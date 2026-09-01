@@ -215,6 +215,48 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 .nav-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
 /* ─── HERO ────────────────────────────────────────────────────────────── */
+.hero-grid {
+  position: absolute; inset: 0; z-index: 1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,75,62,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,75,62,.055) 1px, transparent 1px);
+  background-size: 72px 72px;
+  transform: perspective(900px) rotateX(38deg) translateY(-22%);
+  transform-origin: 50% 0;
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.6) 30%, transparent 85%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.6) 30%, transparent 85%);
+}
+
+.section-watermark {
+  position: absolute;
+  top: 50%; right: -24px;
+  transform: translateY(-50%) rotate(90deg);
+  font-family: var(--font-mono);
+  font-size: clamp(5rem, 10vw, 9rem);
+  font-weight: 800;
+  color: rgba(255,75,62,.055);
+  letter-spacing: .08em;
+  pointer-events: none;
+  line-height: 1;
+  z-index: 0;
+  user-select: none;
+}
+
+.inscription-kanji {
+  position: absolute;
+  top: 50%; right: 4%;
+  transform: translateY(-50%);
+  font-size: clamp(7rem, 16vw, 15rem);
+  color: rgba(255,75,62,.04);
+  font-weight: 900;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+  letter-spacing: -.02em;
+}
+
 .hero {
   min-height: 520px;
   height: min(70vh, 640px);
@@ -312,6 +354,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 
 /* ─── TREINAR SECTION ─────────────────────────────────────────────────── */
 .treinar {
+  position: relative; overflow: hidden;
   background: var(--bg-2);
   padding: 56px 0 64px;
   border-top: 1px solid var(--border);
@@ -495,6 +538,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 
 /* ─── CLASSES ─────────────────────────────────────────────────────────── */
 .classes {
+  position: relative; overflow: hidden;
   background: var(--bg);
   padding: 76px 0;
   border-top: 1px solid var(--border);
@@ -556,6 +600,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 
 /* ─── ABOUT ───────────────────────────────────────────────────────────── */
 .about {
+  position: relative; overflow: hidden;
   background: var(--bg-white);
   color: var(--text-dark);
   padding: 76px 0;
@@ -620,6 +665,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 
 /* ─── INSCRIPTION WIZARD ──────────────────────────────────────────────── */
 .inscription {
+  position: relative; overflow: hidden;
   background: var(--bg-2);
   padding: 80px 0;
   border-top: 1px solid var(--border);

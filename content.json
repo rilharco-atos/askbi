@@ -13,171 +13,250 @@
   },
   "nav": {
     "links": [
-      { "label": "Treinar",     "href": "#treinar" },
-      { "label": "Modalidades", "href": "#modalidades" },
-      { "label": "Associação",  "href": "#sobre" },
-      { "label": "Contacto",    "href": "#contacto" }
+      {
+        "label": "Treinar",
+        "href": "#treinar"
+      },
+      {
+        "label": "Modalidades",
+        "href": "#modalidades"
+      },
+      {
+        "label": "Associação",
+        "href": "#sobre"
+      },
+      {
+        "label": "Contacto",
+        "href": "#contacto"
+      }
     ],
     "ctaLabel": "Marcar aula experimental",
-    "ctaHref":  "#inscricao"
+    "ctaHref": "#inscricao"
   },
   "hero": {
-    "badge":      "Karate Shotokan · Desde 1998",
-    "line1":      "Karate na Covilhã,",
-    "line2":      "dos 5 aos 70 anos.",
-    "line3":      "",
-    "subtext":    "Três dojos, quinze turmas, treinos todas as semanas. A primeira aula é gratuita e não precisa de equipamento.",
-    "cta1Label":  "Marcar aula experimental",
-    "cta1Href":   "#inscricao",
-    "cta2Label":  "Ver horários",
-    "cta2Href":   "#treinar",
-    "backgroundImage":  "/assets/images/uploads/1788270546883-ypjm94sn5is.jpg",
-    "foregroundImage":  "/assets/images/uploads/1788272792944-esdbfd9t4k.png"
+    "badge": "Karate Shotokan · Desde 1998",
+    "line1": "Karate na Covilhã,",
+    "line2": "dos 5 aos 70 anos.",
+    "line3": "",
+    "subtext": "Treino tradicional de Karate-Do com foco em técnica, saúde e crescimento pessoal. Para todas as idades e níveis de experiência. A primeira aula é gratuita.",
+    "cta1Label": "Marcar aula experimental",
+    "cta1Href": "#inscricao",
+    "cta2Label": "Ver horários",
+    "cta2Href": "#treinar",
+    "backgroundImage": "/assets/images/uploads/1788270546883-ypjm94sn5is.jpg",
+    "foregroundImage": "/assets/images/hero-ink.svg"
   },
   "schedule": {
-    "title":        "Treinos esta semana",
+    "title": "Treinos esta semana",
     "viewAllLabel": "Horário completo",
-    "viewAllHref":  "#inscricao",
+    "viewAllHref": "#inscricao",
     "filters": [
-      { "key": "5-9",     "label": "5–9 anos"  },
-      { "key": "10-15",   "label": "10–15 anos" },
-      { "key": "adultos", "label": "Adultos"    }
+      {
+        "key": "5-9",
+        "label": "5–9 anos"
+      },
+      {
+        "key": "10-15",
+        "label": "10–15 anos"
+      },
+      {
+        "key": "adultos",
+        "label": "Adultos"
+      }
     ],
     "sessions": [
       {
         "id": "s1",
-        "group":     "5-9",
+        "group": "5-9",
         "daysShort": "SEG · QUA · SEX",
-        "time":      "18:00 – 19:00",
-        "label":     "Infantis 5–9 anos",
-        "location":  "Dojo Municipal",
+        "time": "18:00 – 19:00",
+        "label": "Infantis 5–9 anos",
+        "location": "Dojo Municipal",
         "slotsText": "4 vagas",
-        "status":    "open"
+        "status": "open"
       },
       {
         "id": "s2",
-        "group":     "10-15",
+        "group": "10-15",
         "daysShort": "SEG · QUA · SEX",
-        "time":      "19:15 – 20:30",
-        "label":     "Juvenis 10–15 anos",
-        "location":  "Dojo Municipal",
+        "time": "19:15 – 20:30",
+        "label": "Juvenis 10–15 anos",
+        "location": "Dojo Municipal",
         "slotsText": "7 vagas",
-        "status":    "open"
+        "status": "open"
       },
       {
         "id": "s3",
-        "group":     "adultos",
+        "group": "adultos",
         "daysShort": "TER · QUI",
-        "time":      "20:00 – 21:30",
-        "label":     "Adultos",
-        "location":  "Pavilhão da Boidobra",
+        "time": "20:00 – 21:30",
+        "label": "Adultos",
+        "location": "Pavilhão da Boidobra",
         "slotsText": "Lista de espera",
-        "status":    "waitlist"
+        "status": "waitlist"
       },
       {
         "id": "s4",
-        "group":     "adultos",
+        "group": "adultos",
         "daysShort": "SÁB",
-        "time":      "09:00 – 10:30",
-        "label":     "Adultos",
-        "location":  "Dojo Municipal",
+        "time": "09:00 – 10:30",
+        "label": "Adultos",
+        "location": "Dojo Municipal",
         "slotsText": "3 vagas",
-        "status":    "open"
+        "status": "open"
       }
     ],
     "days": [
-      { "day": "Segunda – Sexta", "hours": "18:00 – 21:30" },
-      { "day": "Sábado",          "hours": "09:00 – 12:00" },
-      { "day": "Domingo",         "hours": "Fechado"       }
+      {
+        "day": "Segunda – Sexta",
+        "hours": "18:00 – 21:30"
+      },
+      {
+        "day": "Sábado",
+        "hours": "09:00 – 12:00"
+      },
+      {
+        "day": "Domingo",
+        "hours": "Fechado"
+      }
     ]
   },
   "events": [
-    { "date": "18 OUT", "label": "Torneio Regional da Beira Interior · Fundão" },
-    { "date": "09 NOV", "label": "Exames de graduação · Dojo Municipal"         },
-    { "date": "06 DEZ", "label": "Estágio nacional com Sensei convidado"        }
+    {
+      "date": "18 OUT",
+      "label": "Torneio Regional da Beira Interior · Fundão"
+    },
+    {
+      "date": "09 NOV",
+      "label": "Exames de graduação · Dojo Municipal"
+    },
+    {
+      "date": "06 DEZ",
+      "label": "Estágio nacional com Sensei convidado"
+    }
   ],
   "benefits": [
-    { "icon": "shield",   "title": "Ganhar Confiança",   "text": "Desenvolve autoconfiança e acredita nas tuas capacidades." },
-    { "icon": "lock",     "title": "Defesa Pessoal",     "text": "Técnicas práticas para te protegeres e aos teus."         },
-    { "icon": "dumbbell", "title": "Ficar em Forma",     "text": "Melhora a força, flexibilidade e saúde geral."            },
-    { "icon": "target",   "title": "Melhorar o Foco",    "text": "Treina a mente e melhora a concentração."                 }
+    {
+      "icon": "shield",
+      "title": "Ganhar Confiança",
+      "text": "Desenvolve autoconfiança e acredita nas tuas capacidades."
+    },
+    {
+      "icon": "lock",
+      "title": "Defesa Pessoal",
+      "text": "Técnicas práticas para te protegeres e aos teus."
+    },
+    {
+      "icon": "dumbbell",
+      "title": "Ficar em Forma",
+      "text": "Melhora a força, flexibilidade e saúde geral."
+    },
+    {
+      "icon": "target",
+      "title": "Melhorar o Foco",
+      "text": "Treina a mente e melhora a concentração."
+    }
   ],
   "classes": {
-    "subtitle":  "AS NOSSAS MODALIDADES",
-    "title":     "O que praticamos",
-    "ctaLabel":  "Ver todas as modalidades",
-    "ctaHref":   "#modalidades",
+    "subtitle": "AS NOSSAS MODALIDADES",
+    "title": "O que praticamos",
+    "ctaLabel": "Ver todas as modalidades",
+    "ctaHref": "#modalidades",
     "items": [
-      { "name": "Karaté",        "description": "Treino tradicional de karaté para todas as idades, da criança ao adulto.", "image": "" },
-      { "name": "Jiu-Jitsu",     "description": "Luta no chão e técnicas de submissão. Eficaz e técnico.",                 "image": "" },
-      { "name": "Kickboxing",    "description": "Trabalho de pés e mãos, velocidade e resistência cardiovascular.",        "image": "" },
-      { "name": "Programa Kids", "description": "Aulas divertidas e seguras para crianças dos 5 aos 9 anos.",             "image": "" },
-      { "name": "Defesa Pessoal","description": "Técnicas eficazes de autodefesa para adultos. Prático e direto.",        "image": "" }
+      {
+        "name": "Karaté",
+        "description": "Treino tradicional de karaté para todas as idades, da criança ao adulto.",
+        "image": ""
+      },
+      {
+        "name": "Jiu-Jitsu",
+        "description": "Luta no chão e técnicas de submissão. Eficaz e técnico.",
+        "image": ""
+      },
+      {
+        "name": "Kickboxing",
+        "description": "Trabalho de pés e mãos, velocidade e resistência cardiovascular.",
+        "image": ""
+      },
+      {
+        "name": "Programa Kids",
+        "description": "Aulas divertidas e seguras para crianças dos 5 aos 9 anos.",
+        "image": ""
+      },
+      {
+        "name": "Defesa Pessoal",
+        "description": "Técnicas eficazes de autodefesa para adultos. Prático e direto.",
+        "image": ""
+      }
     ]
   },
   "about": {
-    "subtitle":      "SOBRE NÓS",
-    "title":         "Uma associação, três dojos",
-    "text":          "A ASBKI Covilhã existe desde 1998. Começámos com um dojo no centro da cidade; hoje temos três espaços e quinze turmas em funcionamento. A nossa missão é oferecer karate de qualidade a toda a família, com os melhores instrutores da região.",
+    "subtitle": "SOBRE NÓS",
+    "title": "Uma associação, três dojos",
+    "text": "A ASBKI Covilhã existe desde 1998. Começámos com um dojo no centro da cidade; hoje temos três espaços e quinze turmas em funcionamento. A nossa missão é oferecer karate de qualidade a toda a família, com os melhores instrutores da região.",
     "features": [
       "Instrutores federados com mais de 10 anos de experiência",
       "Ambiente seguro e positivo para todas as idades",
       "Sem mensalidades mínimas — paga só o que treinas"
     ],
-    "ctaLabel":      "Conhecer a associação",
-    "ctaHref":       "#contacto",
-    "image":         "",
+    "ctaLabel": "Conhecer a associação",
+    "ctaHref": "#contacto",
+    "image": "",
     "statsSubtitle": "EM NÚMEROS",
-    "statsTitle":    "A associação em números",
+    "statsTitle": "A associação em números",
     "stats": [
-      { "value": "10",  "suffix": "+", "label": "Anos de experiência" },
-      { "value": "300", "suffix": "+", "label": "Alunos ativos"       },
+      { "value": "15",  "suffix": "+", "label": "Anos de tradição"    },
+      { "value": "300", "suffix": "+", "label": "Praticantes ativos"  },
       { "value": "3",   "suffix": "",  "label": "Dojos na Covilhã"    },
       { "value": "5",   "suffix": "+", "label": "Títulos nacionais"   }
     ]
   },
   "inscription": {
-    "badge":       "PRIMEIRA AULA GRATUITA",
-    "title":       "Marcar aula experimental",
-    "steps":       ["Escolhe a turma", "Os teus dados", "Confirmação"],
-    "step1Title":  "Que treinos te interessam?",
-    "step2Title":  "Como te contactamos?",
-    "step3Title":  "Tudo certo!",
-    "step3Text":   "Confirmamos por SMS em 24h. Sem compromisso — a primeira aula é gratuita e não precisas de equipamento.",
+    "badge": "PRIMEIRA AULA GRATUITA",
+    "title": "Marcar aula experimental",
+    "steps": [
+      "Escolhe a turma",
+      "Os teus dados",
+      "Confirmação"
+    ],
+    "step1Title": "Que treinos te interessam?",
+    "step2Title": "Como te contactamos?",
+    "step3Title": "Tudo certo!",
+    "step3Text": "Confirmamos por SMS em 24h. Sem compromisso — a primeira aula é gratuita e não precisas de equipamento.",
     "fields": {
-      "name":             "Nome do praticante",
-      "namePlaceholder":  "Ex: Ana Silva",
-      "phone":            "Telemóvel",
+      "name": "Nome do praticante",
+      "namePlaceholder": "Ex: Ana Silva",
+      "phone": "Telemóvel",
       "phonePlaceholder": "9__ ___ ___",
-      "email":            "Email (opcional)",
+      "email": "Email (opcional)",
       "emailPlaceholder": "para receber confirmação"
     },
-    "nextLabel":   "Continuar",
-    "backLabel":   "Voltar",
+    "nextLabel": "Continuar",
+    "backLabel": "Voltar",
     "submitLabel": "Confirmar marcação"
   },
   "trial": {
-    "title":    "Pronto para começar?",
-    "subtext":  "Junta-te a nós e obtém a tua primeira aula completamente grátis.",
+    "title": "Pronto para começar?",
+    "subtext": "Junta-te a nós e obtém a tua primeira aula completamente grátis.",
     "ctaLabel": "Marcar aula experimental",
-    "ctaHref":  "#inscricao"
+    "ctaHref": "#inscricao"
   },
   "contact": {
-    "title":     "Fala connosco",
+    "title": "Fala connosco",
     "formTitle": "Envia-nos uma mensagem",
     "fields": {
-      "name":    "Nome",
-      "email":   "E-mail",
-      "phone":   "Telefone",
+      "name": "Nome",
+      "email": "E-mail",
+      "phone": "Telefone",
       "message": "Mensagem",
-      "submit":  "Enviar"
+      "submit": "Enviar"
     }
   },
   "footer": {
-    "description":     "Karate Shotokan na Covilhã desde 1998. Três dojos, quinze turmas, todas as idades.",
+    "description": "Karate Shotokan na Covilhã desde 1998. Três dojos, quinze turmas, todas as idades.",
     "quickLinksTitle": "Acesso rápido",
-    "scheduleTitle":   "Horário",
-    "contactTitle":    "Contacte-nos",
-    "copyright":       "© 2026 ASBKI Covilhã. Todos os Direitos Reservados."
+    "scheduleTitle": "Horário",
+    "contactTitle": "Contacte-nos",
+    "copyright": "© 2026 ASBKI Covilhã. Todos os Direitos Reservados."
   }
 }
