@@ -275,8 +275,8 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 }
 .hero-image {
   position: absolute;
-  left: 44%; right: 0; top: 0; bottom: 0;
-  background-size: contain;
+  left: 40%; right: 0; top: 0; bottom: 0;
+  background-size: auto 90%;
   background-repeat: no-repeat;
   background-position: right bottom;
   z-index: 4;
