@@ -30,9 +30,24 @@ async function loadContent() {
   }
 }
 
+/* ─── Session card HTML ───────────────────────────────────────────────── */
+function sessionCardHTML(s, selectable = false) {
+  return `
+    <div class="session-card" data-session-id="${s.id}" data-group="${s.group}">
+      <div class="session-days">${s.daysShort}</div>
+      <div class="session-time">${s.time}</div>
+      <div class="session-label">${s.label} · ${s.location}</div>
+      <div class="session-slots ${s.status}">${s.slotsText}</div>
+    </div>`;
+}
+
 /* ─── Render ──────────────────────────────────────────────────────────── */
 function render(c) {
-  const { site, nav, hero, benefits, classes, about, schedule, trial, contact, footer } = c;
+  const { site, nav, hero, benefits, classes, about, schedule, events,
+          inscription, trial, contact, footer } = c;
+
+  /* --- META & TITLE --- */
+  document.title = `${site.name} ${site.tagline} — Karate Shotokan`;
 
   /* --- NAV --- */
   document.querySelector('#nav-brand-name').textContent = site.name;
@@ -40,7 +55,6 @@ function render(c) {
   document.querySelector('#footer-brand-name').textContent = site.name;
   document.querySelector('#footer-brand-sub').textContent  = site.tagline;
 
-  /* Logo — replace star with image if set */
   if (site.logo) {
     document.querySelectorAll('.nav-star').forEach(el => {
       el.innerHTML = `<img src="${site.logo}" alt="${site.name}" style="width:100%;height:100%;object-fit:contain;border-radius:50%">`;
@@ -57,22 +71,40 @@ function render(c) {
   document.querySelector('#nav-cta').href = nav.ctaHref;
 
   /* --- HERO --- */
-  document.querySelector('#hero-line1').textContent = hero.line1;
-  document.querySelector('#hero-line2').textContent = hero.line2;
-  document.querySelector('#hero-line3').textContent = hero.line3;
+  if (hero.badge)      document.querySelector('#hero-badge').textContent = hero.badge;
+  document.querySelector('#hero-line1').textContent = hero.line1 || '';
+  document.querySelector('#hero-line2').textContent = hero.line2 || '';
   document.querySelector('#hero-sub').textContent   = hero.subtext;
-  if (hero.backgroundImage) {
+
+  if (hero.backgroundImage)
     document.querySelector('#hero-bg-img').style.backgroundImage = `url(${hero.backgroundImage})`;
-  }
-  const fighter = document.querySelector('#hero-fighter');
-  if (hero.foregroundImage) {
-    fighter.style.backgroundImage = `url(${hero.foregroundImage})`;
-  }
+  if (hero.foregroundImage)
+    document.querySelector('#hero-fighter').style.backgroundImage = `url(${hero.foregroundImage})`;
+
   document.querySelector('#hero-actions').innerHTML = `
     <a href="${hero.cta1Href}" class="btn btn-accent">${hero.cta1Label}</a>
-    <a href="${hero.cta2Href}" class="btn btn-outline">
-      ${svg(ICONS.play, 16)} ${hero.cta2Label}
-    </a>`;
+    <a href="${hero.cta2Href}" class="btn btn-outline-ghost">${hero.cta2Label}</a>`;
+
+  /* --- SCHEDULE (homepage preview) --- */
+  document.querySelector('#schedule-title').textContent = schedule.title;
+  document.querySelector('#schedule-view-all').textContent = schedule.viewAllLabel + ' →';
+  document.querySelector('#schedule-view-all').href = schedule.viewAllHref;
+
+  /* Filters (homepage) */
+  renderFilterPills('#session-filters', schedule.filters, '#session-grid');
+
+  /* Session cards (homepage) */
+  document.querySelector('#session-grid').innerHTML =
+    schedule.sessions.map(s => sessionCardHTML(s)).join('');
+
+  /* Events */
+  if (events && events.length) {
+    document.querySelector('#events-list').innerHTML = events.map(e => `
+      <div class="event-item">
+        <span class="event-date">${e.date}</span>
+        <span class="event-label">${e.label}</span>
+      </div>`).join('');
+  }
 
   /* --- BENEFITS --- */
   document.querySelector('#benefits-grid').innerHTML = benefits.map((b, i) => `
@@ -90,16 +122,15 @@ function render(c) {
   document.querySelector('#classes-cta').textContent      = classes.ctaLabel;
   document.querySelector('#classes-cta').href             = classes.ctaHref;
 
-  const classIcons = ['M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', 'M17 12h-5v5h5v-5zM17 7h-5v4h5V7z', 'M6 4v16M18 4v16M4 8h4m8 0h4M4 16h4m8 0h4M8 4h8', 'M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z', ICONS.shield];
+  const classIcons = ['M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z','M17 12h-5v5h5v-5zM17 7h-5v4h5V7z','M6 4v16M18 4v16M4 8h4m8 0h4M4 16h4m8 0h4M8 4h8','M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z',ICONS.shield];
   document.querySelector('#classes-grid').innerHTML = classes.items.map((cl, i) => `
     <div class="class-card">
       <div class="class-img" data-class="${i}">
         ${cl.image
           ? `<img src="${cl.image}" alt="${cl.name}" loading="lazy">`
-          : `<div class="class-img-placeholder"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="${classIcons[i] || ICONS.shield}"/></svg></div>`
-        }
+          : `<div class="class-img-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="${classIcons[i] || ICONS.shield}"/></svg></div>`}
         <div class="class-icon-badge">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#140908" stroke-width="2">
             <path d="${classIcons[i] || ICONS.shield}"/>
           </svg>
         </div>
@@ -109,13 +140,6 @@ function render(c) {
         <div class="class-desc">${cl.description}</div>
       </div>
     </div>`).join('');
-
-  /* Populate modality select in contact form */
-  const sel = document.querySelector('select[name="modality"]');
-  if (sel) {
-    sel.innerHTML = '<option value="">Seleciona uma modalidade…</option>' +
-      classes.items.map(cl => `<option value="${cl.name}">${cl.name}</option>`).join('');
-  }
 
   /* --- ABOUT --- */
   document.querySelector('#about-subtitle').textContent = about.subtitle;
@@ -129,7 +153,6 @@ function render(c) {
       <span>${f}</span>
     </li>`).join('');
 
-  /* Fighter center image */
   const centerImg = document.querySelector('#about-img');
   if (about.image) {
     centerImg.style.backgroundImage = `url(${about.image})`;
@@ -137,7 +160,6 @@ function render(c) {
     if (ph) ph.style.display = 'none';
   }
 
-  /* --- STATS --- */
   document.querySelector('#stats-subtitle').textContent = about.statsSubtitle;
   document.querySelector('#stats-title').textContent    = about.statsTitle;
   document.querySelector('#stats-grid').innerHTML = about.stats.map(s => `
@@ -146,19 +168,39 @@ function render(c) {
       <div class="stat-label">${s.label}</div>
     </div>`).join('');
 
-  /* --- SCHEDULE --- */
-  document.querySelector('#schedule-title').textContent = schedule.title;
-  document.querySelector('#schedule-rows').innerHTML = schedule.days.map(d => `
-    <div class="schedule-row${d.hours === 'Fechado' ? ' closed' : ''}">
-      <span class="schedule-day">${d.day}</span>
-      <span class="schedule-hours">${d.hours}</span>
-    </div>`).join('');
+  /* --- INSCRIPTION WIZARD --- */
+  if (inscription) {
+    document.querySelector('#inscription-badge').textContent = inscription.badge;
+    document.querySelector('#inscription-title').textContent = inscription.title;
+    document.querySelector('#wizard-step1-title').textContent = inscription.step1Title;
+    document.querySelector('#wizard-step2-title').textContent = inscription.step2Title;
+    document.querySelector('#wizard-step3-title').textContent = inscription.step3Title;
+    document.querySelector('#wizard-step3-text').textContent  = inscription.step3Text;
+    document.querySelector('#wiz-lbl-name').textContent  = inscription.fields.name;
+    document.querySelector('#wiz-lbl-phone').textContent = inscription.fields.phone;
+    document.querySelector('#wiz-lbl-email').innerHTML   =
+      inscription.fields.email.replace('(opcional)', '<span class="optional">(opcional)</span>');
+    document.querySelector('#wiz-name').placeholder  = inscription.fields.namePlaceholder;
+    document.querySelector('#wiz-phone').placeholder = inscription.fields.phonePlaceholder;
+    document.querySelector('#wiz-email').placeholder = inscription.fields.emailPlaceholder;
+    document.querySelector('#wizard-btn-1').textContent = inscription.nextLabel;
+    document.querySelector('#wizard-btn-2').textContent = inscription.nextLabel;
+    document.querySelector('#wizard-back-2').textContent = inscription.backLabel;
 
-  /* --- TRIAL --- */
-  document.querySelector('#trial-title').textContent = trial.title;
-  document.querySelector('#trial-sub').textContent   = trial.subtext;
-  document.querySelector('#trial-cta').textContent   = trial.ctaLabel;
-  document.querySelector('#trial-cta').href          = trial.ctaHref;
+    /* Wizard progress dots */
+    document.querySelector('#wizard-progress').innerHTML = inscription.steps.map((label, i) => `
+      <div class="wizard-step-dot ${i === 0 ? 'active' : ''}" data-step="${i + 1}">
+        <div class="wizard-dot">${i + 1}</div>
+        <span class="wizard-dot-label">${label}</span>
+      </div>`).join('');
+
+    /* Wizard session filter + cards */
+    renderFilterPills('#wizard-filters', schedule.filters, '#wizard-session-grid');
+    document.querySelector('#wizard-session-grid').innerHTML =
+      schedule.sessions.map(s => sessionCardHTML(s, true)).join('');
+
+    initWizard(schedule.sessions, inscription);
+  }
 
   /* --- CONTACT --- */
   document.querySelector('#contact-title').textContent      = contact.title;
@@ -185,11 +227,11 @@ function render(c) {
   ].filter(Boolean).join('');
 
   /* --- FOOTER --- */
-  document.querySelector('#footer-desc').textContent        = footer.description;
-  document.querySelector('#footer-links-title').textContent = footer.quickLinksTitle;
-  document.querySelector('#footer-schedule-title').textContent = footer.scheduleTitle;
-  document.querySelector('#footer-contact-title').textContent  = footer.contactTitle;
-  document.querySelector('#footer-copy').textContent        = footer.copyright;
+  document.querySelector('#footer-desc').textContent             = footer.description;
+  document.querySelector('#footer-links-title').textContent      = footer.quickLinksTitle;
+  document.querySelector('#footer-schedule-title').textContent   = footer.scheduleTitle;
+  document.querySelector('#footer-contact-title').textContent    = footer.contactTitle;
+  document.querySelector('#footer-copy').textContent             = footer.copyright;
 
   document.querySelector('#footer-links').innerHTML = nav.links.map(l =>
     `<li><a href="${l.href}">${l.label}</a></li>`
@@ -214,40 +256,121 @@ function render(c) {
     { key: 'tiktok', icon: ICONS.tiktok },
   ].filter(s => site[s.key]);
 
-  document.querySelector('#footer-social').innerHTML = socials.map(s => `
-    <a href="${site[s.key]}" class="social-link" target="_blank" rel="noopener">${svg(s.icon, 18)}</a>
-  `).join('');
+  document.querySelector('#footer-social').innerHTML = socials.map(s =>
+    `<a href="${site[s.key]}" class="social-link" target="_blank" rel="noopener">${svg(s.icon, 18)}</a>`
+  ).join('');
 
-  /* ── Trigger all fade-in animations ─ */
   initObserver();
   initCounters();
 }
 
-/* ─── Intersection Observer (fade-in + counters) ─────────────────────── */
+/* ─── Filter pills ────────────────────────────────────────────────────── */
+function renderFilterPills(filtersSelector, filters, gridSelector) {
+  const container = document.querySelector(filtersSelector);
+  if (!container || !filters) return;
+
+  container.innerHTML = filters.map((f, i) => `
+    <button class="filter-pill${i === 0 ? ' active' : ''}" data-filter="${f.key}">${f.label}</button>
+  `).join('');
+
+  container.addEventListener('click', e => {
+    const pill = e.target.closest('.filter-pill');
+    if (!pill) return;
+    container.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    filterSessions(pill.dataset.filter, gridSelector);
+  });
+
+  /* Show all matching first filter by default */
+  filterSessions(filters[0].key, gridSelector);
+}
+
+function filterSessions(groupKey, gridSelector) {
+  const grid = document.querySelector(gridSelector);
+  if (!grid) return;
+  grid.querySelectorAll('.session-card').forEach(card => {
+    card.hidden = card.dataset.group !== groupKey;
+  });
+}
+
+/* ─── Wizard ──────────────────────────────────────────────────────────── */
+function initWizard(sessions, inscription) {
+  let selectedSessionId = null;
+  let currentStep = 1;
+
+  const panels   = [1, 2, 3].map(n => document.querySelector(`#wizard-panel-${n}`));
+  const dots     = document.querySelectorAll('#wizard-progress .wizard-step-dot');
+  const btn1     = document.querySelector('#wizard-btn-1');
+  const btn2     = document.querySelector('#wizard-btn-2');
+  const back2    = document.querySelector('#wizard-back-2');
+  const selGrid  = document.querySelector('#wizard-session-grid');
+
+  function goToStep(n) {
+    currentStep = n;
+    panels.forEach((p, i) => p.classList.toggle('active', i + 1 === n));
+    dots.forEach((d, i) => {
+      d.classList.toggle('active', i + 1 === n);
+      d.classList.toggle('done', i + 1 < n);
+    });
+    document.querySelector('#wizard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* Session card selection */
+  selGrid.addEventListener('click', e => {
+    const card = e.target.closest('.session-card');
+    if (!card || card.hidden) return;
+    selGrid.querySelectorAll('.session-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedSessionId = card.dataset.sessionId;
+    btn1.disabled = false;
+  });
+
+  btn1.addEventListener('click', () => {
+    if (!selectedSessionId) return;
+    const session = sessions.find(s => s.id === selectedSessionId);
+    if (session) {
+      document.querySelector('#wizard-selected').innerHTML = `
+        <div class="wizard-selected-label">Turma selecionada</div>
+        <div class="wizard-selected-value">${session.label} · ${session.daysShort} · ${session.time}</div>`;
+    }
+    goToStep(2);
+  });
+
+  back2.addEventListener('click', () => goToStep(1));
+
+  btn2.addEventListener('click', () => {
+    const name  = document.querySelector('#wiz-name').value.trim();
+    const phone = document.querySelector('#wiz-phone').value.trim();
+    if (!name || !phone) {
+      if (!name)  document.querySelector('#wiz-name').focus();
+      else        document.querySelector('#wiz-phone').focus();
+      return;
+    }
+    goToStep(3);
+  });
+}
+
+/* ─── Intersection Observer ───────────────────────────────────────────── */
 function initObserver() {
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        io.unobserve(e.target);
-      }
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
     });
-  }, { threshold: 0.15 });
-
+  }, { threshold: 0.12 });
   document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
 }
 
-/* ─── Counter animation ────────────────────────────────────────────────── */
+/* ─── Counter animation ───────────────────────────────────────────────── */
 function initCounters() {
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
-        const el     = e.target;
+        const el = e.target;
         const target = parseInt(el.dataset.target, 10);
         const suffix = el.dataset.suffix || '';
-        let current  = 0;
-        const step   = Math.ceil(target / 60);
-        const tick   = setInterval(() => {
+        let current = 0;
+        const step = Math.ceil(target / 60);
+        const tick = setInterval(() => {
           current = Math.min(current + step, target);
           el.textContent = current + suffix;
           if (current >= target) clearInterval(tick);
@@ -256,11 +379,10 @@ function initCounters() {
       }
     });
   }, { threshold: 0.5 });
-
   document.querySelectorAll('[data-target]').forEach(el => io.observe(el));
 }
 
-/* ─── Navbar scroll behavior ─────────────────────────────────────────── */
+/* ─── Navbar ──────────────────────────────────────────────────────────── */
 function initNavbar() {
   const nav = document.querySelector('#navbar');
   const bt  = document.querySelector('#back-top');
@@ -270,12 +392,9 @@ function initNavbar() {
     nav.classList.toggle('scrolled', y > 60);
     bt.classList.toggle('visible', y > 400);
 
-    /* Active nav link */
     const sections = document.querySelectorAll('section[id], footer[id]');
     let current = '';
-    sections.forEach(s => {
-      if (window.scrollY >= s.offsetTop - 100) current = s.id;
-    });
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
     document.querySelectorAll('.nav-links a').forEach(a => {
       a.classList.toggle('active', a.getAttribute('href') === '#' + current);
     });
@@ -288,12 +407,10 @@ function initNavbar() {
 function initMobileNav() {
   const toggle = document.querySelector('#nav-toggle');
   const links  = document.querySelector('#nav-links');
-
   toggle.addEventListener('click', () => {
     const open = toggle.classList.toggle('open');
     links.classList.toggle('mobile-open', open);
   });
-
   links.addEventListener('click', e => {
     if (e.target.tagName === 'A') {
       toggle.classList.remove('open');
@@ -308,14 +425,12 @@ window.handleContactForm = function(e) {
   const btn = e.target.querySelector('[type="submit"]');
   btn.textContent = 'A enviar…';
   btn.disabled = true;
-
-  /* In production, POST to your server */
   setTimeout(() => {
     btn.textContent = '✓ Mensagem enviada!';
     btn.style.background = '#22c55e';
     e.target.reset();
     setTimeout(() => {
-      btn.textContent = 'Enviar Mensagem';
+      btn.textContent = 'Enviar';
       btn.style.background = '';
       btn.disabled = false;
     }, 4000);
