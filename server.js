@@ -4,12 +4,23 @@ const express = require('express');
 const multer  = require('multer');
 const path    = require('path');
 const fs      = require('fs');
+const crypto  = require('crypto');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'asbki2026';
+
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+if (!ADMIN_PASSWORD) {
+  console.error('ERRO: A variável de ambiente ADMIN_PASSWORD é obrigatória.');
+  process.exit(1);
+}
+
 const CONTENT_FILE   = path.join(__dirname, 'content.json');
 const UPLOADS_DIR    = path.join(__dirname, 'assets', 'images', 'uploads');
+
+/* ─── In-memory token store (token → expiry timestamp) ───────────────── */
+const TOKEN_TTL_MS = 8 * 60 * 60 * 1000; // 8 horas
+const activeTokens = new Map();
 
 /* ─── Middleware ──────────────────────────────────────────────────────── */
 app.use(express.json({ limit: '10mb' }));
@@ -31,15 +42,17 @@ const upload = multer({
   storage,
   limits: { fileSize: 8 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    if (/image\/(jpeg|png|webp|gif|svg)/.test(file.mimetype)) cb(null, true);
-    else cb(new Error('Apenas imagens são permitidas'));
+    if (/^image\/(jpeg|png|webp|gif)$/.test(file.mimetype)) cb(null, true);
+    else cb(new Error('Apenas imagens JPEG, PNG, WebP ou GIF são permitidas'));
   },
 });
 
 /* ─── Auth middleware ─────────────────────────────────────────────────── */
 function authRequired(req, res, next) {
   const token = req.headers['x-admin-token'];
-  if (token && token === process.env.ADMIN_TOKEN) return next();
+  const expiry = token && activeTokens.get(token);
+  if (expiry && expiry > Date.now()) return next();
+  if (expiry) activeTokens.delete(token); // expirado — limpar
   res.status(401).json({ error: 'Não autorizado' });
 }
 
@@ -61,8 +74,8 @@ app.post('/api/admin/login', (req, res) => {
   if (password !== ADMIN_PASSWORD) {
     return res.status(401).json({ error: 'Password incorreta' });
   }
-  const token = Buffer.from(`${Date.now()}:${ADMIN_PASSWORD}`).toString('base64');
-  process.env.ADMIN_TOKEN = token;
+  const token = crypto.randomBytes(32).toString('hex');
+  activeTokens.set(token, Date.now() + TOKEN_TTL_MS);
   res.json({ token });
 });
 
@@ -113,7 +126,7 @@ app.delete('/api/upload', authRequired, (req, res) => {
 app.get('/api/images', authRequired, (req, res) => {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
   const files = fs.readdirSync(UPLOADS_DIR)
-    .filter(f => /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(f))
+    .filter(f => /\.(jpg|jpeg|png|webp|gif)$/i.test(f))
     .map(f => ({
       filename: f,
       url: `/assets/images/uploads/${f}`,
@@ -129,6 +142,5 @@ app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin', 'inde
 app.listen(PORT, () => {
   console.log(`\n🥋 ASBKI Covilhã CMS`);
   console.log(`   Website: http://localhost:${PORT}`);
-  console.log(`   Admin:   http://localhost:${PORT}/admin`);
-  console.log(`   Password: ${ADMIN_PASSWORD}\n`);
+  console.log(`   Admin:   http://localhost:${PORT}/admin\n`);
 });
