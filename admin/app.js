@@ -124,6 +124,46 @@ function populateFields() {
   if (content.hero?.backgroundImage)  showImgPreview('hero-img-preview', content.hero.backgroundImage);
   if (content.hero?.foregroundImage)  showImgPreview('hero-fg-preview', content.hero.foregroundImage);
   if (content.about?.image)           showImgPreview('about-img-preview', content.about.image);
+
+  populateFighterControls();
+}
+
+/* ─── Fighter size/offset controls ───────────────────────────────────────── */
+function populateFighterControls() {
+  var size   = content.hero?.fighterSize   ?? 88;
+  var offset = content.hero?.fighterOffset ?? 0;
+  var sEl = document.getElementById('fighter-size-input');
+  var oEl = document.getElementById('fighter-offset-input');
+  if (sEl) sEl.value = size;
+  if (oEl) oEl.value = offset;
+  document.getElementById('fighter-size-val').textContent   = size;
+  document.getElementById('fighter-offset-val').textContent = (offset > 0 ? '+' : '') + offset;
+  refreshFighterPreview(size, offset);
+}
+
+function updateFighterControls() {
+  var size   = parseInt(document.getElementById('fighter-size-input').value);
+  var offset = parseInt(document.getElementById('fighter-offset-input').value);
+  document.getElementById('fighter-size-val').textContent   = size;
+  document.getElementById('fighter-offset-val').textContent = (offset > 0 ? '+' : '') + offset;
+  setPath(content, 'hero.fighterSize',   size);
+  setPath(content, 'hero.fighterOffset', offset);
+  markDirty();
+  refreshFighterPreview(size, offset);
+}
+
+function refreshFighterPreview(size, offset) {
+  var img = document.getElementById('fighter-preview-img');
+  if (!img) return;
+  var url = content.hero?.foregroundImage;
+  if (url) {
+    img.src          = url;
+    img.style.display = '';
+    img.style.height  = size + '%';
+    img.style.right   = (-offset) + 'px';
+  } else {
+    img.style.display = 'none';
+  }
 }
 
 function onFieldInput(e) {

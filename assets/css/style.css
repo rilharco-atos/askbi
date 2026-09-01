@@ -273,21 +273,23 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   background-position: center;
   opacity: .10;
 }
-.hero-image {
-  position: absolute;
-  left: 40%; right: 0; top: 0; bottom: 0;
-  background-size: auto 90%;
-  background-repeat: no-repeat;
-  background-position: right bottom;
-  z-index: 4;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 14%);
-  mask-image: linear-gradient(to right, transparent 0%, black 14%);
-}
 .hero-bg-overlay {
   position: absolute; inset: 0; z-index: 3;
   background: linear-gradient(90deg,
-    #0d0d0d 0%, #0d0d0d 28%,
-    rgba(13,13,13,.82) 52%, rgba(13,13,13,.18) 82%);
+    #0d0d0d 0%, #0d0d0d 55%,
+    rgba(13,13,13,.40) 72%, rgba(13,13,13,.10) 100%);
+}
+.hero-image {
+  position: absolute;
+  left: 0; right: 320px; /* fallback; JS sobrepõe right com (vw - navCta.left) */
+  top: 0; bottom: 0;
+  z-index: 4;
+  background-size: auto 88%;
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  /* invisível na zona do texto (0-52%); aparece da direita */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 52%, black 72%);
+  mask-image: linear-gradient(to right, transparent 0%, transparent 52%, black 72%);
 }
 .hero-inner {
   position: relative; z-index: 5;
@@ -944,8 +946,9 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   .form-row { grid-template-columns: 1fr; }
   .hero { min-height: 70vh; padding-top: calc(var(--nav-h) + 48px); padding-bottom: 48px; }
   .hero-bg-img { background-position: center; }
-  .hero-image { left: 0; opacity: .25; }
-  .hero-bg-overlay { background: rgba(13,13,13,.78); }
+  .hero-image { left: 0; right: 0; opacity: .18; }
+  .hero-bg-overlay { background: rgba(13,13,13,.82); }
+  .hero-inner { max-width: 100%; }
   .hero-actions { flex-direction: column; }
   .hero-actions .btn { width: 100%; justify-content: center; min-height: 44px; }
   .wizard { max-width: 100%; }

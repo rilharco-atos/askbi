@@ -225,6 +225,33 @@
             <button class="img-preview-remove" onclick="removeImage('hero.foregroundImage','hero-fg-preview')">✕</button>
           </div>
         </div>
+        <div class="editor-card">
+          <div class="editor-card-title">Posição &amp; Tamanho do Lutador</div>
+          <div class="field">
+            <label>Tamanho — <strong id="fighter-size-val">88</strong>%</label>
+            <input type="range" id="fighter-size-input" min="40" max="140" value="88" step="1"
+                   style="width:100%;accent-color:var(--accent);margin-top:6px" oninput="updateFighterControls()">
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--text-m);margin-top:3px"><span>40%</span><span>90%</span><span>140%</span></div>
+          </div>
+          <div class="field" style="margin-top:14px">
+            <label>Deslocamento horizontal — <strong id="fighter-offset-val">0</strong>px &nbsp;<span style="opacity:.5;font-weight:400">(+ direita / − esquerda)</span></label>
+            <input type="range" id="fighter-offset-input" min="-300" max="300" value="0" step="10"
+                   style="width:100%;accent-color:var(--accent);margin-top:6px" oninput="updateFighterControls()">
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--text-m);margin-top:3px"><span>← −300px</span><span>0</span><span>+300px →</span></div>
+          </div>
+          <div style="margin-top:18px">
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-m);margin-bottom:8px">Pré-visualização</div>
+            <div class="fighter-preview-box" id="fighter-preview-box">
+              <div class="fighter-preview-overlay"></div>
+              <div class="fighter-preview-text">
+                <div style="font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:#ff6a5e;margin-bottom:4px">Karate Shotokan · 1998</div>
+                <div style="font-size:13px;font-weight:800;color:#fff;line-height:1.25">Karate na Covilhã,<br>dos 5 aos 70 anos.</div>
+              </div>
+              <img id="fighter-preview-img" src="" alt="" style="display:none">
+            </div>
+            <p style="font-size:.7rem;color:var(--text-m);margin-top:8px">Clica em <strong>Guardar Alterações</strong> para aplicar no site.</p>
+          </div>
+        </div>
       </div>
 
       <!-- ── BENEFÍCIOS ── -->

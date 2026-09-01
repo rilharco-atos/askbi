@@ -44,7 +44,9 @@
     "cta2Label": "Ver horários",
     "cta2Href": "#treinar",
     "backgroundImage": "/assets/images/uploads/1788270546883-ypjm94sn5is.jpg",
-    "foregroundImage": ""
+    "foregroundImage": "/assets/images/uploads/1788283754195-g27qv8wpxeq.png",
+    "fighterSize": 89,
+    "fighterOffset": 150
   },
   "schedule": {
     "title": "Treinos esta semana",

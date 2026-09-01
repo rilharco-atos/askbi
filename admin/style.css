@@ -370,6 +370,41 @@ button { cursor: pointer; font-family: var(--font-b); }
 }
 .img-preview-remove:hover { background: var(--danger); }
 
+/* Fighter preview */
+.fighter-preview-box {
+  position: relative;
+  height: 160px;
+  background: #0d0d0d;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.fighter-preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #0d0d0d 0%, #0d0d0d 36%, rgba(13,13,13,.45) 58%, rgba(13,13,13,0) 76%);
+  z-index: 1;
+  pointer-events: none;
+}
+.fighter-preview-text {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  pointer-events: none;
+}
+.fighter-preview-box img {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  object-position: right bottom;
+  transition: right .1s, height .1s;
+}
+
 /* Dynamic list (benefits, classes, stats) */
 .list-item {
   background: var(--bg-2);

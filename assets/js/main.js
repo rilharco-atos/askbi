@@ -78,8 +78,11 @@ function render(c) {
 
   if (hero.backgroundImage)
     document.querySelector('#hero-bg-img').style.backgroundImage = `url(${hero.backgroundImage})`;
-  if (hero.foregroundImage)
-    document.querySelector('#hero-image').style.backgroundImage = `url(${hero.foregroundImage})`;
+  if (hero.foregroundImage) {
+    var hImg = document.querySelector('#hero-image');
+    hImg.style.backgroundImage = `url(${hero.foregroundImage})`;
+    hImg.style.backgroundSize  = 'auto ' + (hero.fighterSize ?? 88) + '%';
+  }
 
   document.querySelector('#hero-actions').innerHTML = `
     <a href="${hero.cta1Href}" class="btn btn-accent">${hero.cta1Label}</a>
@@ -456,10 +459,27 @@ window.handleContactForm = function(e) {
   }, 1200);
 };
 
+/* ─── Hero fighter alignment ──────────────────────────────────────────── */
+var _fighterOffset = 0;
+
+function positionHeroFighter() {
+  var navCta  = document.querySelector('.nav-cta');
+  var heroImg = document.querySelector('#hero-image');
+  if (!navCta || !heroImg) return;
+  var rect = navCta.getBoundingClientRect();
+  heroImg.style.right = (window.innerWidth - (rect.left + rect.width / 2) - _fighterOffset) + 'px';
+  heroImg.style.left  = '0';
+}
+
 /* ─── Boot ────────────────────────────────────────────────────────────── */
 (async function init() {
   initNavbar();
   initMobileNav();
   const content = await loadContent();
-  if (content) render(content);
+  if (content) {
+    _fighterOffset = content.hero?.fighterOffset ?? 0;
+    render(content);
+    positionHeroFighter();
+    window.addEventListener('resize', positionHeroFighter, { passive: true });
+  }
 })();
