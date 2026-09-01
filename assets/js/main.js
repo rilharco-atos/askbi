@@ -22,7 +22,7 @@ function svg(d, size = 20) {
 /* ─── Fetch content ───────────────────────────────────────────────────── */
 async function loadContent() {
   try {
-    const res = await fetch('content.json?v=' + Date.now());
+    const res = await fetch('/api/content');
     return await res.json();
   } catch {
     console.error('Não foi possível carregar content.json');
