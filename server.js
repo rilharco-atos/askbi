@@ -17,6 +17,7 @@ if (!ADMIN_PASSWORD) {
 
 const CONTENT_FILE   = path.join(__dirname, 'content.json');
 const UPLOADS_DIR    = path.join(__dirname, 'assets', 'images', 'uploads');
+const IMAGES_ROOT    = path.join(__dirname, 'assets', 'images');
 
 /* ─── In-memory token store (token → expiry timestamp) ───────────────── */
 const TOKEN_TTL_MS = 8 * 60 * 60 * 1000; // 8 horas
@@ -42,8 +43,8 @@ const upload = multer({
   storage,
   limits: { fileSize: 8 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    if (/^image\/(jpeg|png|webp|gif)$/.test(file.mimetype)) cb(null, true);
-    else cb(new Error('Apenas imagens JPEG, PNG, WebP ou GIF são permitidas'));
+    if (/^image\/(jpeg|png|webp|gif|svg\+xml)$/.test(file.mimetype)) cb(null, true);
+    else cb(new Error('Apenas imagens JPEG, PNG, WebP, GIF ou SVG são permitidas'));
   },
 });
 
@@ -122,17 +123,26 @@ app.delete('/api/upload', authRequired, (req, res) => {
   res.json({ ok: true });
 });
 
-/* Admin: list uploaded images */
+/* Admin: list uploaded images + root SVGs */
 app.get('/api/images', authRequired, (req, res) => {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-  const files = fs.readdirSync(UPLOADS_DIR)
-    .filter(f => /\.(jpg|jpeg|png|webp|gif)$/i.test(f))
+  const uploaded = fs.readdirSync(UPLOADS_DIR)
+    .filter(f => /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(f))
     .map(f => ({
       filename: f,
       url: `/assets/images/uploads/${f}`,
       size: fs.statSync(path.join(UPLOADS_DIR, f)).size,
+      deletable: true,
     }));
-  res.json(files);
+  const rootSvgs = fs.readdirSync(IMAGES_ROOT)
+    .filter(f => /\.svg$/i.test(f))
+    .map(f => ({
+      filename: f,
+      url: `/assets/images/${f}`,
+      size: fs.statSync(path.join(IMAGES_ROOT, f)).size,
+      deletable: false,
+    }));
+  res.json([...uploaded, ...rootSvgs]);
 });
 
 /* Serve admin panel */

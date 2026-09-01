@@ -278,6 +278,12 @@ function renderStats() {
 
 function updateStat(i, key, val) { content.about.stats[i][key] = val; markDirty(); }
 function removeStat(i) { content.about.stats.splice(i, 1); renderStats(); markDirty(); }
+window.addStat = function() {
+  if (!content.about.stats) content.about.stats = [];
+  content.about.stats.push({ value: '0', suffix: '', label: 'Nova estatística' });
+  renderStats();
+  markDirty();
+};
 
 function renderSchedule() {
   const list = document.querySelector('#schedule-list');
@@ -392,10 +398,12 @@ async function loadImages() {
     if (!grid) return;
     grid.innerHTML = imgs.map(img => `
       <div style="position:relative;border-radius:6px;overflow:hidden;background:var(--bg-2);border:1px solid var(--border)">
-        <img src="${img.url}" style="width:100%;height:100px;object-fit:cover" loading="lazy">
+        <div style="width:100%;height:100px;display:flex;align-items:center;justify-content:center;background:${img.filename.endsWith('.svg') ? '#fff' : 'transparent'}">
+          <img src="${img.url}" style="max-width:100%;max-height:100px;object-fit:contain" loading="lazy">
+        </div>
         <div style="padding:6px 8px">
           <div style="font-size:.65rem;color:var(--text-m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${img.filename}</div>
-          <div style="font-size:.65rem;color:var(--text-m)">${(img.size/1024).toFixed(0)} KB</div>
+          <div style="font-size:.65rem;color:var(--text-m)">${(img.size/1024).toFixed(0)} KB${img.deletable === false ? ' · SVG fixo' : ''}</div>
         </div>
         <button onclick="copyUrl('${img.url}')" style="position:absolute;top:6px;right:6px;width:24px;height:24px;background:rgba(0,0,0,.7);border:none;border-radius:4px;color:#fff;cursor:pointer;font-size:.7rem" title="Copiar URL">⎘</button>
       </div>`).join('');

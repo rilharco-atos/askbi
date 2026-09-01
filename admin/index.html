@@ -213,10 +213,10 @@
         </div>
         <div class="editor-card">
           <div class="editor-card-title">Imagem do Lutador (Primeiro Plano)</div>
-          <p style="font-size:.78rem;color:var(--text-m);margin-bottom:12px">A imagem principal do lado direito — o atleta/lutador. Usa uma imagem com fundo transparente (PNG) para melhor resultado, ou uma foto recortada.</p>
-          <div class="field"><label>URL da imagem</label><input type="text" data-path="hero.foregroundImage" placeholder="/assets/images/uploads/…"></div>
+          <p style="font-size:.78rem;color:var(--text-m);margin-bottom:12px">A imagem principal do lado direito — o atleta/lutador. Recomendado: SVG com fundo transparente (como o hero-ink.svg atual) ou PNG recortado. Podes também escrever diretamente o URL de um SVG fixo, ex: <code style="font-size:.7rem;opacity:.7">/assets/images/hero-ink.svg</code></p>
+          <div class="field"><label>URL da imagem</label><input type="text" data-path="hero.foregroundImage" placeholder="/assets/images/hero-ink.svg"></div>
           <div class="img-upload-zone">
-            <input type="file" accept="image/*" onchange="uploadImage(event, 'hero.foregroundImage', 'hero-fg-preview')">
+            <input type="file" accept="image/*,.svg" onchange="uploadImage(event, 'hero.foregroundImage', 'hero-fg-preview')">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             <div class="img-upload-label">Clica ou arrasta (PNG transparente recomendado)</div>
           </div>
@@ -292,6 +292,7 @@
             <div class="field"><label>Título</label><input type="text" data-path="about.statsTitle"></div>
           </div>
           <div id="stats-list"></div>
+          <button class="btn btn-secondary btn-sm" onclick="addStat()" style="margin-top:8px">+ Adicionar Estatística</button>
         </div>
       </div>
 
@@ -365,8 +366,9 @@
         <div class="editor-desc">Todas as imagens carregadas para o website.</div>
         <div class="editor-card">
           <div class="editor-card-title">Carregar Nova Imagem</div>
+          <p style="font-size:.72rem;color:var(--text-m);margin-bottom:10px">Suporta JPEG, PNG, WebP, GIF e SVG. Os SVGs fixos do site (hero-ink, logo, etc.) aparecem na biblioteca abaixo mas não podem ser apagados.</p>
           <div class="img-upload-zone">
-            <input type="file" accept="image/*" multiple onchange="uploadToLibrary(event)">
+            <input type="file" accept="image/*,.svg" multiple onchange="uploadToLibrary(event)">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             <div class="img-upload-label">Clica para carregar imagens</div>
           </div>
