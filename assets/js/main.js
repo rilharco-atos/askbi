@@ -79,7 +79,7 @@ function render(c) {
   if (hero.backgroundImage)
     document.querySelector('#hero-bg-img').style.backgroundImage = `url(${hero.backgroundImage})`;
   if (hero.foregroundImage)
-    document.querySelector('#hero-fighter').style.backgroundImage = `url(${hero.foregroundImage})`;
+    document.querySelector('#hero-image').style.backgroundImage = `url(${hero.foregroundImage})`;
 
   document.querySelector('#hero-actions').innerHTML = `
     <a href="${hero.cta1Href}" class="btn btn-accent">${hero.cta1Label}</a>
@@ -90,12 +90,12 @@ function render(c) {
   document.querySelector('#schedule-view-all').textContent = schedule.viewAllLabel + ' →';
   document.querySelector('#schedule-view-all').href = schedule.viewAllHref;
 
-  /* Filters (homepage) */
-  renderFilterPills('#session-filters', schedule.filters, '#session-grid');
-
-  /* Session cards (homepage) */
+  /* Session cards (homepage) — must render before filter pills apply initial state */
   document.querySelector('#session-grid').innerHTML =
     schedule.sessions.map(s => sessionCardHTML(s)).join('');
+
+  /* Filters (homepage) */
+  renderFilterPills('#session-filters', schedule.filters, '#session-grid');
 
   /* Events */
   if (events && events.length) {
@@ -194,10 +194,10 @@ function render(c) {
         <span class="wizard-dot-label">${label}</span>
       </div>`).join('');
 
-    /* Wizard session filter + cards */
-    renderFilterPills('#wizard-filters', schedule.filters, '#wizard-session-grid');
+    /* Wizard session cards — must render before filter pills apply initial state */
     document.querySelector('#wizard-session-grid').innerHTML =
       schedule.sessions.map(s => sessionCardHTML(s, true)).join('');
+    renderFilterPills('#wizard-filters', schedule.filters, '#wizard-session-grid');
 
     initWizard(schedule.sessions, inscription);
   }
@@ -270,27 +270,46 @@ function renderFilterPills(filtersSelector, filters, gridSelector) {
   if (!container || !filters) return;
 
   container.innerHTML = filters.map((f, i) => `
-    <button class="filter-pill${i === 0 ? ' active' : ''}" data-filter="${f.key}">${f.label}</button>
+    <button class="filter-pill${i === 0 ? ' active' : ''}" data-filter="${f.key}"
+      aria-pressed="${i === 0}">${f.label}</button>
   `).join('');
 
   container.addEventListener('click', e => {
     const pill = e.target.closest('.filter-pill');
     if (!pill) return;
-    container.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    container.querySelectorAll('.filter-pill').forEach(p => {
+      p.classList.remove('active');
+      p.setAttribute('aria-pressed', 'false');
+    });
     pill.classList.add('active');
+    pill.setAttribute('aria-pressed', 'true');
     filterSessions(pill.dataset.filter, gridSelector);
   });
 
-  /* Show all matching first filter by default */
+  /* Apply initial filter */
   filterSessions(filters[0].key, gridSelector);
 }
 
 function filterSessions(groupKey, gridSelector) {
   const grid = document.querySelector(gridSelector);
   if (!grid) return;
+
+  let visible = 0;
   grid.querySelectorAll('.session-card').forEach(card => {
-    card.hidden = card.dataset.group !== groupKey;
+    const show = card.dataset.group === groupKey;
+    card.hidden = !show;
+    if (show) visible++;
   });
+
+  /* Empty state */
+  const existing = grid.querySelector('.session-empty');
+  if (existing) existing.remove();
+  if (visible === 0) {
+    const el = document.createElement('p');
+    el.className = 'session-empty';
+    el.textContent = 'Não há turmas disponíveis nesta faixa etária.';
+    grid.appendChild(el);
+  }
 }
 
 /* ─── Wizard ──────────────────────────────────────────────────────────── */
