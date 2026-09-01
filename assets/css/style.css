@@ -872,9 +872,17 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 .footer-bottom {
   border-top: 1px solid var(--border);
   padding: 20px 0;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: space-between;
 }
 .footer-copy { font-size: .82rem; color: var(--text-muted); }
+.footer-admin-link {
+  font-size: .75rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  opacity: .45;
+  transition: opacity .2s;
+}
+.footer-admin-link:hover { opacity: 1; }
 
 /* ─── BACK TO TOP ─────────────────────────────────────────────────────── */
 .back-top {
