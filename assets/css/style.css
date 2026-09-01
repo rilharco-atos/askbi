@@ -932,7 +932,40 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   .contact-grid { grid-template-columns: 1fr; gap: 40px; }
 }
 @media (max-width: 768px) {
-  :root { --nav-h: 64px; }
+  /* ── Tema claro em mobile ──────────────────────────────────────────── */
+  :root {
+    --nav-h:         64px;
+    --bg:            #f8f5f0;
+    --bg-2:          #eeebe4;
+    --bg-card:       #ffffff;
+    --text:          #1c1714;
+    --text-2:        #46403a;
+    --text-muted:    #7a7068;
+    --border:        #ddd8cf;
+    --border-sep:    #e8e2d8;
+    --border-subtle: rgba(0,0,0,.07);
+  }
+  .section-watermark { color: rgba(0,0,0,.05); }
+
+  /* Hero mantém fundo escuro (tem overlay rgba 82%) */
+  .hero {
+    background: #0d0d0d;
+    --text: #ece8e1; --text-2: #c4bfb7; --text-muted: #8b857d;
+    --border: #34323a; --border-sep: #221f1e;
+  }
+  /* Footer mantém fundo escuro */
+  .footer {
+    background: #0f0e0d;
+    --text: #ece8e1; --text-2: #c4bfb7; --text-muted: #8b857d;
+    --border: #34323a; --border-sep: #221f1e;
+  }
+  .footer-copy, .footer-col-title, .footer-links a,
+  .footer-contact-item, .footer-schedule-day, .footer-schedule-hours,
+  .footer-admin-link { color: var(--text-muted); }
+  .footer-col-title { color: var(--text-2); }
+  .footer-brand-tagline { color: var(--text-muted); }
+  /* ────────────────────────────────────────────────────────────────── */
+
   .container { padding: 0 20px; }
   .nav-links, .nav-cta { display: none; }
   .nav-toggle { display: flex; }
