@@ -270,26 +270,21 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 .hero-bg-img {
   position: absolute; inset: 0;
   background-size: cover;
-  background-position: center;
-  opacity: .10;
+  background-position: right center;
+  opacity: 1;
 }
 .hero-image {
-  position: absolute;
-  left: 44%; right: 0; top: 0; bottom: 0;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: right bottom;
-  z-index: 2;
+  display: none;
 }
 .hero-bg-overlay {
   position: absolute; inset: 0; z-index: 3;
   background: linear-gradient(90deg,
-    #0d0d0d 0%, #0d0d0d 22%,
-    rgba(13,13,13,.72) 46%, rgba(13,13,13,.18) 78%);
+    #0d0d0d 0%, #0d0d0d 28%,
+    rgba(13,13,13,.82) 52%, rgba(13,13,13,.18) 82%);
 }
 .hero-inner {
   position: relative; z-index: 5;
-  max-width: 580px;
+  max-width: 780px;
 }
 
 .hero-badge {
@@ -303,13 +298,13 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 }
 .hero-headline {
   font-family: var(--font-h);
-  font-size: clamp(40px, 5.2vw, 82px);
+  font-size: clamp(40px, 4.6vw, 74px);
   font-weight: 800;
   line-height: 1.02;
   letter-spacing: -.03em;
   color: #fff;
   margin-bottom: 20px;
-  max-width: 740px;
+  max-width: 780px;
   text-wrap: balance;
 }
 .hero-sub {
@@ -941,9 +936,9 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   .footer-grid { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .hero { min-height: 70vh; }
-  .hero-image { left: 0; opacity: .35; }
+  .hero-bg-img { background-position: center; }
   .hero-bg-overlay {
-    background: rgba(13,13,13,.72);
+    background: rgba(13,13,13,.75);
   }
   .hero-actions { flex-direction: column; }
   .hero-actions .btn { width: 100%; justify-content: center; min-height: 44px; }

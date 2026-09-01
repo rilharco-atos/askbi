@@ -38,13 +38,13 @@
     "line1": "Karate na Covilhã,",
     "line2": "dos 5 aos 70 anos.",
     "line3": "",
-    "subtext": "Treino tradicional de Karate-Do com foco em técnica, saúde e crescimento pessoal. Para todas as idades e níveis de experiência. A primeira aula é gratuita.",
+    "subtext": "Três dojos, quinze turmas, treinos todas as semanas. A primeira aula é gratuita e não precisa de equipamento.",
     "cta1Label": "Marcar aula experimental",
     "cta1Href": "#inscricao",
     "cta2Label": "Ver horários",
     "cta2Href": "#treinar",
     "backgroundImage": "/assets/images/uploads/1788270546883-ypjm94sn5is.jpg",
-    "foregroundImage": "/assets/images/hero-ink.svg"
+    "foregroundImage": ""
   },
   "schedule": {
     "title": "Treinos esta semana",
@@ -205,10 +205,26 @@
     "statsSubtitle": "EM NÚMEROS",
     "statsTitle": "A associação em números",
     "stats": [
-      { "value": "15",  "suffix": "+", "label": "Anos de tradição"    },
-      { "value": "300", "suffix": "+", "label": "Praticantes ativos"  },
-      { "value": "3",   "suffix": "",  "label": "Dojos na Covilhã"    },
-      { "value": "5",   "suffix": "+", "label": "Títulos nacionais"   }
+      {
+        "value": "10",
+        "suffix": "+",
+        "label": "Anos de experiência"
+      },
+      {
+        "value": "300",
+        "suffix": "+",
+        "label": "Alunos ativos"
+      },
+      {
+        "value": "3",
+        "suffix": "",
+        "label": "Dojos na Covilhã"
+      },
+      {
+        "value": "5",
+        "suffix": "+",
+        "label": "Títulos nacionais"
+      }
     ]
   },
   "inscription": {
