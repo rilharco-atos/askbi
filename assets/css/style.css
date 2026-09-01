@@ -260,8 +260,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 .hero {
   min-height: 860px;
   position: relative;
-  display: flex;
-  align-items: flex-start;
+  display: block;
   overflow: hidden;
   padding-top: calc(var(--nav-h) + 120px);
   padding-bottom: 80px;
