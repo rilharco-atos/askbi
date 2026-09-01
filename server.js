@@ -114,6 +114,7 @@ function authRequired(req, res, next) {
 
 app.get('/api/content', async (_req, res) => {
   try {
+    res.setHeader('Cache-Control', 'no-store');
     res.json(await readContent());
   } catch {
     res.status(500).json({ error: 'Erro ao ler conteúdo' });
