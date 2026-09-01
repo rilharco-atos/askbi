@@ -42,6 +42,7 @@ async function writeContent(data) {
       access: 'public',
       contentType: 'application/json',
       addRandomSuffix: false,
+      allowOverwrite: true,
     }));
   } else {
     const backup = CONTENT_FILE.replace('.json', `.backup-${Date.now()}.json`);
