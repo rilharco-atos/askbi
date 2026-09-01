@@ -54,9 +54,30 @@ async function writeContent(data) {
   }
 }
 
-/* ─── In-memory token store ───────────────────────────────────────────── */
+/* ─── JWT stateless (não precisa de estado em memória) ───────────────── */
 const TOKEN_TTL_MS = 8 * 60 * 60 * 1000;
-const activeTokens = new Map();
+
+function createToken() {
+  const header  = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
+  const payload = Buffer.from(JSON.stringify({ exp: Date.now() + TOKEN_TTL_MS })).toString('base64url');
+  const sig     = crypto.createHmac('sha256', ADMIN_PASSWORD).update(`${header}.${payload}`).digest('base64url');
+  return `${header}.${payload}.${sig}`;
+}
+
+function verifyToken(token) {
+  if (!token) return false;
+  const parts = token.split('.');
+  if (parts.length !== 3) return false;
+  const [header, payload, sig] = parts;
+  const expected = crypto.createHmac('sha256', ADMIN_PASSWORD).update(`${header}.${payload}`).digest('base64url');
+  const a = Buffer.from(sig, 'base64url');
+  const b = Buffer.from(expected, 'base64url');
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return false;
+  try {
+    const { exp } = JSON.parse(Buffer.from(payload, 'base64url').toString());
+    return !exp || exp > Date.now();
+  } catch { return false; }
+}
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 if (!ADMIN_PASSWORD) {
@@ -85,10 +106,7 @@ const upload = multer({
 /* ─── Auth middleware ─────────────────────────────────────────────────── */
 function authRequired(req, res, next) {
   if (!ADMIN_PASSWORD) return res.status(503).json({ error: 'CMS desativado' });
-  const token = req.headers['x-admin-token'];
-  const expiry = token && activeTokens.get(token);
-  if (expiry && expiry > Date.now()) return next();
-  if (expiry) activeTokens.delete(token);
+  if (verifyToken(req.headers['x-admin-token'])) return next();
   res.status(401).json({ error: 'Não autorizado' });
 }
 
@@ -105,9 +123,7 @@ app.get('/api/content', async (_req, res) => {
 app.post('/api/admin/login', (req, res) => {
   const { password } = req.body;
   if (password !== ADMIN_PASSWORD) return res.status(401).json({ error: 'Password incorreta' });
-  const token = crypto.randomBytes(32).toString('hex');
-  activeTokens.set(token, Date.now() + TOKEN_TTL_MS);
-  res.json({ token });
+  res.json({ token: createToken() });
 });
 
 app.post('/api/content', authRequired, async (req, res) => {
