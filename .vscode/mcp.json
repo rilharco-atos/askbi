@@ -1,0 +1,24 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "github_token",
+      "description": "GitHub Personal Access Token (repo scope)",
+      "password": true
+    }
+  ],
+  "servers": {
+    "atos-architecture": {
+      "type": "sse",
+      "url": "https://atos-architecture-mcp.marior.net:8443/mcp"
+    },
+    "github": {
+      "type": "stdio",
+      "command": "C:\\Program Files\\nodejs\\npx.cmd",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github_token}"
+      }
+    }
+  }
+}

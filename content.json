@@ -1,0 +1,193 @@
+{
+  "site": {
+    "name": "ASBKI Covilhã",
+    "tagline": "Artes Marciais",
+    "logo": "/assets/images/uploads/1788272307296-n3jzhn7bi8.png",
+    "phone": "+351 275 000 000",
+    "email": "geral@asbki-covilha.pt",
+    "address": "Covilhã, Portugal",
+    "facebook": "",
+    "instagram": "",
+    "youtube": "",
+    "tiktok": ""
+  },
+  "nav": {
+    "links": [
+      {
+        "label": "Início",
+        "href": "#inicio"
+      },
+      {
+        "label": "Sobre",
+        "href": "#sobre"
+      },
+      {
+        "label": "Modalidades",
+        "href": "#modalidades"
+      },
+      {
+        "label": "Horários",
+        "href": "#horarios"
+      },
+      {
+        "label": "Galeria",
+        "href": "#galeria"
+      },
+      {
+        "label": "Blogue",
+        "href": "#blogue"
+      },
+      {
+        "label": "Contacto",
+        "href": "#contacto"
+      }
+    ],
+    "ctaLabel": "Aula Experimental Gratuita",
+    "ctaHref": "#contacto"
+  },
+  "hero": {
+    "line1": "DISCIPLINA.",
+    "line2": "FOCO.",
+    "line3": "FORÇA.",
+    "subtext": "As artes marciais constroem um corpo mais forte, uma mente mais aguçada e um espírito inquebrável.",
+    "cta1Label": "Começar Agora",
+    "cta1Href": "#contacto",
+    "cta2Label": "Ver Vídeo",
+    "cta2Href": "#video",
+    "backgroundImage": "/assets/images/uploads/1788270546883-ypjm94sn5is.jpg",
+    "foregroundImage": "/assets/images/uploads/1788272792944-esdbfd9t4k.png"
+  },
+  "benefits": [
+    {
+      "icon": "shield",
+      "title": "Ganhar Confiança",
+      "text": "Desenvolve autoconfiança e acredita nas tuas capacidades."
+    },
+    {
+      "icon": "lock",
+      "title": "Defesa Pessoal",
+      "text": "Técnicas práticas para te protegeres e aos teus."
+    },
+    {
+      "icon": "dumbbell",
+      "title": "Ficar em Forma",
+      "text": "Melhora a força, flexibilidade e saúde geral."
+    },
+    {
+      "icon": "target",
+      "title": "Melhorar o Foco",
+      "text": "Treina a mente e melhora a concentração."
+    }
+  ],
+  "classes": {
+    "subtitle": "AS NOSSAS MODALIDADES",
+    "title": "ESCOLHE O TEU ESTILO",
+    "ctaLabel": "Ver Todas as Modalidades",
+    "ctaHref": "#modalidades",
+    "items": [
+      {
+        "name": "Karaté",
+        "description": "Treino tradicional de karaté para todas as idades.",
+        "image": ""
+      },
+      {
+        "name": "Jiu-Jitsu",
+        "description": "Luta no chão e técnicas de submissão.",
+        "image": ""
+      },
+      {
+        "name": "Kickboxing",
+        "description": "Trabalho de pés e mãos, velocidade e resistência.",
+        "image": ""
+      },
+      {
+        "name": "Programa Kids",
+        "description": "Aulas divertidas e seguras para crianças.",
+        "image": ""
+      },
+      {
+        "name": "Defesa Pessoal",
+        "description": "Técnicas eficazes de autodefesa para adultos.",
+        "image": ""
+      }
+    ]
+  },
+  "about": {
+    "subtitle": "SOBRE NÓS",
+    "title": "CONSTRUÍMOS GUERREIROS",
+    "text": "Na ASBKI Covilhã somos mais do que apenas um ginásio. Somos uma família. A nossa missão é ajudar cada aluno a tornar-se a melhor versão de si mesmo através do treino de artes marciais.",
+    "features": [
+      "Instrutores Experientes e Certificados",
+      "Ambiente Limpo, Seguro e Positivo",
+      "Programas para Todas as Idades e Níveis"
+    ],
+    "ctaLabel": "Saber Mais",
+    "ctaHref": "#contacto",
+    "image": "",
+    "statsSubtitle": "PORQUÊ ESCOLHER-NOS",
+    "statsTitle": "MELHOR TREINO. COMUNIDADE FORTE.",
+    "stats": [
+      {
+        "value": "10",
+        "suffix": "+",
+        "label": "Anos de Experiência"
+      },
+      {
+        "value": "500",
+        "suffix": "+",
+        "label": "Alunos Felizes"
+      },
+      {
+        "value": "15",
+        "suffix": "+",
+        "label": "Instrutores Especializados"
+      },
+      {
+        "value": "100",
+        "suffix": "%",
+        "label": "Foco na Disciplina"
+      }
+    ]
+  },
+  "schedule": {
+    "title": "HORÁRIOS",
+    "days": [
+      {
+        "day": "Segunda – Sexta",
+        "hours": "08:00 – 22:00"
+      },
+      {
+        "day": "Sábado",
+        "hours": "09:00 – 14:00"
+      },
+      {
+        "day": "Domingo",
+        "hours": "Fechado"
+      }
+    ]
+  },
+  "trial": {
+    "title": "PRONTO PARA COMEÇAR A TUA JORNADA?",
+    "subtext": "Junta-te a nós hoje e obtém a tua primeira aula completamente grátis!",
+    "ctaLabel": "Reserva a Tua Aula Gratuita",
+    "ctaHref": "#contacto"
+  },
+  "contact": {
+    "title": "CONTACTO",
+    "formTitle": "Envia-nos uma Mensagem",
+    "fields": {
+      "name": "Nome",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "message": "Mensagem",
+      "submit": "Enviar Mensagem"
+    }
+  },
+  "footer": {
+    "description": "Capacitamos indivíduos através do treino de artes marciais que constrói força, confiança e carácter.",
+    "quickLinksTitle": "Acesso Rápido",
+    "scheduleTitle": "Horário",
+    "contactTitle": "Contacte-nos",
+    "copyright": "© 2026 ASBKI Covilhã. Todos os Direitos Reservados."
+  }
+}

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ASBKI Covilhã - Escola de Artes Marciais. Karaté, Jiu-Jitsu, Kickboxing e muito mais.">
+  <title>ASBKI Covilhã — Artes Marciais</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ═══ NAVBAR ═══════════════════════════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#inicio" class="nav-brand">
+        <div class="nav-star">★</div>
+        <div>
+          <span class="nav-brand-name" id="nav-brand-name">ASBKI</span>
+          <span class="nav-brand-sub" id="nav-brand-sub">Artes Marciais</span>
+        </div>
+      </a>
+      <ul class="nav-links" id="nav-links"></ul>
+      <a href="#contacto" class="btn btn-accent nav-cta" id="nav-cta">Aula Gratuita</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ══════════════════════════════════════════════════════════════ -->
+<section class="hero" id="inicio">
+  <div class="hero-bg">
+    <div class="hero-bg-img" id="hero-bg-img"></div>
+    <div class="hero-bg-overlay"></div>
+  </div>
+  <div class="hero-slash"></div>
+  <div class="hero-accent-glow"></div>
+  <div class="hero-fighter" id="hero-fighter"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <h1 class="hero-headline">
+        <span id="hero-line1">DISCIPLINA.</span><br>
+        <span id="hero-line2">FOCO.</span><br>
+        <span class="accent" id="hero-line3">FORÇA.</span>
+      </h1>
+      <p class="hero-sub" id="hero-sub">
+        As artes marciais constroem um corpo mais forte, uma mente mais aguçada e um espírito inquebrável.
+      </p>
+      <div class="hero-actions" id="hero-actions"></div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ═══ BENEFITS ══════════════════════════════════════════════════════════ -->
+<section class="benefits" id="beneficios">
+  <div class="container">
+    <div class="benefits-grid" id="benefits-grid"></div>
+  </div>
+</section>
+
+<!-- ═══ CLASSES ═══════════════════════════════════════════════════════════ -->
+<section class="classes" id="modalidades">
+  <div class="container">
+    <div class="classes-header fade-in">
+      <span class="section-label" id="classes-subtitle"></span>
+      <h2 class="section-title" id="classes-title"></h2>
+    </div>
+    <div class="classes-grid fade-in fade-in-delay-1" id="classes-grid"></div>
+    <div class="classes-footer fade-in fade-in-delay-2">
+      <a href="#modalidades" class="btn btn-dark" id="classes-cta"></a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ABOUT ══════════════════════════════════════════════════════════════ -->
+<!-- ═══ ABOUT (3 colunas: texto | lutador | stats) ═══════════════════════ -->
+<section class="about" id="sobre">
+  <div class="container">
+    <div class="about-3col">
+
+      <!-- ESQUERDA: texto -->
+      <div class="about-text fade-in">
+        <span class="section-label" id="about-subtitle"></span>
+        <h2 class="section-title" id="about-title"></h2>
+        <p class="about-para" id="about-text"></p>
+        <ul class="about-features" id="about-features"></ul>
+        <a href="#contacto" class="btn btn-accent" id="about-cta"></a>
+      </div>
+
+      <!-- CENTRO: imagem do lutador + splash circular vermelho -->
+      <div class="about-center fade-in fade-in-delay-1">
+        <div class="about-splash"></div>
+        <div class="about-center-img" id="about-img">
+          <div class="about-img-placeholder" id="about-img-placeholder">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+            <span>Imagem do Lutador</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIREITA: estatísticas -->
+      <div class="about-stats-col fade-in fade-in-delay-2">
+        <span class="section-label" id="stats-subtitle"></span>
+        <h3 class="section-title about-stats-title" id="stats-title"></h3>
+        <div class="stats-grid-2col" id="stats-grid"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HORÁRIOS ════════════════════════════════════════════════════════════ -->
+<section class="schedule-section" id="horarios">
+  <div class="container">
+    <div class="schedule-inner fade-in">
+      <div class="footer-col-title" id="schedule-title"></div>
+      <div class="schedule-days" id="schedule-rows"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TRIAL CTA ══════════════════════════════════════════════════════════ -->
+<section class="trial" id="galeria">
+  <div class="container">
+    <div class="fade-in">
+      <h2 class="section-title" id="trial-title"></h2>
+      <p class="trial-sub" id="trial-sub"></p>
+      <a href="#contacto" class="btn btn-accent" id="trial-cta"></a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACT ════════════════════════════════════════════════════════════ -->
+<section class="contact" id="contacto">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="fade-in">
+        <span class="section-label">Fala Connosco</span>
+        <h2 class="section-title" id="contact-title" style="margin-bottom:32px"></h2>
+        <div id="contact-details"></div>
+      </div>
+      <div class="fade-in fade-in-delay-1">
+        <div class="contact-form">
+          <div class="contact-form-title" id="contact-form-title"></div>
+          <form id="contact-form" onsubmit="handleContactForm(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label id="label-name">Nome</label>
+                <input type="text" name="name" required placeholder="O teu nome">
+              </div>
+              <div class="form-group">
+                <label id="label-email">E-mail</label>
+                <input type="email" name="email" required placeholder="teu@email.com">
+              </div>
+            </div>
+            <div class="form-group">
+              <label id="label-phone">Telefone</label>
+              <input type="tel" name="phone" placeholder="+351 9XX XXX XXX">
+            </div>
+            <div class="form-group">
+              <label>Modalidade de Interesse</label>
+              <select name="modality">
+                <option value="">Seleciona uma modalidade…</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label id="label-message">Mensagem</label>
+              <textarea name="message" placeholder="Como podemos ajudar?"></textarea>
+            </div>
+            <button type="submit" class="btn btn-accent form-submit" id="label-submit">Enviar Mensagem</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═════════════════════════════════════════════════════════════ -->
+<footer class="footer" id="blogue">
+  <div class="container">
+    <div class="footer-grid">
+      <!-- Brand -->
+      <div class="footer-brand">
+        <div class="footer-brand-logo">
+          <div class="nav-star">★</div>
+          <div>
+            <span class="nav-brand-name" id="footer-brand-name">ASBKI</span>
+            <span class="nav-brand-sub" id="footer-brand-sub">Artes Marciais</span>
+          </div>
+        </div>
+        <p class="footer-desc" id="footer-desc"></p>
+        <div class="footer-social" id="footer-social"></div>
+      </div>
+      <!-- Quick Links -->
+      <div>
+        <div class="footer-col-title" id="footer-links-title">Acesso Rápido</div>
+        <ul class="footer-links" id="footer-links"></ul>
+      </div>
+      <!-- Schedule -->
+      <div>
+        <div class="footer-col-title" id="footer-schedule-title">Horário</div>
+        <div class="footer-schedule" id="footer-schedule"></div>
+      </div>
+      <!-- Contact -->
+      <div>
+        <div class="footer-col-title" id="footer-contact-title">Contacte-nos</div>
+        <div class="footer-contact" id="footer-contact"></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy" id="footer-copy"></span>
+    </div>
+  </div>
+</footer>
+
+<!-- Back to top -->
+<button class="back-top" id="back-top" aria-label="Voltar ao topo">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
