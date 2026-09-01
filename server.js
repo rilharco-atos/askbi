@@ -26,9 +26,11 @@ const IMAGES_ROOT  = path.join(__dirname, 'assets', 'images');
 /* ─── Leitura/escrita do conteúdo (local ou Blob) ─────────────────────── */
 async function readContent() {
   if (blob) {
-    const { blobs } = await blob.list(blobOpts({ prefix: 'cms/content.json' }));
+    /* Lê sempre a versão mais recente (URL único por gravação = sem cache CDN) */
+    const { blobs } = await blob.list(blobOpts({ prefix: 'cms/content-v' }));
     if (blobs.length) {
-      const r = await fetch(blobs[0].url + '?t=' + Date.now());
+      const latest = blobs.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt))[0];
+      const r = await fetch(latest.url);
       return r.json();
     }
   }
@@ -38,12 +40,16 @@ async function readContent() {
 async function writeContent(data) {
   const json = JSON.stringify(data, null, 2);
   if (blob) {
-    await blob.put('cms/content.json', json, blobOpts({
+    /* Cria versão nova com timestamp — URL diferente em cada gravação */
+    await blob.put(`cms/content-v${Date.now()}.json`, json, blobOpts({
       access: 'public',
       contentType: 'application/json',
       addRandomSuffix: false,
-      allowOverwrite: true,
     }));
+    /* Mantém apenas as últimas 5 versões */
+    const { blobs: all } = await blob.list(blobOpts({ prefix: 'cms/content-v' }));
+    const sorted = all.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+    await Promise.all(sorted.slice(5).map(b => blob.del(b.url, blobOpts())));
   } else {
     const backup = CONTENT_FILE.replace('.json', `.backup-${Date.now()}.json`);
     if (fs.existsSync(CONTENT_FILE)) fs.copyFileSync(CONTENT_FILE, backup);
