@@ -9,10 +9,12 @@ const crypto  = require('crypto');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 if (!ADMIN_PASSWORD) {
-  console.error('ERRO: A variável de ambiente ADMIN_PASSWORD é obrigatória.');
-  process.exit(1);
+  console.warn('AVISO: ADMIN_PASSWORD não definida — rotas de admin desativadas.');
+  /* Bloqueia /admin e /api/* antes de registar qualquer rota protegida */
+  app.use(['/admin', '/api/admin', '/api/content', '/api/upload', '/api/images'],
+    (_req, res) => res.status(503).json({ error: 'CMS desativado: ADMIN_PASSWORD não configurada' }));
 }
 
 const CONTENT_FILE   = path.join(__dirname, 'content.json');
@@ -50,6 +52,7 @@ const upload = multer({
 
 /* ─── Auth middleware ─────────────────────────────────────────────────── */
 function authRequired(req, res, next) {
+  if (!ADMIN_PASSWORD) return res.status(503).json({ error: 'CMS desativado' });
   const token = req.headers['x-admin-token'];
   const expiry = token && activeTokens.get(token);
   if (expiry && expiry > Date.now()) return next();
@@ -148,9 +151,13 @@ app.get('/api/images', authRequired, (req, res) => {
 /* Serve admin panel */
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin', 'index.html')));
 
-/* ─── Start ───────────────────────────────────────────────────────────── */
-app.listen(PORT, () => {
-  console.log(`\n🥋 ASBKI Covilhã CMS`);
-  console.log(`   Website: http://localhost:${PORT}`);
-  console.log(`   Admin:   http://localhost:${PORT}/admin\n`);
-});
+/* ─── Start (local) / Export (Vercel serverless) ─────────────────────── */
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\nASBKI Covilhã CMS`);
+    console.log(`   Website: http://localhost:${PORT}`);
+    console.log(`   Admin:   http://localhost:${PORT}/admin\n`);
+  });
+}
+
+module.exports = app;
