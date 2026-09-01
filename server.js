@@ -12,9 +12,12 @@ const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 if (!ADMIN_PASSWORD) {
   console.warn('AVISO: ADMIN_PASSWORD não definida — rotas de admin desativadas.');
-  /* Bloqueia /admin e /api/* antes de registar qualquer rota protegida */
-  app.use(['/admin', '/api/admin', '/api/content', '/api/upload', '/api/images'],
-    (_req, res) => res.status(503).json({ error: 'CMS desativado: ADMIN_PASSWORD não configurada' }));
+  /* Bloqueia apenas rotas de escrita/admin; GET /api/content fica público */
+  app.use('/admin', (_req, res) => res.status(503).send('CMS desativado'));
+  app.use('/api/admin', (_req, res) => res.status(503).json({ error: 'CMS desativado' }));
+  app.post('/api/content', (_req, res) => res.status(503).json({ error: 'CMS desativado' }));
+  app.use('/api/upload',   (_req, res) => res.status(503).json({ error: 'CMS desativado' }));
+  app.use('/api/images',   (_req, res) => res.status(503).json({ error: 'CMS desativado' }));
 }
 
 const CONTENT_FILE   = path.join(__dirname, 'content.json');
