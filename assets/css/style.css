@@ -43,7 +43,7 @@ ul { list-style: none; }
 button { cursor: pointer; border: none; background: none; font-family: var(--font-b); }
 
 /* ─── Utilities ──────────────────────────────────────────────────────── */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.container { max-width: 1440px; margin: 0 auto; padding: 0 clamp(16px, 2.5vw, 40px); }
 
 .section-label {
   font-family: var(--font-mono);
@@ -361,7 +361,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 /* ─── Session cards ───────────────────────────────────────────────────── */
 .session-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 14px;
   margin-bottom: 0;
 }
@@ -885,7 +885,6 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 
 /* ─── RESPONSIVE ──────────────────────────────────────────────────────── */
 @media (max-width: 1100px) {
-  .session-grid { grid-template-columns: repeat(2, 1fr); }
   .classes-grid { grid-template-columns: repeat(3, 1fr); }
   .about-3col { grid-template-columns: 1fr; gap: 40px; }
   .about-center { height: 300px; }
