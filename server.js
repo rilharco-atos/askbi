@@ -9,11 +9,15 @@ const crypto  = require('crypto');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-/* ─── Vercel Blob (quando BLOB_READ_WRITE_TOKEN está definido) ─────────── */
+/* ─── Vercel Blob (quando ASBKI_READ_WRITE_TOKEN está definido) ────────── */
 let blob = null;
+const BLOB_TOKEN = process.env.ASBKI_READ_WRITE_TOKEN || '';
 try {
-  if (process.env.BLOB_READ_WRITE_TOKEN) blob = require('@vercel/blob');
+  if (BLOB_TOKEN) blob = require('@vercel/blob');
 } catch { /* blob fica null — usa sistema de ficheiros local */ }
+
+/* Opções com token explícito (necessário quando o prefix não é BLOB) */
+const blobOpts = (extra = {}) => ({ ...extra, token: BLOB_TOKEN });
 
 const CONTENT_FILE = path.join(__dirname, 'content.json');
 const UPLOADS_DIR  = path.join(__dirname, 'assets', 'images', 'uploads');
@@ -22,9 +26,9 @@ const IMAGES_ROOT  = path.join(__dirname, 'assets', 'images');
 /* ─── Leitura/escrita do conteúdo (local ou Blob) ─────────────────────── */
 async function readContent() {
   if (blob) {
-    const { blobs } = await blob.list({ prefix: 'cms/content.json' });
+    const { blobs } = await blob.list(blobOpts({ prefix: 'cms/content.json' }));
     if (blobs.length) {
-      const r = await fetch(blobs[0].url + '?t=' + Date.now()); // bypass cache
+      const r = await fetch(blobs[0].url + '?t=' + Date.now());
       return r.json();
     }
   }
@@ -34,11 +38,11 @@ async function readContent() {
 async function writeContent(data) {
   const json = JSON.stringify(data, null, 2);
   if (blob) {
-    await blob.put('cms/content.json', json, {
+    await blob.put('cms/content.json', json, blobOpts({
       access: 'public',
       contentType: 'application/json',
       addRandomSuffix: false,
-    });
+    }));
   } else {
     const backup = CONTENT_FILE.replace('.json', `.backup-${Date.now()}.json`);
     if (fs.existsSync(CONTENT_FILE)) fs.copyFileSync(CONTENT_FILE, backup);
@@ -131,10 +135,10 @@ app.post('/api/upload', authRequired, (req, res, next) => {
 
   try {
     if (blob) {
-      const result = await blob.put(`uploads/${filename}`, req.file.buffer, {
+      const result = await blob.put(`uploads/${filename}`, req.file.buffer, blobOpts({
         access: 'public',
         contentType: req.file.mimetype,
-      });
+      }));
       res.json({ url: result.url });
     } else {
       fs.mkdirSync(UPLOADS_DIR, { recursive: true });
@@ -153,7 +157,7 @@ app.delete('/api/upload', authRequired, async (req, res) => {
 
   try {
     if (blob) {
-      await blob.del(filename); // filename é a URL completa do Blob
+      await blob.del(filename, blobOpts()); // filename é a URL completa do Blob
     } else {
       const filePath = path.join(UPLOADS_DIR, path.basename(filename));
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
@@ -167,7 +171,7 @@ app.delete('/api/upload', authRequired, async (req, res) => {
 app.get('/api/images', authRequired, async (_req, res) => {
   try {
     if (blob) {
-      const { blobs: items } = await blob.list({ prefix: 'uploads/' });
+      const { blobs: items } = await blob.list(blobOpts({ prefix: 'uploads/' }));
       return res.json(items.map(b => ({
         filename: path.basename(b.pathname),
         url: b.url,
