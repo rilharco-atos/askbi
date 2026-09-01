@@ -463,12 +463,17 @@ window.handleContactForm = function(e) {
 var _fighterOffset = 0;
 
 function positionHeroFighter() {
-  if (window.innerWidth <= 768) return; /* mobile: CSS trata do fighter */
-  var navCta  = document.querySelector('.nav-cta');
   var heroImg = document.querySelector('#hero-image');
-  if (!navCta || !heroImg) return;
+  if (!heroImg) return;
+  if (window.innerWidth <= 768) {
+    heroImg.style.right = '';
+    heroImg.style.left  = '';
+    return;
+  }
+  var navCta = document.querySelector('.nav-cta');
+  if (!navCta) return;
   var rect = navCta.getBoundingClientRect();
-  if (!rect.width) return; /* botão escondido — não calcular */
+  if (!rect.width) return;
   heroImg.style.right = (window.innerWidth - (rect.left + rect.width / 2) - _fighterOffset) + 'px';
   heroImg.style.left  = '0';
 }

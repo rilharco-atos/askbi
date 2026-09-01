@@ -29,14 +29,15 @@
 
 /* ─── Reset ──────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; overflow-x: hidden; }
+html { scroll-behavior: smooth; }
 body {
+  overflow-x: clip; /* clip em vez de hidden — não cria scroll context em iOS */
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-b);
   font-size: 17px;
   line-height: 1.6;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 img { max-width: 100%; display: block; }
 a  { text-decoration: none; color: inherit; }
