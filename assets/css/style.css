@@ -261,20 +261,28 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   min-height: 860px;
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   overflow: hidden;
-  padding-top: var(--nav-h);
+  padding-top: calc(var(--nav-h) + 120px);
+  padding-bottom: 80px;
   background: var(--bg);
 }
 .hero-bg { position: absolute; inset: 0; }
 .hero-bg-img {
   position: absolute; inset: 0;
   background-size: cover;
-  background-position: right center;
-  opacity: 1;
+  background-position: center;
+  opacity: .10;
 }
 .hero-image {
-  display: none;
+  position: absolute;
+  left: 44%; right: 0; top: 0; bottom: 0;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  z-index: 4;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 14%);
+  mask-image: linear-gradient(to right, transparent 0%, black 14%);
 }
 .hero-bg-overlay {
   position: absolute; inset: 0; z-index: 3;
@@ -935,11 +943,10 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
   .stats-grid-2col { grid-template-columns: 1fr 1fr; }
   .footer-grid { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
-  .hero { min-height: 70vh; }
+  .hero { min-height: 70vh; padding-top: calc(var(--nav-h) + 48px); padding-bottom: 48px; }
   .hero-bg-img { background-position: center; }
-  .hero-bg-overlay {
-    background: rgba(13,13,13,.75);
-  }
+  .hero-image { left: 0; opacity: .25; }
+  .hero-bg-overlay { background: rgba(13,13,13,.78); }
   .hero-actions { flex-direction: column; }
   .hero-actions .btn { width: 100%; justify-content: center; min-height: 44px; }
   .wizard { max-width: 100%; }
