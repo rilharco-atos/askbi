@@ -463,10 +463,12 @@ window.handleContactForm = function(e) {
 var _fighterOffset = 0;
 
 function positionHeroFighter() {
+  if (window.innerWidth <= 768) return; /* mobile: CSS trata do fighter */
   var navCta  = document.querySelector('.nav-cta');
   var heroImg = document.querySelector('#hero-image');
   if (!navCta || !heroImg) return;
   var rect = navCta.getBoundingClientRect();
+  if (!rect.width) return; /* botão escondido — não calcular */
   heroImg.style.right = (window.innerWidth - (rect.left + rect.width / 2) - _fighterOffset) + 'px';
   heroImg.style.left  = '0';
 }
