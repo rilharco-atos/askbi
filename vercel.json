@@ -8,6 +8,7 @@
         "includeFiles": [
           "index.html",
           "content.json",
+          "pages/**/*",
           "assets/**/*",
           "admin/**/*"
         ]

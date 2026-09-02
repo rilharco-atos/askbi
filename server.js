@@ -22,6 +22,75 @@ const blobOpts = (extra = {}) => ({ ...extra, token: BLOB_TOKEN });
 const CONTENT_FILE = path.join(__dirname, 'content.json');
 const UPLOADS_DIR  = path.join(__dirname, 'assets', 'images', 'uploads');
 const IMAGES_ROOT  = path.join(__dirname, 'assets', 'images');
+const PAGES_DIR    = path.join(__dirname, 'pages');
+
+/* ─── Páginas (URL limpa → ficheiro HTML) ─────────────────────────────── */
+const PAGES = {
+  '/':                          'index.html',
+  '/dojos':                     'pages/dojos.html',
+  '/noticias':                  'pages/noticias.html',
+  '/eventos':                   'pages/eventos.html',
+  '/competicoes':               'pages/eventos.html',
+  '/formacoes':                 'pages/eventos.html',
+  '/associacao':                'pages/associacao.html',
+  '/associacao/historia':       'pages/historia.html',
+  '/associacao/orgaos-sociais': 'pages/orgaos-sociais.html',
+  '/associacao/instrutores':    'pages/instrutores.html',
+  '/associacao/dojo-kun':       'pages/dojo-kun.html',
+  '/modalidades':               'pages/modalidades.html',
+  '/inscricao':                 'pages/inscricao.html',
+  '/contacto':                  'pages/contacto.html',
+};
+
+/* ─── Defaults + migração de conteúdo antigo ──────────────────────────── */
+const SCHEMA_VERSION = 2;
+const ANCHOR_MAP = {
+  '#inicio': '/', '#beneficios': '/', '#treinar': '/inscricao#horarios',
+  '#horarios': '/inscricao#horarios', '#modalidades': '/modalidades',
+  '#sobre': '/associacao', '#inscricao': '/inscricao', '#contacto': '/contacto',
+  '#galeria': '/noticias', '#blogue': '/noticias',
+};
+
+let _defaults = null;
+function readDefaults() {
+  if (!_defaults) _defaults = JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf-8'));
+  return _defaults;
+}
+
+/* Preenche chaves em falta com os defaults do repo; o conteúdo gravado ganha. */
+function mergeDefaults(def, saved) {
+  if (Array.isArray(def)) return Array.isArray(saved) ? saved : def;
+  if (def && typeof def === 'object') {
+    if (!saved || typeof saved !== 'object' || Array.isArray(saved)) return def;
+    const out = { ...saved };
+    for (const k of Object.keys(def)) out[k] = mergeDefaults(def[k], saved[k]);
+    return out;
+  }
+  return saved === undefined ? def : saved;
+}
+
+function fixHref(v) {
+  if (typeof v !== 'string' || !v.startsWith('#')) return v;
+  return ANCHOR_MAP[v] || '/';
+}
+
+function migrate(saved) {
+  const defaults = readDefaults();
+  const c = mergeDefaults(defaults, saved || {});
+  if ((Number(saved?.schemaVersion) || 1) < SCHEMA_VERSION) {
+    /* v1 era página única com âncoras — o menu novo vem dos defaults */
+    c.nav = defaults.nav;
+    c.hero.cta1Href        = fixHref(c.hero.cta1Href);
+    c.hero.cta2Href        = fixHref(c.hero.cta2Href);
+    c.schedule.viewAllHref = fixHref(c.schedule.viewAllHref);
+    c.classes.ctaHref      = fixHref(c.classes.ctaHref);
+    c.about.ctaHref        = fixHref(c.about.ctaHref);
+    c.trial.ctaHref        = fixHref(c.trial.ctaHref);
+    if (Array.isArray(saved?.events)) c.events = defaults.events;
+    c.schemaVersion = SCHEMA_VERSION;
+  }
+  return c;
+}
 
 /* ─── Leitura/escrita do conteúdo (local ou Blob) ─────────────────────── */
 async function readContent() {
@@ -31,13 +100,14 @@ async function readContent() {
     if (blobs.length) {
       const latest = blobs.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt))[0];
       const r = await fetch(latest.url);
-      return r.json();
+      return migrate(await r.json());
     }
   }
-  return JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf-8'));
+  return migrate(JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf-8')));
 }
 
 async function writeContent(data) {
+  data.schemaVersion = SCHEMA_VERSION;
   const json = JSON.stringify(data, null, 2);
   if (blob) {
     /* Cria versão nova com timestamp — URL diferente em cada gravação */
@@ -54,6 +124,7 @@ async function writeContent(data) {
     const backup = CONTENT_FILE.replace('.json', `.backup-${Date.now()}.json`);
     if (fs.existsSync(CONTENT_FILE)) fs.copyFileSync(CONTENT_FILE, backup);
     fs.writeFileSync(CONTENT_FILE, json, 'utf-8');
+    _defaults = null;
     const dir = path.dirname(CONTENT_FILE);
     const backups = fs.readdirSync(dir)
       .filter(f => f.startsWith('content.backup-')).sort().reverse();
@@ -98,7 +169,8 @@ if (!ADMIN_PASSWORD) {
 
 /* ─── Middleware ──────────────────────────────────────────────────────── */
 app.use(express.json({ limit: '10mb' }));
-app.use(express.static(__dirname));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/admin',  express.static(path.join(__dirname, 'admin')));
 
 /* ─── Multer (memória — funciona em Vercel e localmente) ──────────────── */
 const upload = multer({
@@ -117,14 +189,14 @@ function authRequired(req, res, next) {
   res.status(401).json({ error: 'Não autorizado' });
 }
 
-/* ─── Routes ──────────────────────────────────────────────────────────── */
+/* ─── API ─────────────────────────────────────────────────────────────── */
 
 app.get('/api/content', async (_req, res) => {
   try {
     res.setHeader('Cache-Control', 'no-store');
     res.json(await readContent());
-  } catch {
-    res.status(500).json({ error: 'Erro ao ler conteúdo' });
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao ler conteúdo', detail: err.message });
   }
 });
 
@@ -227,7 +299,22 @@ app.get('/api/images', authRequired, async (_req, res) => {
   }
 });
 
+/* ─── Páginas ─────────────────────────────────────────────────────────── */
 app.get('/admin', (_req, res) => res.sendFile(path.join(__dirname, 'admin', 'index.html')));
+
+const sendPage = file => (_req, res) => {
+  res.setHeader('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, file));
+};
+for (const [route, file] of Object.entries(PAGES)) app.get(route, sendPage(file));
+app.get('/noticias/:slug', sendPage('pages/noticia.html'));
+app.get('/favicon.ico', (_req, res) => res.status(204).end());
+
+/* 404 */
+app.use((req, res) => {
+  if (req.path.startsWith('/api/')) return res.status(404).json({ error: 'Não encontrado' });
+  res.status(404).sendFile(path.join(PAGES_DIR, '404.html'));
+});
 
 /* ─── Start (local) / Export (Vercel serverless) ─────────────────────── */
 if (require.main === module) {
@@ -239,3 +326,4 @@ if (require.main === module) {
 }
 
 module.exports = app;
+module.exports._migrate = migrate;

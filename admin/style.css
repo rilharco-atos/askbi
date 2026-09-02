@@ -507,3 +507,33 @@ button { cursor: pointer; font-family: var(--font-b); }
   :root { --sidebar: 200px; }
   .content-area { padding: 20px 16px; }
 }
+
+/* ─── Editores genéricos (v2) ─────────────────────────────────────────── */
+.help { font-size: .72rem; color: var(--text-m); margin: 4px 0 10px; line-height: 1.5; }
+.help code { font-size: .68rem; background: var(--bg-2); padding: 1px 5px; border-radius: 3px; }
+.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.field-grid .field.full { grid-column: 1 / -1; }
+.list-item-actions { display: flex; gap: 6px; }
+.list-item-actions .btn:disabled { opacity: .3; }
+.sublist { display: flex; flex-direction: column; gap: 6px; }
+.sublist-row { display: grid; grid-template-columns: 1fr 1fr auto auto auto; gap: 6px; align-items: center; }
+.sublist-row input { width: 100%; background: var(--bg-2); border: 1px solid var(--border-2); border-radius: 6px; padding: 8px 10px; color: var(--text); font-family: var(--font-b); font-size: .85rem; outline: none; }
+.sublist-row input:focus { border-color: var(--accent); }
+.sublist > .btn { align-self: flex-start; margin-top: 4px; }
+.img-row { display: flex; gap: 12px; align-items: stretch; margin-bottom: 12px; }
+.img-upload-zone.compact { padding: 12px 16px; display: flex; align-items: center; gap: 10px; flex: 1; cursor: pointer; }
+.img-upload-zone.compact svg { margin: 0; }
+.img-upload-zone.compact .img-upload-label { font-size: .75rem; }
+.img-thumb { position: relative; width: 120px; height: 68px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); background: #222; flex-shrink: 0; }
+.img-thumb img { width: 100%; height: 100%; object-fit: contain; }
+.img-thumb .img-preview-remove { top: 4px; right: 4px; width: 22px; height: 22px; font-size: .65rem; }
+.img-inline { margin-top: 4px; }
+.lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 4px; }
+.lib-item { position: relative; border-radius: 6px; overflow: hidden; background: var(--bg-2); border: 1px solid var(--border); }
+.lib-thumb { width: 100%; height: 100px; display: flex; align-items: center; justify-content: center; }
+.lib-thumb img { max-width: 100%; max-height: 100px; object-fit: contain; }
+.lib-meta { padding: 6px 8px; }
+.lib-name { font-size: .65rem; color: var(--text-m); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lib-size { font-size: .65rem; color: var(--text-m); }
+.lib-copy { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; background: rgba(0,0,0,.7); border: none; border-radius: 4px; color: #fff; cursor: pointer; font-size: .7rem; }
+@media (max-width: 900px) { .field-grid, .field-row { grid-template-columns: 1fr; } .sublist-row { grid-template-columns: 1fr 1fr; } }

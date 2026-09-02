@@ -12,274 +12,152 @@
    <link
       href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
       rel="stylesheet">
-   <link rel="stylesheet" href="assets/css/style.css">
+   <link rel="stylesheet" href="/assets/css/style.css">
+   <link rel="stylesheet" href="/assets/css/pages.css">
 </head>
 
-<body>
+<body data-page="home">
 
-   <!-- ═══ NAVBAR ═══════════════════════════════════════════════════════════ -->
-   <nav class="navbar" id="navbar">
-      <div class="container">
-         <div class="nav-inner">
-            <a href="#inicio" class="nav-brand">
-               <div class="nav-star">★</div>
+   <div id="site-header"></div>
+
+   <main>
+
+      <!-- ═══ HERO ═══════════════════════════════════════════════════════════ -->
+      <section class="hero" id="inicio">
+         <div class="hero-bg">
+            <div class="hero-bg-img" id="hero-bg-img"></div>
+            <div class="hero-bg-overlay"></div>
+         </div>
+         <div class="hero-grid" aria-hidden="true"></div>
+         <div class="hero-image" id="hero-image"></div>
+         <div class="container">
+            <div class="hero-inner">
+               <span class="hero-badge" id="hero-badge"></span>
+               <h1 class="hero-headline">
+                  <span id="hero-line1"></span><br>
+                  <span id="hero-line2"></span>
+               </h1>
+               <p class="hero-sub" id="hero-sub"></p>
+               <div class="hero-actions" id="hero-actions"></div>
+            </div>
+         </div>
+      </section>
+
+      <!-- ═══ TREINAR (horários + eventos) ═════════════════════════════════ -->
+      <section class="treinar" id="treinar">
+         <div class="section-watermark" aria-hidden="true">02</div>
+         <div class="container">
+            <div class="treinar-head fade-in">
+               <h2 class="treinar-title" id="schedule-title">Treinos esta semana</h2>
+               <a href="/inscricao#horarios" class="link-arrow" id="schedule-view-all">Horário completo →</a>
+            </div>
+            <div class="session-filters fade-in fade-in-delay-1" id="session-filters"></div>
+            <div class="session-grid fade-in fade-in-delay-1" id="session-grid"></div>
+
+            <div class="treinar-bottom fade-in fade-in-delay-2">
+               <div class="events-panel">
+                  <h3 class="panel-title" id="events-home-title">Próximas provas</h3>
+                  <div class="events-list" id="events-list"></div>
+                  <a href="/eventos" class="link-arrow" style="display:inline-block;margin-top:18px">Ver calendário completo →</a>
+               </div>
+               <div class="socio-panel">
+                  <h3 class="panel-title">Já és sócio?</h3>
+                  <p class="panel-text">Consulta quotas, presenças e o teu percurso de graduações na área reservada.</p>
+                  <a href="/contacto" class="btn btn-outline-ghost">Entrar na área de sócio</a>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <!-- ═══ BENEFITS ═════════════════════════════════════════════════════ -->
+      <section class="benefits" id="beneficios">
+         <div class="container">
+            <div class="benefits-grid" id="benefits-grid"></div>
+         </div>
+      </section>
+
+      <!-- ═══ CLASSES ══════════════════════════════════════════════════════ -->
+      <section class="classes" id="modalidades">
+         <div class="section-watermark" aria-hidden="true">03</div>
+         <div class="container">
+            <div class="classes-header fade-in">
+               <span class="section-label" id="classes-subtitle"></span>
+               <h2 class="section-title" id="classes-title"></h2>
+            </div>
+            <div class="classes-grid fade-in fade-in-delay-1" id="classes-grid"></div>
+            <div class="classes-footer fade-in fade-in-delay-2">
+               <a href="/modalidades" class="btn btn-accent" id="classes-cta"></a>
+            </div>
+         </div>
+      </section>
+
+      <!-- ═══ ABOUT ════════════════════════════════════════════════════════ -->
+      <section class="about" id="sobre">
+         <div class="section-watermark" aria-hidden="true">04</div>
+         <div class="container">
+            <div class="about-3col">
+               <div class="about-text fade-in">
+                  <span class="section-label" id="about-subtitle"></span>
+                  <h2 class="section-title dark" id="about-title"></h2>
+                  <p class="about-para" id="about-text"></p>
+                  <ul class="about-features" id="about-features"></ul>
+                  <a href="/associacao" class="btn btn-accent" id="about-cta"></a>
+               </div>
+               <div class="about-center fade-in fade-in-delay-1">
+                  <div class="about-splash"></div>
+                  <div class="about-center-img" id="about-img">
+                     <div class="about-img-placeholder" id="about-img-placeholder">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                           <circle cx="12" cy="8" r="4" />
+                           <path d="M6 20v-2a6 6 0 0 1 12 0v2" />
+                        </svg>
+                        <span>Imagem do Dojo</span>
+                     </div>
+                  </div>
+               </div>
+               <div class="about-stats-col fade-in fade-in-delay-2">
+                  <span class="section-label" id="stats-subtitle"></span>
+                  <h3 class="section-title dark about-stats-title" id="stats-title"></h3>
+                  <div class="stats-grid-2col" id="stats-grid"></div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <!-- ═══ NOTÍCIAS RECENTES ════════════════════════════════════════════ -->
+      <section class="home-news" id="noticias">
+         <div class="section-watermark" aria-hidden="true">05</div>
+         <div class="container">
+            <div class="section-head fade-in">
                <div>
-                  <span class="nav-brand-name" id="nav-brand-name">ASBKI</span>
-                  <span class="nav-brand-sub" id="nav-brand-sub">Karate Shotokan</span>
+                  <span class="section-label" id="news-subtitle"></span>
+                  <h2 class="section-title" id="news-home-title"></h2>
                </div>
-            </a>
-            <ul class="nav-links" id="nav-links"></ul>
-            <a href="#inscricao" class="btn btn-accent nav-cta" id="nav-cta">Marcar aula experimental</a>
-            <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menu">
-               <span></span><span></span><span></span>
-            </button>
-         </div>
-      </div>
-   </nav>
-
-   <!-- ═══ HERO ══════════════════════════════════════════════════════════════ -->
-   <section class="hero" id="inicio">
-      <div class="hero-bg">
-         <div class="hero-bg-img" id="hero-bg-img"></div>
-         <div class="hero-bg-overlay"></div>
-      </div>
-      <div class="hero-grid" aria-hidden="true"></div>
-      <div class="hero-image" id="hero-image"></div>
-      <div class="container">
-         <div class="hero-inner">
-            <span class="hero-badge" id="hero-badge"></span>
-            <h1 class="hero-headline">
-               <span id="hero-line1"></span><br>
-               <span id="hero-line2"></span>
-            </h1>
-            <p class="hero-sub" id="hero-sub"></p>
-            <div class="hero-actions" id="hero-actions"></div>
-         </div>
-      </div>
-   </section>
-
-   <!-- ═══ TREINAR (horários + eventos) ════════════════════════════════════ -->
-   <section class="treinar" id="treinar">
-      <div class="section-watermark" aria-hidden="true">02</div>
-      <div class="container">
-         <div class="treinar-head fade-in">
-            <h2 class="treinar-title" id="schedule-title">Treinos esta semana</h2>
-            <a href="#inscricao" class="link-arrow" id="schedule-view-all">Horário completo →</a>
-         </div>
-         <div class="session-filters fade-in fade-in-delay-1" id="session-filters"></div>
-         <div class="session-grid fade-in fade-in-delay-1" id="session-grid"></div>
-
-         <div class="treinar-bottom fade-in fade-in-delay-2">
-            <div class="events-panel">
-               <h3 class="panel-title">Próximas provas</h3>
-               <div class="events-list" id="events-list"></div>
+               <a href="/noticias" class="link-arrow" id="news-view-all"></a>
             </div>
-            <div class="socio-panel">
-               <h3 class="panel-title">Já és sócio?</h3>
-               <p class="panel-text">Consulta quotas, presenças e o teu percurso de graduações na área reservada.</p>
-               <a href="#contacto" class="btn btn-outline-ghost">Entrar na área de sócio</a>
+            <div class="card-grid fade-in fade-in-delay-1" id="news-grid"></div>
+         </div>
+      </section>
+
+      <!-- ═══ CTA ══════════════════════════════════════════════════════════ -->
+      <section class="trial" id="experimentar">
+         <div class="inscription-kanji" aria-hidden="true">入門</div>
+         <div class="container">
+            <div class="trial-inner fade-in">
+               <span class="section-label">Primeira aula gratuita</span>
+               <h2 class="section-title" id="trial-title"></h2>
+               <p class="trial-sub" id="trial-sub"></p>
+               <a href="/inscricao" class="btn btn-accent" id="trial-cta"></a>
             </div>
          </div>
-      </div>
-   </section>
+      </section>
 
-   <!-- ═══ BENEFITS ══════════════════════════════════════════════════════════ -->
-   <section class="benefits" id="beneficios">
-      <div class="container">
-         <div class="benefits-grid" id="benefits-grid"></div>
-      </div>
-   </section>
+   </main>
 
-   <!-- ═══ CLASSES ═══════════════════════════════════════════════════════════ -->
-   <section class="classes" id="modalidades">
-      <div class="section-watermark" aria-hidden="true">03</div>
-      <div class="container">
-         <div class="classes-header fade-in">
-            <span class="section-label" id="classes-subtitle"></span>
-            <h2 class="section-title" id="classes-title"></h2>
-         </div>
-         <div class="classes-grid fade-in fade-in-delay-1" id="classes-grid"></div>
-         <div class="classes-footer fade-in fade-in-delay-2">
-            <a href="#inscricao" class="btn btn-accent" id="classes-cta"></a>
-         </div>
-      </div>
-   </section>
+   <div id="site-footer"></div>
 
-   <!-- ═══ ABOUT ══════════════════════════════════════════════════════════════ -->
-   <section class="about" id="sobre">
-      <div class="section-watermark" aria-hidden="true">04</div>
-      <div class="container">
-         <div class="about-3col">
-            <div class="about-text fade-in">
-               <span class="section-label" id="about-subtitle"></span>
-               <h2 class="section-title dark" id="about-title"></h2>
-               <p class="about-para" id="about-text"></p>
-               <ul class="about-features" id="about-features"></ul>
-               <a href="#inscricao" class="btn btn-accent" id="about-cta"></a>
-            </div>
-            <div class="about-center fade-in fade-in-delay-1">
-               <div class="about-splash"></div>
-               <div class="about-center-img" id="about-img">
-                  <div class="about-img-placeholder" id="about-img-placeholder">
-                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                        <circle cx="12" cy="8" r="4" />
-                        <path d="M6 20v-2a6 6 0 0 1 12 0v2" />
-                     </svg>
-                     <span>Imagem do Dojo</span>
-                  </div>
-               </div>
-            </div>
-            <div class="about-stats-col fade-in fade-in-delay-2">
-               <span class="section-label" id="stats-subtitle"></span>
-               <h3 class="section-title dark about-stats-title" id="stats-title"></h3>
-               <div class="stats-grid-2col" id="stats-grid"></div>
-            </div>
-         </div>
-      </div>
-   </section>
-
-   <!-- ═══ INSCRIPTION (3-step wizard) ══════════════════════════════════════ -->
-   <section class="inscription" id="inscricao">
-      <div class="inscription-kanji" aria-hidden="true">入門</div>
-      <div class="container">
-         <div class="inscription-intro fade-in">
-            <span class="section-label" id="inscription-badge"></span>
-            <h2 class="section-title" id="inscription-title"></h2>
-         </div>
-
-         <div class="wizard fade-in fade-in-delay-1" id="wizard">
-
-            <!-- Progress -->
-            <div class="wizard-progress" id="wizard-progress"></div>
-
-            <!-- Step 1: choose session -->
-            <div class="wizard-panel active" id="wizard-panel-1">
-               <h3 class="wizard-step-title" id="wizard-step1-title"></h3>
-               <div class="session-filters" id="wizard-filters"></div>
-               <div class="session-grid selectable" id="wizard-session-grid"></div>
-               <div class="wizard-actions">
-                  <button class="btn btn-accent" id="wizard-btn-1" disabled>Continuar</button>
-               </div>
-            </div>
-
-            <!-- Step 2: contact -->
-            <div class="wizard-panel" id="wizard-panel-2">
-               <h3 class="wizard-step-title" id="wizard-step2-title"></h3>
-               <div class="wizard-selected-session" id="wizard-selected"></div>
-               <div class="wizard-form">
-                  <div class="form-group">
-                     <label id="wiz-lbl-name"></label>
-                     <input type="text" id="wiz-name" autocomplete="given-name">
-                  </div>
-                  <div class="form-group">
-                     <label id="wiz-lbl-phone"></label>
-                     <input type="tel" id="wiz-phone" autocomplete="tel">
-                  </div>
-                  <div class="form-group">
-                     <label id="wiz-lbl-email"></label>
-                     <input type="email" id="wiz-email" autocomplete="email">
-                  </div>
-               </div>
-               <div class="wizard-actions">
-                  <button class="btn btn-ghost" id="wizard-back-2">Voltar</button>
-                  <button class="btn btn-accent" id="wizard-btn-2">Continuar</button>
-               </div>
-            </div>
-
-            <!-- Step 3: confirmation -->
-            <div class="wizard-panel" id="wizard-panel-3">
-               <div class="wizard-success">
-                  <div class="wizard-check">✓</div>
-                  <h3 class="wizard-step-title" id="wizard-step3-title"></h3>
-                  <p class="wizard-success-text" id="wizard-step3-text"></p>
-               </div>
-            </div>
-
-         </div>
-      </div>
-   </section>
-
-   <!-- ═══ CONTACT ════════════════════════════════════════════════════════════ -->
-   <section class="contact" id="contacto">
-      <div class="container">
-         <div class="contact-grid">
-            <div class="fade-in">
-               <span class="section-label">Fala Connosco</span>
-               <h2 class="section-title" id="contact-title" style="margin-bottom:32px"></h2>
-               <div id="contact-details"></div>
-            </div>
-            <div class="fade-in fade-in-delay-1">
-               <div class="contact-form">
-                  <div class="contact-form-title" id="contact-form-title"></div>
-                  <form id="contact-form" onsubmit="handleContactForm(event)">
-                     <div class="form-row">
-                        <div class="form-group">
-                           <label id="label-name">Nome</label>
-                           <input type="text" name="name" required placeholder="O teu nome">
-                        </div>
-                        <div class="form-group">
-                           <label id="label-email">E-mail</label>
-                           <input type="email" name="email" required placeholder="teu@email.com">
-                        </div>
-                     </div>
-                     <div class="form-group">
-                        <label id="label-phone">Telefone</label>
-                        <input type="tel" name="phone" placeholder="+351 9XX XXX XXX">
-                     </div>
-                     <div class="form-group">
-                        <label id="label-message">Mensagem</label>
-                        <textarea name="message" placeholder="Como podemos ajudar?"></textarea>
-                     </div>
-                     <button type="submit" class="btn btn-accent form-submit" id="label-submit">Enviar</button>
-                  </form>
-               </div>
-            </div>
-         </div>
-      </div>
-   </section>
-
-   <!-- ═══ FOOTER ═════════════════════════════════════════════════════════════ -->
-   <footer class="footer" id="blogue">
-      <div class="container">
-         <div class="footer-grid">
-            <div class="footer-brand">
-               <div class="footer-brand-logo">
-                  <div class="nav-star">★</div>
-                  <div>
-                     <span class="nav-brand-name" id="footer-brand-name">ASBKI</span>
-                     <span class="nav-brand-sub" id="footer-brand-sub">Karate Shotokan</span>
-                  </div>
-               </div>
-               <p class="footer-desc" id="footer-desc"></p>
-               <div class="footer-social" id="footer-social"></div>
-            </div>
-            <div>
-               <div class="footer-col-title" id="footer-links-title">Acesso Rápido</div>
-               <ul class="footer-links" id="footer-links"></ul>
-            </div>
-            <div>
-               <div class="footer-col-title" id="footer-schedule-title">Horário</div>
-               <div class="footer-schedule" id="footer-schedule"></div>
-            </div>
-            <div>
-               <div class="footer-col-title" id="footer-contact-title">Contacte-nos</div>
-               <div class="footer-contact" id="footer-contact"></div>
-            </div>
-         </div>
-         <div class="footer-bottom">
-            <span class="footer-copy" id="footer-copy"></span>
-            <a href="/admin" class="footer-admin-link">Área Reservada</a>
-         </div>
-      </div>
-   </footer>
-
-   <button class="back-top" id="back-top" aria-label="Voltar ao topo">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-         <path d="M12 19V5M5 12l7-7 7 7" />
-      </svg>
-   </button>
-
-   <script src="assets/js/main.js"></script>
+   <script src="/assets/js/site.js"></script>
+   <script src="/assets/js/home.js"></script>
 </body>
 
 </html>

@@ -1,4 +1,5 @@
 {
+  "schemaVersion": 2,
   "site": {
     "name": "ASBKI",
     "tagline": "Karate Shotokan · Covilhã",
@@ -14,24 +15,62 @@
   "nav": {
     "links": [
       {
-        "label": "Treinar",
-        "href": "#treinar"
+        "label": "Início",
+        "href": "/"
       },
       {
-        "label": "Modalidades",
-        "href": "#modalidades"
+        "label": "Dojos",
+        "href": "/dojos"
+      },
+      {
+        "label": "Notícias",
+        "href": "/noticias"
+      },
+      {
+        "label": "Eventos",
+        "href": "/eventos"
+      },
+      {
+        "label": "Competições",
+        "href": "/competicoes"
+      },
+      {
+        "label": "Formações",
+        "href": "/formacoes"
       },
       {
         "label": "Associação",
-        "href": "#sobre"
-      },
-      {
-        "label": "Contacto",
-        "href": "#contacto"
+        "href": "/associacao",
+        "children": [
+          {
+            "label": "Sobre nós",
+            "href": "/associacao"
+          },
+          {
+            "label": "História",
+            "href": "/associacao/historia"
+          },
+          {
+            "label": "Órgãos Sociais",
+            "href": "/associacao/orgaos-sociais"
+          },
+          {
+            "label": "Instrutores",
+            "href": "/associacao/instrutores"
+          },
+          {
+            "label": "Dojo Kun",
+            "href": "/associacao/dojo-kun"
+          },
+          {
+            "label": "Modalidades",
+            "href": "/modalidades"
+          }
+        ]
       }
     ],
     "ctaLabel": "Marcar aula experimental",
-    "ctaHref": "#inscricao"
+    "ctaHref": "/inscricao"
   },
   "hero": {
     "badge": "Karate Shotokan · Desde 1998",
@@ -40,9 +79,9 @@
     "line3": "",
     "subtext": "Três dojos, quinze turmas, treinos todas as semanas. A primeira aula é gratuita e não precisa de equipamento.",
     "cta1Label": "Marcar aula experimental",
-    "cta1Href": "#inscricao",
+    "cta1Href": "/inscricao",
     "cta2Label": "Ver horários",
-    "cta2Href": "#treinar",
+    "cta2Href": "/inscricao#horarios",
     "backgroundImage": "/assets/images/uploads/1788270546883-ypjm94sn5is.jpg",
     "foregroundImage": "/assets/images/uploads/1788283754195-g27qv8wpxeq.png",
     "fighterSize": 89,
@@ -51,7 +90,10 @@
   "schedule": {
     "title": "Treinos esta semana",
     "viewAllLabel": "Horário completo",
-    "viewAllHref": "#inscricao",
+    "viewAllHref": "/inscricao#horarios",
+    "pageSubtitle": "HORÁRIOS",
+    "pageTitle": "Todas as turmas",
+    "pageIntro": "Escolhe a faixa etária para ver os treinos disponíveis em cada dojo. Podes marcar a aula experimental diretamente a partir de qualquer turma.",
     "filters": [
       {
         "key": "5-9",
@@ -106,6 +148,16 @@
         "location": "Dojo Municipal",
         "slotsText": "3 vagas",
         "status": "open"
+      },
+      {
+        "id": "s5",
+        "group": "10-15",
+        "daysShort": "TER · QUI",
+        "time": "18:30 – 19:45",
+        "label": "Juvenis 10–15 anos",
+        "location": "Pavilhão do Teixoso",
+        "slotsText": "5 vagas",
+        "status": "open"
       }
     ],
     "days": [
@@ -123,74 +175,177 @@
       }
     ]
   },
-  "events": [
-    {
-      "date": "18 OUT",
-      "label": "Torneio Regional da Beira Interior · Fundão"
-    },
-    {
-      "date": "09 NOV",
-      "label": "Exames de graduação · Dojo Municipal"
-    },
-    {
-      "date": "06 DEZ",
-      "label": "Estágio nacional com Sensei convidado"
-    }
-  ],
+  "events": {
+    "subtitle": "CALENDÁRIO",
+    "title": "Eventos",
+    "intro": "Competições, exames de graduação, estágios e formações. Tudo o que está marcado para os próximos meses, num só lugar.",
+    "homeTitle": "Próximas provas",
+    "emptyText": "Não há eventos marcados nesta categoria. Volta em breve.",
+    "types": [
+      {
+        "key": "competicao",
+        "label": "Competições",
+        "path": "/competicoes",
+        "pageTitle": "Competições",
+        "pageIntro": "Torneios e campeonatos em que a ASBKI participa ou organiza. Os atletas inscrevem-se junto do seu instrutor até à data limite indicada."
+      },
+      {
+        "key": "exame",
+        "label": "Exames de graduação",
+        "path": "",
+        "pageTitle": "Exames de graduação",
+        "pageIntro": ""
+      },
+      {
+        "key": "estagio",
+        "label": "Estágios",
+        "path": "",
+        "pageTitle": "Estágios",
+        "pageIntro": ""
+      },
+      {
+        "key": "formacao",
+        "label": "Formações",
+        "path": "/formacoes",
+        "pageTitle": "Formações",
+        "pageIntro": "Cursos de treinadores, arbitragem, primeiros socorros e estágios técnicos. Abertos a sócios e, quando indicado, a praticantes de outros clubes."
+      },
+      {
+        "key": "outro",
+        "label": "Outros",
+        "path": "",
+        "pageTitle": "Outros eventos",
+        "pageIntro": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "e1",
+        "date": "2026-09-20",
+        "title": "Treino aberto de início de época",
+        "type": "outro",
+        "location": "Dojo Municipal · Covilhã",
+        "description": "Treino conjunto de todas as turmas para abrir a época 2026/27. Aberto a familiares e a quem quiser experimentar. Não é preciso equipamento.",
+        "link": ""
+      },
+      {
+        "id": "e2",
+        "date": "2026-10-18",
+        "title": "Torneio Regional da Beira Interior",
+        "type": "competicao",
+        "location": "Fundão",
+        "description": "Kata e kumite em todos os escalões. Inscrições junto do instrutor até 4 de outubro.",
+        "link": ""
+      },
+      {
+        "id": "e3",
+        "date": "2026-11-09",
+        "title": "Exames de graduação",
+        "type": "exame",
+        "location": "Dojo Municipal · Covilhã",
+        "description": "Exames de cinto para todas as turmas. Cada praticante é informado pelo instrutor se está apto a apresentar-se.",
+        "link": ""
+      },
+      {
+        "id": "e4",
+        "date": "2026-12-06",
+        "title": "Estágio nacional com Sensei convidado",
+        "type": "estagio",
+        "location": "Pavilhão da Boidobra · Covilhã",
+        "description": "Um dia inteiro de treino técnico com um instrutor convidado. Aberto a praticantes a partir de cinto verde.",
+        "link": ""
+      },
+      {
+        "id": "e5",
+        "date": "2027-01-24",
+        "title": "Curso regional de arbitragem",
+        "type": "formacao",
+        "location": "A confirmar",
+        "description": "Formação para novos árbitros e atualização para os já credenciados. Destinado a praticantes a partir de cinto castanho.",
+        "link": ""
+      },
+      {
+        "id": "e6",
+        "date": "2027-03-14",
+        "title": "Campeonato Regional de Karate",
+        "type": "competicao",
+        "location": "A confirmar",
+        "description": "Prova de apuramento para o campeonato nacional. Inscrições através do clube.",
+        "link": ""
+      }
+    ]
+  },
   "benefits": [
     {
       "icon": "shield",
-      "title": "Ganhar Confiança",
-      "text": "Desenvolve autoconfiança e acredita nas tuas capacidades."
+      "title": "Confiança",
+      "text": "Cada técnica dominada prova que consegues mais do que pensavas. Essa confiança vem contigo para fora do dojo."
     },
     {
       "icon": "lock",
-      "title": "Defesa Pessoal",
-      "text": "Técnicas práticas para te protegeres e aos teus."
+      "title": "Defesa pessoal",
+      "text": "Aprendes a usar o corpo de forma eficiente e a manter a calma quando a pressão aperta."
     },
     {
       "icon": "dumbbell",
-      "title": "Ficar em Forma",
-      "text": "Melhora a força, flexibilidade e saúde geral."
+      "title": "Corpo forte",
+      "text": "Força, flexibilidade, equilíbrio e resistência trabalhados em cada treino, sem máquinas."
     },
     {
       "icon": "target",
-      "title": "Melhorar o Foco",
-      "text": "Treina a mente e melhora a concentração."
+      "title": "Foco e disciplina",
+      "text": "Treinar a atenção no momento presente melhora a concentração nos estudos e no trabalho."
     }
   ],
   "classes": {
     "subtitle": "AS NOSSAS MODALIDADES",
     "title": "O que praticamos",
+    "intro": "O karate Shotokan é a nossa base. À volta dele organizamos turmas por idade e objetivo, para que cada pessoa treine com quem está no mesmo ponto do caminho.",
     "ctaLabel": "Ver todas as modalidades",
-    "ctaHref": "#modalidades",
+    "ctaHref": "/modalidades",
     "items": [
       {
-        "name": "Karaté",
-        "description": "Treino tradicional de karaté para todas as idades, da criança ao adulto.",
+        "name": "Karate Shotokan",
+        "description": "Treino tradicional de karate para todas as idades, da criança ao adulto. Kihon, kata e kumite.",
         "image": ""
       },
       {
-        "name": "Jiu-Jitsu",
-        "description": "Luta no chão e técnicas de submissão. Eficaz e técnico.",
+        "name": "Karate infantil",
+        "description": "Turmas dos 5 aos 9 anos. Coordenação, regras e confiança, em aulas pensadas para crianças.",
         "image": ""
       },
       {
-        "name": "Kickboxing",
-        "description": "Trabalho de pés e mãos, velocidade e resistência cardiovascular.",
+        "name": "Juvenis",
+        "description": "Dos 10 aos 15 anos. Técnica mais exigente, preparação para exames e primeiras competições.",
         "image": ""
       },
       {
-        "name": "Programa Kids",
-        "description": "Aulas divertidas e seguras para crianças dos 5 aos 9 anos.",
+        "name": "Competição",
+        "description": "Treino específico de kata e kumite desportivo para quem quer representar o clube.",
         "image": ""
       },
       {
-        "name": "Defesa Pessoal",
-        "description": "Técnicas eficazes de autodefesa para adultos. Prático e direto.",
+        "name": "Defesa pessoal",
+        "description": "Aplicação prática das técnicas de karate em situações reais. Para adultos, sem experiência prévia.",
         "image": ""
       }
     ]
+  },
+  "kids": {
+    "subtitle": "PARA PAIS",
+    "title": "Karate infantil: mais do que socos e pontapés",
+    "intro": "Já reparaste quanto tempo o teu filho passa em frente a um ecrã? A falta de atividade física e de estímulos afeta diretamente o desenvolvimento dos mais novos. O karate trabalha exatamente o oposto: corpo em movimento, atenção no presente e regras claras que se aprendem a respeitar.",
+    "bullets": [
+      "Disciplina e respeito, bases para a vida na escola e em sociedade.",
+      "Foco e concentração. Os pais notam a diferença no rendimento escolar.",
+      "Autoconfiança para enfrentar obstáculos sem medo.",
+      "Ensino adaptado. Cada etapa respeita o ritmo e o potencial de cada criança.",
+      "Ambiente seguro e estruturado, com instrutores certificados."
+    ],
+    "closing": "Não esperes pelo \"amanhã\" para investir no futuro do teu filho. Os resultados aparecem mais depressa do que imaginas. A primeira aula é gratuita.",
+    "ctaLabel": "Marcar aula experimental para o meu filho",
+    "ctaHref": "/inscricao",
+    "image": ""
   },
   "about": {
     "subtitle": "SOBRE NÓS",
@@ -202,15 +357,15 @@
       "Sem mensalidades mínimas — paga só o que treinas"
     ],
     "ctaLabel": "Conhecer a associação",
-    "ctaHref": "#contacto",
+    "ctaHref": "/associacao",
     "image": "",
     "statsSubtitle": "EM NÚMEROS",
     "statsTitle": "A associação em números",
     "stats": [
       {
-        "value": "10",
-        "suffix": "+",
-        "label": "Anos de experiência"
+        "value": "28",
+        "suffix": "",
+        "label": "Anos de atividade"
       },
       {
         "value": "300",
@@ -226,6 +381,347 @@
         "value": "5",
         "suffix": "+",
         "label": "Títulos nacionais"
+      }
+    ],
+    "approachSubtitle": "A NOSSA ABORDAGEM",
+    "approachTitle": "Não é sobre a força do punho. É sobre a firmeza do carácter.",
+    "approachText": "Muitos procuram o dojo para aprender a lutar. Os que ficam descobrem que o verdadeiro combate acontece por dentro.\n\nQuando o karate deixa de ser uma rotina de treino e passa a ser uma prática de vida, dá-se uma espécie de forja. O suor no tatami, a disciplina imposta pelo sensei e a repetição exaustiva de um movimento não servem só para apurar a técnica. Servem para formar homens e mulheres de valor.\n\nNa ASBKI não treinamos apenas alunos. Trabalhamos para que cada pessoa saia daqui mais forte, mais segura e mais capaz de enfrentar a vida de frente. Quem percorre este caminho percebe que a verdadeira força não se exibe, contém-se. Respeita, porque conhece o valor do respeito. Não procura o conflito, mas torna-se a barreira natural que protege quem ama.\n\nO karate é, acima de tudo, a construção de um espírito que não se dobra. O equilíbrio entre a gentileza e a determinação."
+  },
+  "history": {
+    "subtitle": "HISTÓRIA",
+    "title": "Quase três décadas de karate na Covilhã",
+    "intro": "A ASBKI nasceu de um grupo pequeno de praticantes que queria treinar karate Shotokan a sério na Beira Interior. O que se segue são os marcos principais. As datas e nomes estão a ser confirmados pela direção.",
+    "timeline": [
+      {
+        "year": "1998",
+        "title": "Fundação",
+        "text": "Um dojo no centro da Covilhã, uma turma de adultos e a primeira dúzia de praticantes."
+      },
+      {
+        "year": "2004",
+        "title": "Primeiros cintos negros",
+        "text": "Os primeiros praticantes formados de raiz no clube chegam ao 1.º Dan."
+      },
+      {
+        "year": "2012",
+        "title": "Segundo dojo",
+        "text": "Abertura das turmas na Boidobra e primeiras turmas infantis."
+      },
+      {
+        "year": "2019",
+        "title": "Terceiro dojo",
+        "text": "Chegada ao Teixoso. A associação passa a cobrir três zonas do concelho."
+      },
+      {
+        "year": "2026",
+        "title": "Hoje",
+        "text": "Quinze turmas, mais de 300 praticantes, dos 5 aos 70 anos."
+      }
+    ]
+  },
+  "board": {
+    "subtitle": "ÓRGÃOS SOCIAIS",
+    "title": "Quem dirige a associação",
+    "intro": "A ASBKI é uma associação sem fins lucrativos, gerida por sócios eleitos em assembleia geral. Os órgãos sociais são renovados a cada três anos.",
+    "mandate": "Mandato 2025 – 2028",
+    "groups": [
+      {
+        "name": "Direção",
+        "members": [
+          {
+            "role": "Presidente",
+            "name": "A definir"
+          },
+          {
+            "role": "Vice-Presidente",
+            "name": "A definir"
+          },
+          {
+            "role": "Tesoureiro",
+            "name": "A definir"
+          },
+          {
+            "role": "Secretário",
+            "name": "A definir"
+          },
+          {
+            "role": "Vogal",
+            "name": "A definir"
+          }
+        ]
+      },
+      {
+        "name": "Assembleia Geral",
+        "members": [
+          {
+            "role": "Presidente",
+            "name": "A definir"
+          },
+          {
+            "role": "1.º Secretário",
+            "name": "A definir"
+          },
+          {
+            "role": "2.º Secretário",
+            "name": "A definir"
+          }
+        ]
+      },
+      {
+        "name": "Conselho Fiscal",
+        "members": [
+          {
+            "role": "Presidente",
+            "name": "A definir"
+          },
+          {
+            "role": "Relator",
+            "name": "A definir"
+          },
+          {
+            "role": "Vogal",
+            "name": "A definir"
+          }
+        ]
+      }
+    ]
+  },
+  "instructors": {
+    "subtitle": "INSTRUTORES",
+    "title": "Quem dá os treinos",
+    "intro": "Todos os instrutores da ASBKI são graduados, federados e com formação de treinador. Mais importante do que isso: continuam a treinar e a examinar-se como qualquer praticante.",
+    "lineage": "O karate Shotokan que praticamos descende diretamente de Gichin Funakoshi, o mestre de Okinawa que levou o karate para o Japão no início do século XX e lhe deu a forma que hoje se ensina em todo o mundo. Os cinco preceitos do Dojo Kun que recitamos no fim de cada treino são dele.",
+    "items": [
+      {
+        "name": "Nome a confirmar",
+        "grade": "4.º Dan",
+        "role": "Diretor técnico",
+        "bio": "Responsável pelo programa técnico e pelos exames de graduação. Treina na ASBKI desde a fundação.",
+        "image": ""
+      },
+      {
+        "name": "Nome a confirmar",
+        "grade": "3.º Dan",
+        "role": "Instrutor · Adultos e competição",
+        "bio": "Treinador de kumite. Acompanha a equipa de competição nas provas regionais e nacionais.",
+        "image": ""
+      },
+      {
+        "name": "Nome a confirmar",
+        "grade": "2.º Dan",
+        "role": "Instrutora · Infantis e juvenis",
+        "bio": "Responsável pelas turmas dos 5 aos 15 anos. Formação em desporto infantil.",
+        "image": ""
+      }
+    ]
+  },
+  "dojoKun": {
+    "subtitle": "FILOSOFIA",
+    "title": "Dojo Kun",
+    "intro": "Mais do que um conjunto de regras, o Dojo Kun é o alicerce moral de quem pratica karate. Tem raízes no código de ética dos antigos samurais, o Bushido, e foi formalizado por Gichin Funakoshi, o fundador do karate moderno, para garantir que o treino físico nunca se separasse do aperfeiçoamento do carácter. Recitamo-lo no fim de cada treino. Não é repetir palavras. É reafirmar um compromisso.",
+    "principles": [
+      {
+        "jp": "Hitotsu, jinkaku kansei ni tsutomuru koto",
+        "pt": "Esforçar-se pela formação do carácter",
+        "text": "A técnica é o meio. O fim é a pessoa em que nos tornamos."
+      },
+      {
+        "jp": "Hitotsu, makoto no michi o mamoru koto",
+        "pt": "Ser fiel ao verdadeiro caminho da razão",
+        "text": "Honestidade connosco e com os outros, dentro e fora do tatami."
+      },
+      {
+        "jp": "Hitotsu, doryoku no seishin o yashinau koto",
+        "pt": "Cultivar o espírito de esforço e perseverança",
+        "text": "O progresso vem da constância, não do talento."
+      },
+      {
+        "jp": "Hitotsu, reigi o omonzuru koto",
+        "pt": "Respeitar acima de tudo a etiqueta",
+        "text": "O respeito é a base de tudo. Sem ele, a arte marcial esvazia-se."
+      },
+      {
+        "jp": "Hitotsu, kekki no yu o imashimeru koto",
+        "pt": "Conter o espírito de agressão",
+        "text": "A pessoa forte é a que tem a sabedoria de evitar a luta."
+      }
+    ],
+    "note": "O \"Hitotsu\" que antecede cada frase significa \"um\" ou \"primeiro\". Lembra-nos que todos os princípios têm a mesma importância e que, antes de qualquer técnica, vem a nossa postura diante da vida.",
+    "budoTitle": "O combate invisível",
+    "budoText": "A ligação entre o treino físico e o bem-estar mental assenta na filosofia tradicional do Budo, em que o adversário a vencer não está fora, mas dentro de nós. O silêncio e a exigência do dojo funcionam como espelho e como refúgio.\n\nA execução de um kata exige atenção plena e funciona como uma meditação em movimento. Superar o cansaço e dominar técnicas complexas prova à mente que vamos além dos limites que imaginávamos. O impacto controlado, o kiai e a disciplina do treino são uma via segura para libertar tensões, medos e frustrações.\n\nE o dojo acolhe todos por igual. O respeito mútuo cria um ambiente onde as dores de cada um não precisam de ser explicadas para serem compreendidas."
+  },
+  "dojos": {
+    "subtitle": "ONDE TREINAMOS",
+    "title": "Os nossos dojos",
+    "intro": "Três espaços em três zonas do concelho da Covilhã. Escolhe o mais perto de ti. Em qualquer deles, a primeira aula é gratuita.",
+    "items": [
+      {
+        "id": "municipal",
+        "name": "Dojo Municipal",
+        "address": "Complexo Desportivo da Covilhã (morada a confirmar)",
+        "phone": "+351 275 000 000",
+        "email": "geral@asbki-covilha.pt",
+        "mapUrl": "https://maps.google.com/?q=Complexo+Desportivo+da+Covilhã",
+        "image": "",
+        "notes": "Sede da associação. Turmas infantis, juvenis e adultos."
+      },
+      {
+        "id": "boidobra",
+        "name": "Pavilhão da Boidobra",
+        "address": "Boidobra, Covilhã (morada a confirmar)",
+        "phone": "+351 275 000 000",
+        "email": "geral@asbki-covilha.pt",
+        "mapUrl": "https://maps.google.com/?q=Boidobra+Covilhã",
+        "image": "",
+        "notes": "Turmas de adultos e treino de competição."
+      },
+      {
+        "id": "teixoso",
+        "name": "Pavilhão do Teixoso",
+        "address": "Teixoso, Covilhã (morada a confirmar)",
+        "phone": "+351 275 000 000",
+        "email": "geral@asbki-covilha.pt",
+        "mapUrl": "https://maps.google.com/?q=Teixoso+Covilhã",
+        "image": "",
+        "notes": "Turmas juvenis. Estacionamento junto ao pavilhão."
+      }
+    ]
+  },
+  "news": {
+    "subtitle": "NOTÍCIAS E ARTIGOS",
+    "title": "O que andamos a pensar",
+    "intro": "Artigos sobre técnica, filosofia e vida no dojo, escritos pela equipa da ASBKI. Também é aqui que anunciamos resultados, exames e novidades.",
+    "homeTitle": "Últimas notícias",
+    "homeViewAll": "Ver todas",
+    "allLabel": "Todos",
+    "readMore": "Ler artigo",
+    "backLabel": "Voltar às notícias",
+    "categories": [
+      {
+        "key": "filosofia",
+        "label": "Filosofia"
+      },
+      {
+        "key": "tecnica",
+        "label": "Técnica"
+      },
+      {
+        "key": "familias",
+        "label": "Famílias"
+      },
+      {
+        "key": "motivacao",
+        "label": "Motivação"
+      },
+      {
+        "key": "bem-estar",
+        "label": "Bem-estar"
+      },
+      {
+        "key": "clube",
+        "label": "Vida do clube"
+      }
+    ],
+    "items": [
+      {
+        "slug": "potencia-nasce-na-anca",
+        "title": "A potência nasce na anca, não no braço",
+        "category": "tecnica",
+        "date": "2026-09-01",
+        "author": "Equipa técnica ASBKI",
+        "excerpt": "Muitos praticantes acreditam que a força de um golpe está nos braços e nos ombros. Está muito mais abaixo.",
+        "image": "",
+        "body": "De onde vem realmente a força de um golpe de karate? Muitos praticantes, sobretudo no início, acreditam que está nos braços e nos ombros. Está muito mais abaixo: na anca.\n\nA anca é o motor de todo o movimento. Sem ela, o golpe perde eficácia e a técnica fica limitada, por muita força que se tenha nos braços. Há três razões para isto.\n\n## A energia começa no chão\n\nA força não nasce na mão. Nasce na base, nos pés bem assentes, sobe pelas pernas e é processada pela anca antes de chegar ao alvo. Quem tenta gerar potência de cima para baixo está a usar uma fração do corpo.\n\n## A rotação tem de ter intenção\n\nÉ a anca que transforma o impulso das pernas numa rotação poderosa e garante que todo o peso do corpo é transferido para o alvo. O trabalho de hanmi e shomen que repetimos em cada treino serve exatamente para isto.\n\n## A ligação faz o kime\n\nA anca liga a parte inferior e a parte superior do corpo. O kime, a finalização do golpe, só acontece a sério quando a anca e a técnica chegam ao ponto final exatamente ao mesmo tempo. Um milésimo de segundo de desfasamento e a força dispersa.\n\nA lição é simples de dizer e difícil de aplicar: deixa de tentar empurrar o golpe com os ombros. Concentra-te na rotação, no uso consciente do centro do corpo e na sincronia. Quando dominas a anca, o karate deixa de ser força bruta e passa a ser precisão, fluidez e impacto real.\n\nTreina devagar, procura a ativação correta e sente a diferença na velocidade do próximo golpe."
+      },
+      {
+        "slug": "deixa-de-esperar-o-momento-perfeito",
+        "title": "Deixa de esperar o momento perfeito",
+        "category": "motivacao",
+        "date": "2026-08-28",
+        "author": "ASBKI Covilhã",
+        "excerpt": "O momento perfeito não existe. É uma ilusão que a nossa cabeça inventa para nos manter na zona de conforto.",
+        "image": "",
+        "body": "Quantas vezes adiaste começar algo novo, ou até aparecer num treino, porque sentiste que ainda não estavas preparado? A verdade incómoda é que o momento perfeito não existe. É uma ilusão que a nossa cabeça inventa para nos manter na zona de conforto.\n\nTodos temos uma lista de coisas por fazer que nos olha todos os dias. Sabemos exatamente quais são. E em vez de as resolvermos, continuamos à espera. À espera de ter vontade. À espera de ter mais confiança. À espera do momento certo.\n\nA vida não muda enquanto estamos só a planear. Muda quando executamos. Quando paramos de nos preparar infinitamente e decidimos agir.\n\nO primeiro passo não precisa de ser impecável. Só precisa de ser dado. Os instintos sabem o caminho, mas é preciso coragem para começar a andar. A perfeição não é um requisito do progresso. O movimento é.\n\nNo tatami vemos isto todas as semanas. Quem espera \"estar em forma\" para começar nunca começa. Quem aparece sem estar preparado descobre que a preparação acontece no próprio treino. É no esforço que o imperfeito se torna excelente.\n\nAs melhores surpresas da vida estão guardadas para quem tem a ousadia de tentar. Vai treinar. Vai viver. Vai fazer acontecer."
+      },
+      {
+        "slug": "o-teu-limite-e-maior-do-que-pensas",
+        "title": "O teu limite é maior do que pensas",
+        "category": "motivacao",
+        "date": "2026-08-21",
+        "author": "ASBKI Covilhã",
+        "excerpt": "Na maior parte das vezes o nosso maior obstáculo não é o mundo lá fora. Somos nós.",
+        "image": "",
+        "body": "Quantas vezes deixaste de fazer algo por medo do desconhecido? Ou pela segurança da rotina, ou por aquela procrastinação de quem prefere deixar para a semana que vem?\n\nNa maior parte das vezes o nosso maior obstáculo não é o mundo lá fora. Somos nós. Há um potencial enorme adormecido, que só aparece quando se tem a coragem de dar o primeiro passo.\n\nA fronteira entre onde estás e onde queres chegar não é uma linha fixa. É um convite. O que separa o \"possível\" do \"impossível\" é a dedicação que decides pôr em cada treino, em cada movimento, em cada repetição. O talento sem treino é apenas um desejo.\n\nÉ aqui que o karate entra. Mais do que uma arte marcial, é um amplificador. Vai desafiar-te a ir além do que achavas ser o teu limite e revelar força, foco e capacidades que não sabias ter. Não se trata de aprender a lutar. Trata-se de descobrir do que és capaz quando te comprometes com o teu próprio desenvolvimento.\n\nNa ASBKI não ensinamos apenas técnicas. Damos-te a ferramenta para lapidar a disciplina, fortalecer o espírito e revelar aquilo que já existe dentro de ti.\n\nQual é o próximo nível que vais conquistar? Marca uma aula experimental e vem descobrir a força que ainda não exploraste."
+      },
+      {
+        "slug": "karate-ansiedade-e-depressao",
+        "title": "Karate, ansiedade e depressão: o que o tatami tem para oferecer",
+        "category": "bem-estar",
+        "date": "2026-08-14",
+        "author": "ASBKI Covilhã",
+        "excerpt": "Para quem vive com ansiedade ou episódios depressivos, a prática oferece algo além do exercício: a sensação de recuperar controlo.",
+        "image": "",
+        "body": "O karate é, entre outras coisas, uma forma de autocondicionamento. Num mundo acelerado e barulhento, o dojo funciona como um espaço de silêncio deliberado, onde o corpo e a mente trabalham em conjunto para reconstruir a resiliência.\n\nPara quem vive com ansiedade, episódios depressivos ou ataques de pânico, a prática oferece algo que vai além do exercício físico: a sensação de recuperar algum controlo. Convém dizer com clareza que o karate não substitui acompanhamento médico ou psicológico. Mas pode ser um complemento sério, e há razões concretas para isso.\n\n## O que a investigação sugere\n\nA psicologia do desporto e a neurociência têm estudado os efeitos das artes marciais tradicionais e apontam para três mecanismos.\n\nO primeiro é neuroquímico. O esforço físico controlado liberta endorfinas e dopamina, que ajudam a equilibrar estados de humor baixos.\n\nO segundo é a ancoragem no presente. Executar um kata ou concentrar-se num golpe exige atenção total ao momento. Este estado de presença funciona como uma meditação em movimento e interrompe o ciclo de pensamentos intrusivos que alimenta o pânico. A respiração profunda que acompanha as técnicas faz parte do mesmo mecanismo.\n\nO terceiro é a reconstrução da confiança. Aprender técnicas complexas e progredir gradualmente nas graduações altera a forma como a pessoa se vê. O cérebro, ao ultrapassar barreiras físicas, valida a capacidade de ultrapassar barreiras emocionais.\n\n## O que vemos no dojo\n\nAs mudanças são visíveis. O praticante que entra fechado, a proteger-se do mundo, encontra aos poucos uma voz física. A postura muda, o olhar fica mais firme e a autoconfiança deixa de ser um conceito para passar a ser uma forma de estar.\n\nO impacto controlado, o kiai e a disciplina do treino oferecem uma via segura para libertar tensões acumuladas, medos e frustrações. E há uma dimensão comunitária que pesa muito: o dojo acolhe todos por igual. O respeito mútuo e a entreajuda criam um ambiente de segurança onde as dores internas não precisam de ser explicadas para serem compreendidas.\n\nComo diz o Dojo Kun, o objetivo final do karate não é a vitória ou a derrota. É o aperfeiçoamento do carácter de quem o pratica. Quem veste o karategi e pisa o tatami com o coração aberto percebe rapidamente o que isto significa."
+      },
+      {
+        "slug": "ichi-ni-san-o-karate-tambem-treina-a-cabeca",
+        "title": "Ichi, ni, san: o karate também treina a cabeça",
+        "category": "tecnica",
+        "date": "2026-07-31",
+        "author": "Equipa técnica ASBKI",
+        "excerpt": "Há uma parte do treino que os iniciantes raramente antecipam: o trabalho intelectual que começa antes do primeiro soco.",
+        "image": "",
+        "body": "Quem nos procura vem quase sempre à procura de condição física, força ou disciplina. O karate dá isso, sem dúvida. Mas há uma parte do treino que os iniciantes raramente antecipam e que acaba por surpreender: o trabalho intelectual.\n\nNo nosso dojo, o treino começa muito antes do primeiro soco. Começa quando se aprende o nome japonês de cada técnica, a contagem de um a dez, os cumprimentos tradicionais e a ordem dos gestos ao entrar e sair do tatami. Isto não é decorar palavras por decorar. É pôr o cérebro a trabalhar.\n\nAprender um vocabulário novo, mesmo que técnico, ativa as zonas do cérebro ligadas à memória, à atenção e à rapidez de raciocínio. Nas crianças isto é evidente nos primeiros meses. Nos adultos é uma forma de manter a cabeça ágil que não envolve palavras cruzadas.\n\nHá também uma razão cultural. Os termos em japonês ligam-nos diretamente à história e à filosofia de onde o karate veio. Quando dizemos \"rei\" em vez de \"cumprimento\", estamos a invocar toda uma etiqueta que sustenta o respeito mútuo dentro do dojo.\n\nCada \"ichi, ni, san\" contado em voz alta, cada nome de técnica pronunciado com precisão, é uma oportunidade de treinar a mente para ser tão afiada como o golpe. O karate molda o corpo. Mas, acima disso, disciplina o pensamento e tempera o carácter."
+      },
+      {
+        "slug": "a-confianca-que-se-treina-no-dojo",
+        "title": "A confiança que se treina no dojo vem connosco para fora",
+        "category": "bem-estar",
+        "date": "2026-07-17",
+        "author": "ASBKI Covilhã",
+        "excerpt": "O maior adversário nunca está do outro lado do tatami. Está nos nossos conflitos internos.",
+        "image": "",
+        "body": "Muita gente chega ao karate a carregar dúvidas sobre si própria. Uma sensação de fragilidade, a ideia de que não vai ser capaz. Isto é mais comum do que parece e não é um problema. É, na verdade, o ponto de partida de quase todos.\n\nO treino constante ensina uma coisa que os discursos motivacionais não conseguem: que o maior adversário nunca está do outro lado do tatami. Está nos nossos conflitos internos, no medo de falhar em frente aos outros, na voz que diz para ficar em casa.\n\nO que a prática faz é dar-nos ferramentas concretas para lidar com isso. Manter a calma num kumite quando o coração bate a mil treina a mesma capacidade de que precisamos numa reunião difícil ou numa discussão em casa. Cada queda e cada repetição falhada provam que conseguimos levantar-nos e tentar outra vez. A procura pelo movimento perfeito é, no fundo, a procura pelo controlo sobre a nossa própria cabeça.\n\nCom o tempo, esta confiança deixa de ficar fechada no dojo. Aparece na forma como andamos, como olhamos as pessoas nos olhos, como tomamos decisões sem tremer. Não é arrogância. É a clareza de saber exatamente do que somos capazes.\n\nO \"Oss\" que dizemos ao entrar não é só um cumprimento. É um compromisso de perseverar diante de qualquer barreira, venha ela de fora ou de dentro."
+      },
+      {
+        "slug": "do-ecra-ao-tatami",
+        "title": "Do ecrã ao tatami: porque as lutas dos filmes nos prendem",
+        "category": "motivacao",
+        "date": "2026-07-03",
+        "author": "ASBKI Covilhã",
+        "excerpt": "Muitos dos adultos que entram no nosso dojo pela primeira vez começam com a frase \"gostava de saber fazer aquilo\".",
+        "image": "",
+        "body": "Uma cena de luta bem coreografada num filme. Um combo perfeito num jogo. O treino do protagonista de um anime que recusa desistir. Porque é que estas coisas nos fazem acelerar o coração?\n\nAs artes marciais saíram do dojo há muito tempo e tornaram-se uma linguagem que quase toda a gente reconhece. O cinema de ação bebe delas desde os anos 70. Os jogos de luta transformaram katas em mecânicas. As animações japonesas fizeram do treino duro uma narrativa de crescimento. Em cada um destes formatos está a mesma coisa que nos fascina ao vivo: o domínio do corpo, a disciplina, o respeito entre adversários.\n\nEsta presença constante no entretenimento faz mais do que divertir. Desperta em muita gente uma vontade concreta de experimentar. Quantos de nós já vimos um movimento técnico e pensámos \"gostava de saber fazer isto\"? Muitos dos adultos que entram no nosso dojo pela primeira vez começam exatamente com essa frase.\n\nA boa notícia é que a distância entre admirar e praticar é mais curta do que parece. Não é preciso condição física especial, nem equipamento, nem idade certa. É preciso aparecer a um treino.\n\nSe és fã de ecrã e nunca pisaste um tatami, o convite fica feito. A jornada de mil quilómetros começa num único movimento."
+      },
+      {
+        "slug": "antes-de-formar-lutadores-formamos-caracter",
+        "title": "Antes de formar lutadores, formamos carácter",
+        "category": "filosofia",
+        "date": "2026-06-26",
+        "author": "ASBKI Covilhã",
+        "excerpt": "Quando o treino acaba e cada um volta para a sua vida, o que fica não é o mae-geri. É a maneira como a pessoa trata os outros.",
+        "image": "",
+        "body": "Uma técnica bem executada impressiona quem está a ver. Mas quando o treino acaba e cada um volta para a sua vida, o que fica não é o mae-geri. É a maneira como a pessoa trata os outros, como reage a uma derrota, como lida com uma injustiça. O karate que ensinamos na ASBKI parte deste princípio: a técnica é o meio, o carácter é o fim.\n\nSeguir o caminho certo custa. Exige disciplina para treinar quando não apetece e para respeitar regras que nem sempre se compreendem à primeira. Mas sem ética não há vitória que valha. Um pódio conseguido por atalhos não forma ninguém.\n\nO progresso real raramente vem do talento. Vem da insistência: voltar ao dojo depois de um exame falhado, repetir o kata que não sai, aceitar a correção do sensei sem argumentar. Este espírito de esforço é o que faz um verdadeiro karateca, muito antes da cor do cinto.\n\nO respeito é a base de tudo isto. Sem ele, o que fazemos no tatami deixa de ser arte marcial e passa a ser apenas violência organizada. E há um ponto que fazemos questão de repetir aos mais novos: controlar a agressividade é a maior vitória de todas. A pessoa verdadeiramente forte não é a que procura a luta. É a que tem sabedoria e força suficientes para a evitar.\n\nO karate é, no fim de contas, um caminho de vida. Oss."
+      },
+      {
+        "slug": "a-excelencia-e-um-habito",
+        "title": "A excelência é um hábito, não um acontecimento",
+        "category": "filosofia",
+        "date": "2026-06-12",
+        "author": "ASBKI Covilhã",
+        "excerpt": "O nível que se vê num cinturão negro não apareceu num dia especial. Foi construído em centenas de treinos vulgares.",
+        "image": "",
+        "body": "Há uma ideia que trava muita gente à porta do dojo: a de que a excelência é um lugar distante, reservado a quem nasceu com talento. Quem treina há alguns anos sabe que não é assim. O nível que se vê num cinturão negro não apareceu num dia especial. Foi construído em centenas de treinos vulgares, à terça e à quinta, muitos deles sem vontade nenhuma.\n\nOs gregos antigos já diziam que somos aquilo que fazemos repetidamente. No karate isto é literal. O kihon que se repete mil vezes, a posição que se corrige mais uma vez, o aquecimento que se faz sempre da mesma maneira. Nada disto é épico. Tudo isto é o que separa quem progride de quem desiste.\n\nSe o objetivo é crescer, o entusiasmo do primeiro mês não chega. Ele passa. O que fica é a disciplina de aparecer, mesmo quando o treino anterior correu mal, mesmo quando chove, mesmo quando a semana foi longa. É nessa constância silenciosa que o carácter se forma.\n\nNão procures o gesto perfeito. Procura a repetição honesta que, aos poucos, transforma esforço em hábito e hábito em segunda natureza.\n\nUma pergunta para levar para casa: o que estás a repetir hoje que define quem vais ser daqui a um ano?"
+      },
+      {
+        "slug": "o-que-o-tatami-ensina-aos-miudos",
+        "title": "O que o tatami ensina aos miúdos que os livros não conseguem",
+        "category": "familias",
+        "date": "2026-06-05",
+        "author": "ASBKI Covilhã",
+        "excerpt": "Muitos pais procuram as artes marciais a pensar em defesa pessoal. O que o dojo entrega é bastante mais do que isso.",
+        "image": "",
+        "body": "Muitos pais procuram as artes marciais para os filhos a pensar apenas em defesa pessoal. É uma razão válida. Mas o que o dojo entrega é bastante mais do que isso: entrega formação de carácter.\n\nAo contrário de uma sala de aula, o tatami ensina coisas que não vêm nos manuais. A resiliência de se levantar depois de cair, literalmente. A disciplina de respeitar quem está ao lado e a si próprio. A coragem de tentar um movimento que parece impossível. E a inteligência emocional para lidar com a frustração de um exame que não correu bem e voltar na semana seguinte.\n\nIntroduzir o karate na rotina de uma criança é dar-lhe uma base para o futuro. O que vemos nas turmas dos 5 aos 9 anos é que o fortalecimento físico vem acompanhado de um amadurecimento mental notável. Trabalhamos o foco, a disciplina, o respeito e a autoconfiança, e estas ferramentas acabam por aparecer na escola e em casa antes de aparecerem numa competição.\n\nAcompanhar este percurso é uma das partes mais gratificantes do nosso trabalho. Cada nova técnica aprendida, cada graduação conquistada, cada pequeno obstáculo ultrapassado é um capítulo. Ver o brilho nos olhos de uma criança ao dominar um movimento que há um mês parecia um desafio não tem preço.\n\nAs artes marciais não formam apenas lutadores. Formam pessoas com princípios. O teu filho não aprende só a defender-se. Aprende a vencer os desafios da vida.\n\nSe quiseres ver como trabalhamos, a primeira aula é gratuita e não precisa de equipamento."
       }
     ]
   },
@@ -254,13 +750,15 @@
     "submitLabel": "Confirmar marcação"
   },
   "trial": {
-    "title": "Pronto para começar?",
-    "subtext": "Junta-te a nós e obtém a tua primeira aula completamente grátis.",
+    "title": "Chega de esperar o momento perfeito.",
+    "subtext": "O primeiro passo não precisa de ser impecável. Só precisa de ser dado. A primeira aula é gratuita e não precisas de equipamento.",
     "ctaLabel": "Marcar aula experimental",
-    "ctaHref": "#inscricao"
+    "ctaHref": "/inscricao"
   },
   "contact": {
+    "subtitle": "FALA CONNOSCO",
     "title": "Fala connosco",
+    "intro": "Dúvidas sobre horários, mensalidades ou qual a turma certa para ti ou para o teu filho? Escreve-nos ou aparece num treino.",
     "formTitle": "Envia-nos uma mensagem",
     "fields": {
       "name": "Nome",

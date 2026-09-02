@@ -1,19 +1,33 @@
 /* ─── ASBKI CMS Admin App ─────────────────────────────────────────────── */
+/* Editores genéricos: [data-path] (escalar), [data-lines] (lista de linhas),
+   .img-field[data-img] (imagem) e listEditor() para listas de objetos.     */
 
-let token  = localStorage.getItem('cms_token') || '';
+let token   = localStorage.getItem('cms_token') || '';
 let content = {};
-let dirty  = false;
+let dirty   = false;
 
 /* ─── Utils ──────────────────────────────────────────────────────────── */
 function getPath(obj, path) {
-  return path.split('.').reduce((o, k) => (o ? o[k] : undefined), obj);
+  return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
 }
 function setPath(obj, path, value) {
   const keys = path.split('.');
   const last = keys.pop();
-  const parent = keys.reduce((o, k) => o[k], obj);
-  if (parent) parent[last] = value;
+  let parent = obj;
+  for (const k of keys) {
+    if (parent[k] == null) parent[k] = /^\d+$/.test(k) ? [] : {};
+    parent = parent[k];
+  }
+  parent[last] = value;
 }
+function esc(s) {
+  return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function slugify(s) {
+  return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+function uid(prefix) { return prefix + Date.now().toString(36).slice(-5); }
 
 function showToast(msg, type = 'success') {
   const t = document.querySelector('#toast');
@@ -22,15 +36,13 @@ function showToast(msg, type = 'success') {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3500);
 }
-
 function setSaveStatus(text, type) {
   const el = document.querySelector('#save-status');
   if (!text) { el.style.display = 'none'; return; }
-  el.textContent  = text;
-  el.className    = `save-status ${type}`;
+  el.textContent = text;
+  el.className = `save-status ${type}`;
   el.style.display = '';
 }
-
 function markDirty() {
   dirty = true;
   setSaveStatus('Alterações não guardadas', 'saving');
@@ -45,11 +57,9 @@ document.querySelector('#login-form').addEventListener('submit', async (e) => {
   btn.disabled = true;
   btn.textContent = 'A verificar…';
   err.classList.remove('show');
-
   try {
     const res  = await fetch('/api/admin/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: pwd }),
     });
     const data = await res.json();
@@ -76,14 +86,13 @@ async function bootApp() {
   document.querySelector('#login-screen').style.display = 'none';
   document.querySelector('#app').hidden = false;
   await loadContent();
-  initNav();
+  initSidebar();
   loadImages();
 }
 
-/* Auto-login if token exists */
 if (token) {
-  fetch('/api/content')
-    .then(r => r.ok ? bootApp() : null)
+  fetch('/api/images', { headers: { 'x-admin-token': token } })
+    .then(r => r.ok ? bootApp() : (localStorage.removeItem('cms_token'), token = ''))
     .catch(() => {});
 }
 
@@ -92,8 +101,7 @@ async function loadContent() {
   try {
     const res = await fetch('/api/content?v=' + Date.now());
     content   = await res.json();
-    populateFields();
-    renderDynamicSections();
+    renderAll();
     dirty = false;
     setSaveStatus('', '');
     document.querySelector('#last-saved').textContent = 'Carregado às ' + new Date().toLocaleTimeString('pt-PT');
@@ -102,261 +110,404 @@ async function loadContent() {
   }
 }
 
-/* ─── Populate all [data-path] inputs ─────────────────────────────────── */
-function populateFields() {
+function renderAll() {
+  populateScalars();
+  populateLines();
+  renderImgFields();
+  populateFighterControls();
+  Object.values(EDITORS).forEach(fn => fn());
+}
+
+/* ─── [data-path] escalares ───────────────────────────────────────────── */
+function populateScalars() {
   document.querySelectorAll('[data-path]').forEach(el => {
     const val = getPath(content, el.dataset.path);
-    if (val !== undefined) el.value = val ?? '';
-    el.removeEventListener('input', onFieldInput);
-    el.addEventListener('input', onFieldInput);
+    el.value = val ?? '';
   });
+}
+document.addEventListener('input', e => {
+  const el = e.target;
+  if (el.dataset.path) { setPath(content, el.dataset.path, el.type === 'number' ? Number(el.value) : el.value); markDirty(); }
+  if (el.dataset.lines) { setPath(content, el.dataset.lines, el.value.split('\n').map(l => l.trim()).filter(Boolean)); markDirty(); }
+  if (el.dataset.bind) { onBindInput(el); }
+});
 
-  /* About features textarea */
-  const featTa = document.querySelector('#about-features-input');
-  if (featTa && content.about?.features) {
-    featTa.value = content.about.features.join('\n');
-    featTa.removeEventListener('input', onFeaturesInput);
-    featTa.addEventListener('input', onFeaturesInput);
+/* ─── [data-lines] listas de texto (uma por linha) ────────────────────── */
+function populateLines() {
+  document.querySelectorAll('[data-lines]').forEach(el => {
+    const val = getPath(content, el.dataset.lines);
+    el.value = Array.isArray(val) ? val.join('\n') : '';
+  });
+}
+
+/* ─── .img-field[data-img] — imagem com upload e pré-visualização ─────── */
+const UPLOAD_SVG = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
+
+function imgFieldHTML(path, label, help) {
+  const url = getPath(content, path) || '';
+  return `
+    <div class="field" style="margin-bottom:8px"><label>${esc(label || 'Imagem (URL)')}</label>
+      <input type="text" data-path="${esc(path)}" value="${esc(url)}" placeholder="/assets/images/uploads/…"></div>
+    ${help ? `<p class="help">${help}</p>` : ''}
+    <div class="img-row">
+      <label class="img-upload-zone compact">
+        <input type="file" accept="image/*,.svg" data-upload="${esc(path)}">
+        ${UPLOAD_SVG}<span class="img-upload-label">Carregar imagem</span>
+      </label>
+      <div class="img-thumb" data-thumb="${esc(path)}" ${url ? '' : 'hidden'}>
+        <img src="${esc(url)}" alt="">
+        <button type="button" class="img-preview-remove" data-clear="${esc(path)}" title="Remover">✕</button>
+      </div>
+    </div>`;
+}
+function renderImgFields() {
+  document.querySelectorAll('.img-field[data-img]').forEach(el => {
+    el.innerHTML = imgFieldHTML(el.dataset.img, el.dataset.label, el.dataset.help);
+  });
+}
+function refreshThumb(path) {
+  const url = getPath(content, path) || '';
+  document.querySelectorAll(`[data-thumb="${path}"]`).forEach(t => {
+    t.hidden = !url;
+    const img = t.querySelector('img'); if (img) img.src = url;
+  });
+  document.querySelectorAll(`[data-path="${path}"]`).forEach(i => { if (i.value !== url) i.value = url; });
+  if (path === 'hero.foregroundImage') refreshFighterPreview();
+}
+document.addEventListener('change', async e => {
+  const el = e.target;
+  if (el.dataset.upload !== undefined && el.files?.[0]) {
+    const url = await doUpload(el.files[0]);
+    if (url) { setPath(content, el.dataset.upload, url); refreshThumb(el.dataset.upload); markDirty(); }
+    el.value = '';
   }
+  if (el.dataset.path && /image|logo|Image/.test(el.dataset.path)) refreshThumb(el.dataset.path);
+});
+document.addEventListener('click', e => {
+  const clr = e.target.closest('[data-clear]');
+  if (clr) { setPath(content, clr.dataset.clear, ''); refreshThumb(clr.dataset.clear); markDirty(); }
+});
 
-  /* Image previews */
-  if (content.site?.logo)             showImgPreview('logo-preview', content.site.logo);
-  if (content.hero?.backgroundImage)  showImgPreview('hero-img-preview', content.hero.backgroundImage);
-  if (content.hero?.foregroundImage)  showImgPreview('hero-fg-preview', content.hero.foregroundImage);
-  if (content.about?.image)           showImgPreview('about-img-preview', content.about.image);
-
-  populateFighterControls();
-}
-
-/* ─── Fighter size/offset controls ───────────────────────────────────────── */
+/* ─── Controlo do lutador (hero) ──────────────────────────────────────── */
 function populateFighterControls() {
-  var size   = content.hero?.fighterSize   ?? 88;
-  var offset = content.hero?.fighterOffset ?? 0;
-  var sEl = document.getElementById('fighter-size-input');
-  var oEl = document.getElementById('fighter-offset-input');
-  if (sEl) sEl.value = size;
-  if (oEl) oEl.value = offset;
+  const size = content.hero?.fighterSize ?? 88, offset = content.hero?.fighterOffset ?? 0;
+  const sEl = document.getElementById('fighter-size-input'), oEl = document.getElementById('fighter-offset-input');
+  if (!sEl || !oEl) return;
+  sEl.value = size; oEl.value = offset;
   document.getElementById('fighter-size-val').textContent   = size;
   document.getElementById('fighter-offset-val').textContent = (offset > 0 ? '+' : '') + offset;
-  refreshFighterPreview(size, offset);
+  refreshFighterPreview();
 }
-
-function updateFighterControls() {
-  var size   = parseInt(document.getElementById('fighter-size-input').value);
-  var offset = parseInt(document.getElementById('fighter-offset-input').value);
+window.updateFighterControls = function () {
+  const size = parseInt(document.getElementById('fighter-size-input').value);
+  const offset = parseInt(document.getElementById('fighter-offset-input').value);
   document.getElementById('fighter-size-val').textContent   = size;
   document.getElementById('fighter-offset-val').textContent = (offset > 0 ? '+' : '') + offset;
-  setPath(content, 'hero.fighterSize',   size);
+  setPath(content, 'hero.fighterSize', size);
   setPath(content, 'hero.fighterOffset', offset);
   markDirty();
-  refreshFighterPreview(size, offset);
-}
-
-function refreshFighterPreview(size, offset) {
-  var img = document.getElementById('fighter-preview-img');
+  refreshFighterPreview();
+};
+function refreshFighterPreview() {
+  const img = document.getElementById('fighter-preview-img');
   if (!img) return;
-  var url = content.hero?.foregroundImage;
+  const url = content.hero?.foregroundImage;
   if (url) {
-    img.src          = url;
-    img.style.display = '';
-    img.style.height  = size + '%';
-    img.style.right   = (-offset) + 'px';
-  } else {
-    img.style.display = 'none';
+    img.src = url; img.style.display = '';
+    img.style.height = (content.hero?.fighterSize ?? 88) + '%';
+    img.style.right  = (-(content.hero?.fighterOffset ?? 0)) + 'px';
+  } else img.style.display = 'none';
+}
+
+/* ─── Editor genérico de listas ───────────────────────────────────────── */
+/* schema: { title(item,i), newItem(), fields: [{ key, label, type, options, placeholder, full, help }] }
+   types: text | textarea | select | date | number | image | lines | sublist  */
+const EDITORS = {};
+
+function fieldHTML(base, item, f) {
+  const path = `${base}.${f.key}`;
+  const val = item[f.key];
+  const attrs = `data-bind="${esc(path)}" placeholder="${esc(f.placeholder || '')}"`;
+  switch (f.type) {
+    case 'textarea':
+      return `<div class="field ${f.full !== false ? 'full' : ''}"><label>${esc(f.label)}</label><textarea ${attrs} style="min-height:${f.rows ? f.rows * 22 : 70}px">${esc(val)}</textarea>${f.help ? `<p class="help">${f.help}</p>` : ''}</div>`;
+    case 'select': {
+      const opts = typeof f.options === 'function' ? f.options() : f.options;
+      const has = opts.some(o => (o.value ?? o) === val);
+      return `<div class="field"><label>${esc(f.label)}</label><select ${attrs}>
+        ${!has && val ? `<option value="${esc(val)}" selected>${esc(val)}</option>` : ''}
+        ${opts.map(o => { const v = o.value ?? o, l = o.label ?? o; return `<option value="${esc(v)}" ${v === val ? 'selected' : ''}>${esc(l)}</option>`; }).join('')}
+      </select></div>`;
+    }
+    case 'date':   return `<div class="field"><label>${esc(f.label)}</label><input type="date" ${attrs} value="${esc(val)}"></div>`;
+    case 'number': return `<div class="field"><label>${esc(f.label)}</label><input type="number" ${attrs} value="${esc(val)}"></div>`;
+    case 'lines':  return `<div class="field full"><label>${esc(f.label)}</label><textarea data-bind="${esc(path)}" data-kind="lines" style="min-height:90px" placeholder="${esc(f.placeholder || 'Uma por linha')}">${esc(Array.isArray(val) ? val.join('\n') : '')}</textarea>${f.help ? `<p class="help">${f.help}</p>` : ''}</div>`;
+    case 'image':  return `<div class="field full img-inline">${imgFieldHTML(path, f.label, f.help)}</div>`;
+    case 'sublist': {
+      const arr = Array.isArray(val) ? val : [];
+      return `<div class="field full"><label>${esc(f.label)}</label>
+        <div class="sublist" data-sublist="${esc(path)}">
+          ${arr.map((sub, j) => `
+            <div class="sublist-row">
+              ${f.fields.map(sf => `<input type="text" data-bind="${esc(path)}.${j}.${sf.key}" value="${esc(sub[sf.key])}" placeholder="${esc(sf.placeholder || sf.label)}" title="${esc(sf.label)}">`).join('')}
+              <button type="button" class="btn btn-sm btn-secondary" data-act="up"     data-list="${esc(path)}" data-index="${j}" title="Subir">↑</button>
+              <button type="button" class="btn btn-sm btn-secondary" data-act="down"   data-list="${esc(path)}" data-index="${j}" title="Descer">↓</button>
+              <button type="button" class="btn btn-sm btn-danger"    data-act="remove" data-list="${esc(path)}" data-index="${j}" title="Remover">✕</button>
+            </div>`).join('')}
+          <button type="button" class="btn btn-sm btn-secondary" data-act="add" data-list="${esc(path)}" data-new='${esc(JSON.stringify(f.newItem || {}))}'>+ ${esc(f.addLabel || 'Adicionar')}</button>
+        </div></div>`;
+    }
+    default:
+      return `<div class="field"><label>${esc(f.label)}</label><input type="text" ${attrs} value="${esc(val)}">${f.help ? `<p class="help">${f.help}</p>` : ''}</div>`;
   }
 }
 
-function onFieldInput(e) {
-  setPath(content, e.target.dataset.path, e.target.value);
+function listEditor(mountSel, path, schema) {
+  const render = () => {
+    const mount = document.querySelector(mountSel);
+    if (!mount) return;
+    let arr = getPath(content, path);
+    if (!Array.isArray(arr)) { arr = []; setPath(content, path, arr); }
+    mount.innerHTML = arr.map((item, i) => {
+      const base = `${path}.${i}`;
+      return `
+        <div class="editor-card list-item" data-item="${esc(base)}">
+          <div class="list-item-header">
+            <div class="list-item-label">${esc(schema.title ? schema.title(item, i) : `Item ${i + 1}`)}</div>
+            <div class="list-item-actions">
+              <button type="button" class="btn btn-sm btn-secondary" data-act="up"     data-list="${esc(path)}" data-index="${i}" ${i === 0 ? 'disabled' : ''}>↑</button>
+              <button type="button" class="btn btn-sm btn-secondary" data-act="down"   data-list="${esc(path)}" data-index="${i}" ${i === arr.length - 1 ? 'disabled' : ''}>↓</button>
+              <button type="button" class="btn btn-sm btn-danger"    data-act="remove" data-list="${esc(path)}" data-index="${i}">Remover</button>
+            </div>
+          </div>
+          <div class="field-grid">${schema.fields.map(f => fieldHTML(base, item, f)).join('')}</div>
+        </div>`;
+    }).join('') + `
+      <button type="button" class="btn btn-secondary" data-act="add" data-list="${esc(path)}" data-new-fn="${esc(mountSel)}">+ ${esc(schema.addLabel || 'Adicionar')}</button>`;
+  };
+  EDITORS[mountSel] = render;
+  EDITORS[mountSel].schema = schema;
+  EDITORS[mountSel].path = path;
+}
+
+function onBindInput(el) {
+  const path = el.dataset.bind;
+  let v = el.value;
+  if (el.dataset.kind === 'lines') v = v.split('\n').map(l => l.trim()).filter(Boolean);
+  else if (el.type === 'number') v = Number(v);
+  setPath(content, path, v);
   markDirty();
-}
-function onFeaturesInput(e) {
-  content.about.features = e.target.value.split('\n').filter(l => l.trim());
-  markDirty();
-}
-
-/* ─── Dynamic sections ───────────────────────────────────────────────── */
-function renderDynamicSections() {
-  renderNavLinks();
-  renderBenefits();
-  renderClasses();
-  renderStats();
-  renderSchedule();
+  /* Atualiza o título do cartão sem re-renderizar (mantém o foco) */
+  const card = el.closest('.list-item');
+  if (card) {
+    const ed = Object.values(EDITORS).find(fn => card.dataset.item.startsWith(fn.path + '.'));
+    if (ed && ed.schema.title) {
+      const idx = Number(card.dataset.item.slice(ed.path.length + 1).split('.')[0]);
+      const lbl = card.querySelector('.list-item-label');
+      if (lbl) lbl.textContent = ed.schema.title(getPath(content, ed.path)[idx], idx);
+    }
+  }
 }
 
-function renderNavLinks() {
-  const list = document.querySelector('#nav-links-list');
-  if (!list) return;
-  list.innerHTML = (content.nav?.links || []).map((l, i) => `
-    <div class="schedule-editor-row" style="margin-bottom:8px">
-      <div class="field" style="margin-bottom:0">
-        <label>Texto</label>
-        <input type="text" value="${esc(l.label)}" placeholder="Início" oninput="updateNavLink(${i},'label',this.value)">
-      </div>
-      <div class="field" style="margin-bottom:0">
-        <label>Link (âncora)</label>
-        <input type="text" value="${esc(l.href)}" placeholder="#inicio" oninput="updateNavLink(${i},'href',this.value)">
-      </div>
-      <button class="btn btn-danger btn-sm" onclick="removeNavLink(${i})">✕</button>
-    </div>`).join('');
-}
-
-function updateNavLink(i, key, val) { content.nav.links[i][key] = val; markDirty(); }
-function removeNavLink(i) { content.nav.links.splice(i, 1); renderNavLinks(); markDirty(); }
-window.addNavLink = function() {
-  content.nav.links.push({ label: 'Novo Link', href: '#' });
-  renderNavLinks();
-  markDirty();
-};
-
-function renderBenefits() {
-  const list = document.querySelector('#benefits-list');
-  list.innerHTML = (content.benefits || []).map((b, i) => `
-    <div class="editor-card list-item" id="benefit-${i}">
-      <div class="list-item-header">
-        <div class="list-item-label">Benefício ${i + 1}</div>
-        <button class="btn btn-danger btn-sm" onclick="removeBenefit(${i})">Remover</button>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Ícone</label>
-          <select onchange="updateBenefit(${i},'icon',this.value)">
-            ${['shield','lock','dumbbell','target'].map(ic =>
-              `<option value="${ic}" ${b.icon===ic?'selected':''}>${ic}</option>`).join('')}
-          </select>
-        </div>
-        <div class="field"><label>Título</label>
-          <input type="text" value="${esc(b.title)}" oninput="updateBenefit(${i},'title',this.value)">
-        </div>
-      </div>
-      <div class="field"><label>Descrição</label>
-        <input type="text" value="${esc(b.text)}" oninput="updateBenefit(${i},'text',this.value)">
-      </div>
-    </div>`).join('');
-}
-
-function updateBenefit(i, key, val) {
-  content.benefits[i][key] = val;
-  markDirty();
-}
-function removeBenefit(i) {
-  content.benefits.splice(i, 1);
-  renderBenefits();
-  markDirty();
-}
-
-function renderClasses() {
-  const list = document.querySelector('#classes-list');
-  list.innerHTML = (content.classes?.items || []).map((cl, i) => `
-    <div class="editor-card list-item" id="class-${i}">
-      <div class="list-item-header">
-        <div class="list-item-label">${esc(cl.name) || 'Modalidade ' + (i+1)}</div>
-        <button class="btn btn-danger btn-sm" onclick="removeClass(${i})">Remover</button>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Nome</label>
-          <input type="text" value="${esc(cl.name)}" oninput="updateClass(${i},'name',this.value)">
-        </div>
-        <div class="field"><label>Descrição</label>
-          <input type="text" value="${esc(cl.description)}" oninput="updateClass(${i},'description',this.value)">
-        </div>
-      </div>
-      <div class="field"><label>Imagem (URL)</label>
-        <input type="text" value="${esc(cl.image)}" oninput="updateClass(${i},'image',this.value)" placeholder="/assets/images/uploads/…">
-      </div>
-      <div class="img-upload-zone" style="padding:16px">
-        <input type="file" accept="image/*" onchange="uploadClassImg(event,${i})">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <div class="img-upload-label" style="font-size:.72rem">Upload imagem</div>
-      </div>
-      ${cl.image ? `<div class="img-preview"><img src="${esc(cl.image)}" alt="${esc(cl.name)}" id="class-img-${i}"></div>` : ''}
-    </div>`).join('');
-}
-
-function updateClass(i, key, val) {
-  content.classes.items[i][key] = val;
-  if (key === 'image') {
-    const prev = document.querySelector(`#class-img-${i}`);
-    if (prev) prev.src = val;
+/* Ações estruturais: add / remove / up / down (listas e sublistas) */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-act]');
+  if (!btn) return;
+  const path = btn.dataset.list;
+  let arr = getPath(content, path);
+  if (!Array.isArray(arr)) { arr = []; setPath(content, path, arr); }
+  const i = Number(btn.dataset.index);
+  switch (btn.dataset.act) {
+    case 'add': {
+      const ed = btn.dataset.newFn ? EDITORS[btn.dataset.newFn] : null;
+      const item = ed?.schema.newItem ? ed.schema.newItem() : JSON.parse(btn.dataset.new || '{}');
+      arr.push(item);
+      break;
+    }
+    case 'remove':
+      if (!confirm('Remover este item?')) return;
+      arr.splice(i, 1); break;
+    case 'up':   if (i > 0) [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]; break;
+    case 'down': if (i < arr.length - 1) [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]]; break;
   }
   markDirty();
-}
-function removeClass(i) {
-  content.classes.items.splice(i, 1);
-  renderClasses();
-  markDirty();
-}
-window.addClassItem = function() {
-  content.classes.items.push({ name: 'Nova Modalidade', description: '', image: '' });
-  renderClasses();
-  markDirty();
-};
-async function uploadClassImg(e, i) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const url = await doUpload(file);
-  if (url) { content.classes.items[i].image = url; renderClasses(); markDirty(); }
-}
+  /* Re-render do editor de topo que contém este caminho */
+  const top = Object.values(EDITORS).find(fn => path === fn.path || path.startsWith(fn.path + '.'));
+  if (top) top(); else renderAll();
+});
 
-function renderStats() {
-  const list = document.querySelector('#stats-list');
-  list.innerHTML = (content.about?.stats || []).map((s, i) => `
-    <div class="schedule-editor-row">
-      <div class="field" style="margin-bottom:0">
-        <label>Valor</label>
-        <input type="text" value="${esc(s.value)}" placeholder="10" oninput="updateStat(${i},'value',this.value)">
-      </div>
-      <div class="field" style="margin-bottom:0">
-        <label>Sufixo / Legenda</label>
-        <div style="display:grid;grid-template-columns:60px 1fr;gap:8px">
-          <input type="text" value="${esc(s.suffix)}" placeholder="+" oninput="updateStat(${i},'suffix',this.value)">
-          <input type="text" value="${esc(s.label)}" placeholder="Anos de Experiência" oninput="updateStat(${i},'label',this.value)">
-        </div>
-      </div>
-      <button class="btn btn-danger btn-sm" onclick="removeStat(${i})">✕</button>
-    </div>`).join('');
-}
+/* ─── Definição dos editores ──────────────────────────────────────────── */
+const STATUS_OPTS = [{ value: 'open', label: 'Vagas abertas' }, { value: 'waitlist', label: 'Lista de espera' }, { value: 'full', label: 'Cheio' }];
+const ICON_OPTS   = ['shield', 'lock', 'dumbbell', 'target'];
+const groupOpts   = () => (content.schedule?.filters || []).map(f => ({ value: f.key, label: f.label }));
+const dojoOpts    = () => (content.dojos?.items || []).map(d => d.name);
+const typeOpts    = () => (content.events?.types || []).map(t => ({ value: t.key, label: t.label }));
+const catOpts     = () => (content.news?.categories || []).map(k => ({ value: k.key, label: k.label }));
 
-function updateStat(i, key, val) { content.about.stats[i][key] = val; markDirty(); }
-function removeStat(i) { content.about.stats.splice(i, 1); renderStats(); markDirty(); }
-window.addStat = function() {
-  if (!content.about.stats) content.about.stats = [];
-  content.about.stats.push({ value: '0', suffix: '', label: 'Nova estatística' });
-  renderStats();
-  markDirty();
-};
+/* Geral: menu */
+listEditor('#nav-links-list', 'nav.links', {
+  title: l => l.label || 'Novo item',
+  addLabel: 'Adicionar item ao menu',
+  newItem: () => ({ label: 'Novo item', href: '/', children: [] }),
+  fields: [
+    { key: 'label', label: 'Texto', placeholder: 'Dojos' },
+    { key: 'href',  label: 'Link',  placeholder: '/dojos', help: 'Páginas: / · /dojos · /noticias · /eventos · /competicoes · /formacoes · /associacao · /associacao/historia · /associacao/orgaos-sociais · /associacao/instrutores · /associacao/dojo-kun · /modalidades · /inscricao · /contacto' },
+    { key: 'children', label: 'Submenu (dropdown)', type: 'sublist', addLabel: 'Adicionar ao submenu',
+      newItem: { label: 'Novo', href: '/' }, fields: [{ key: 'label', label: 'Texto' }, { key: 'href', label: 'Link' }] },
+  ],
+});
 
-function renderSchedule() {
-  const list = document.querySelector('#schedule-list');
-  list.innerHTML = (content.schedule?.days || []).map((d, i) => `
-    <div class="schedule-editor-row" style="margin-bottom:8px">
-      <div class="field" style="margin-bottom:0">
-        <label>Dia(s)</label>
-        <input type="text" value="${esc(d.day)}" placeholder="Segunda – Sexta" oninput="updateSchedule(${i},'day',this.value)">
-      </div>
-      <div class="field" style="margin-bottom:0">
-        <label>Horário</label>
-        <input type="text" value="${esc(d.hours)}" placeholder="08:00 – 22:00" oninput="updateSchedule(${i},'hours',this.value)">
-      </div>
-      <button class="btn btn-danger btn-sm" onclick="removeScheduleRow(${i})">✕</button>
-    </div>`).join('');
-}
+/* Início */
+listEditor('#benefits-list', 'benefits', {
+  title: b => b.title || 'Benefício', addLabel: 'Adicionar benefício',
+  newItem: () => ({ icon: 'shield', title: '', text: '' }),
+  fields: [
+    { key: 'icon', label: 'Ícone', type: 'select', options: ICON_OPTS },
+    { key: 'title', label: 'Título' },
+    { key: 'text', label: 'Descrição', type: 'textarea' },
+  ],
+});
 
-function updateSchedule(i, key, val) { content.schedule.days[i][key] = val; markDirty(); }
-function removeScheduleRow(i) { content.schedule.days.splice(i, 1); renderSchedule(); markDirty(); }
-window.addScheduleRow = function() {
-  content.schedule.days.push({ day: '', hours: '' });
-  renderSchedule();
-  markDirty();
-};
+/* Horários */
+listEditor('#filters-list', 'schedule.filters', {
+  title: f => f.label || 'Faixa', addLabel: 'Adicionar faixa etária',
+  newItem: () => ({ key: uid('g'), label: '' }),
+  fields: [{ key: 'label', label: 'Nome (ex: 5–9 anos)' }, { key: 'key', label: 'Chave interna', help: 'Não mudar depois de criar turmas.' }],
+});
+listEditor('#sessions-list', 'schedule.sessions', {
+  title: s => `${s.label || 'Turma'} · ${s.daysShort || ''} ${s.time || ''}`, addLabel: 'Adicionar turma',
+  newItem: () => ({ id: uid('s'), group: content.schedule?.filters?.[0]?.key || '', daysShort: '', time: '', label: '', location: content.dojos?.items?.[0]?.name || '', slotsText: 'Vagas', status: 'open' }),
+  fields: [
+    { key: 'label', label: 'Nome da turma', placeholder: 'Infantis 5–9 anos' },
+    { key: 'group', label: 'Faixa etária', type: 'select', options: groupOpts },
+    { key: 'daysShort', label: 'Dias', placeholder: 'SEG · QUA · SEX' },
+    { key: 'time', label: 'Hora', placeholder: '18:00 – 19:00' },
+    { key: 'location', label: 'Dojo', type: 'select', options: dojoOpts, help: 'Tem de coincidir com o nome do dojo para aparecer na página Dojos.' },
+    { key: 'slotsText', label: 'Vagas (texto)', placeholder: '4 vagas' },
+    { key: 'status', label: 'Estado', type: 'select', options: STATUS_OPTS },
+  ],
+});
+listEditor('#days-list', 'schedule.days', {
+  title: d => d.day || 'Dia', addLabel: 'Adicionar linha',
+  newItem: () => ({ day: '', hours: '' }),
+  fields: [{ key: 'day', label: 'Dia(s)', placeholder: 'Segunda – Sexta' }, { key: 'hours', label: 'Horário', placeholder: '18:00 – 21:30' }],
+});
+
+/* Dojos */
+listEditor('#dojos-list', 'dojos.items', {
+  title: d => d.name || 'Dojo', addLabel: 'Adicionar dojo',
+  newItem: () => ({ id: uid('d'), name: '', address: '', phone: '', email: '', mapUrl: '', image: '', notes: '' }),
+  fields: [
+    { key: 'name', label: 'Nome' }, { key: 'address', label: 'Morada' },
+    { key: 'phone', label: 'Telefone' }, { key: 'email', label: 'E-mail' },
+    { key: 'mapUrl', label: 'Link do mapa (Google Maps)', placeholder: 'https://maps.google.com/?q=…' },
+    { key: 'notes', label: 'Nota curta', placeholder: 'Turmas infantis e adultos.' },
+    { key: 'image', label: 'Fotografia', type: 'image' },
+  ],
+});
+
+/* Modalidades */
+listEditor('#classes-list', 'classes.items', {
+  title: c => c.name || 'Modalidade', addLabel: 'Adicionar modalidade',
+  newItem: () => ({ name: '', description: '', image: '' }),
+  fields: [{ key: 'name', label: 'Nome' }, { key: 'description', label: 'Descrição', type: 'textarea' }, { key: 'image', label: 'Imagem', type: 'image' }],
+});
+
+/* Associação */
+listEditor('#stats-list', 'about.stats', {
+  title: s => s.label || 'Estatística', addLabel: 'Adicionar estatística',
+  newItem: () => ({ value: '0', suffix: '', label: '' }),
+  fields: [{ key: 'value', label: 'Valor', placeholder: '300' }, { key: 'suffix', label: 'Sufixo', placeholder: '+' }, { key: 'label', label: 'Legenda' }],
+});
+listEditor('#timeline-list', 'history.timeline', {
+  title: t => `${t.year || '—'} · ${t.title || ''}`, addLabel: 'Adicionar marco',
+  newItem: () => ({ year: '', title: '', text: '' }),
+  fields: [{ key: 'year', label: 'Ano' }, { key: 'title', label: 'Título' }, { key: 'text', label: 'Texto', type: 'textarea' }],
+});
+listEditor('#board-list', 'board.groups', {
+  title: g => g.name || 'Órgão', addLabel: 'Adicionar órgão',
+  newItem: () => ({ name: '', members: [] }),
+  fields: [
+    { key: 'name', label: 'Nome do órgão', placeholder: 'Direção' },
+    { key: 'members', label: 'Membros', type: 'sublist', addLabel: 'Adicionar membro', newItem: { role: '', name: '' },
+      fields: [{ key: 'role', label: 'Cargo', placeholder: 'Presidente' }, { key: 'name', label: 'Nome' }] },
+  ],
+});
+listEditor('#instructors-list', 'instructors.items', {
+  title: p => p.name || 'Instrutor', addLabel: 'Adicionar instrutor',
+  newItem: () => ({ name: '', grade: '', role: '', bio: '', image: '' }),
+  fields: [
+    { key: 'name', label: 'Nome' }, { key: 'grade', label: 'Graduação', placeholder: '3.º Dan' },
+    { key: 'role', label: 'Função', placeholder: 'Instrutor · Adultos' },
+    { key: 'bio', label: 'Biografia curta', type: 'textarea' },
+    { key: 'image', label: 'Fotografia', type: 'image' },
+  ],
+});
+listEditor('#kun-list', 'dojoKun.principles', {
+  title: (p, i) => `${i + 1}. ${p.pt || ''}`, addLabel: 'Adicionar preceito',
+  newItem: () => ({ jp: '', pt: '', text: '' }),
+  fields: [{ key: 'jp', label: 'Japonês (romaji)' }, { key: 'pt', label: 'Português' }, { key: 'text', label: 'Explicação curta', type: 'textarea' }],
+});
+
+/* Notícias */
+listEditor('#news-cats-list', 'news.categories', {
+  title: k => k.label || 'Categoria', addLabel: 'Adicionar categoria',
+  newItem: () => ({ key: uid('c'), label: '' }),
+  fields: [{ key: 'label', label: 'Nome' }, { key: 'key', label: 'Chave interna' }],
+});
+listEditor('#news-list', 'news.items', {
+  title: n => `${n.date || '—'} · ${n.title || 'Sem título'}`, addLabel: 'Novo artigo',
+  newItem: () => ({ slug: '', title: '', category: content.news?.categories?.[0]?.key || '', date: new Date().toISOString().slice(0, 10), author: content.site?.name || '', excerpt: '', image: '', body: '' }),
+  fields: [
+    { key: 'title', label: 'Título' },
+    { key: 'slug', label: 'Endereço (slug)', placeholder: 'gerado automaticamente', help: 'Fica em /noticias/<slug>. Deixa vazio para gerar a partir do título.' },
+    { key: 'category', label: 'Categoria', type: 'select', options: catOpts },
+    { key: 'date', label: 'Data', type: 'date' },
+    { key: 'author', label: 'Autor' },
+    { key: 'excerpt', label: 'Resumo (aparece nos cartões)', type: 'textarea' },
+    { key: 'body', label: 'Texto do artigo', type: 'textarea', rows: 14, help: 'Parágrafos separados por linha em branco. <code>## Título</code> para subtítulos, <code>- item</code> para listas, <code>**negrito**</code>.' },
+    { key: 'image', label: 'Imagem de capa', type: 'image' },
+  ],
+});
+
+/* Eventos */
+listEditor('#event-types-list', 'events.types', {
+  title: t => t.label || 'Tipo', addLabel: 'Adicionar tipo',
+  newItem: () => ({ key: uid('t'), label: '', path: '', pageTitle: '', pageIntro: '' }),
+  fields: [
+    { key: 'label', label: 'Nome' }, { key: 'key', label: 'Chave interna' },
+    { key: 'path', label: 'Página própria (opcional)', placeholder: '/competicoes', help: 'Só /competicoes e /formacoes existem como páginas.' },
+    { key: 'pageTitle', label: 'Título da página' },
+    { key: 'pageIntro', label: 'Introdução da página', type: 'textarea' },
+  ],
+});
+listEditor('#events-list', 'events.items', {
+  title: e => `${e.date || '—'} · ${e.title || 'Sem título'}`, addLabel: 'Adicionar evento',
+  newItem: () => ({ id: uid('e'), date: '', title: '', type: content.events?.types?.[0]?.key || '', location: '', description: '', link: '' }),
+  fields: [
+    { key: 'title', label: 'Título' }, { key: 'date', label: 'Data', type: 'date' },
+    { key: 'type', label: 'Tipo', type: 'select', options: typeOpts },
+    { key: 'location', label: 'Local' },
+    { key: 'description', label: 'Descrição', type: 'textarea' },
+    { key: 'link', label: 'Link externo (opcional)', placeholder: 'https://…' },
+  ],
+});
 
 /* ─── Save ────────────────────────────────────────────────────────────── */
-window.saveContent = async function() {
+function prepareForSave() {
+  (content.news?.items || []).forEach(n => { if (!n.slug) n.slug = slugify(n.title); });
+  (content.events?.items || []).forEach(e => { if (!e.id) e.id = uid('e'); });
+  (content.schedule?.sessions || []).forEach(s => { if (!s.id) s.id = uid('s'); });
+  (content.dojos?.items || []).forEach(d => { if (!d.id) d.id = slugify(d.name) || uid('d'); });
+}
+
+window.saveContent = async function () {
   const btn = document.querySelector('#save-btn');
   btn.disabled = true;
   btn.textContent = 'A guardar…';
   setSaveStatus('A guardar…', 'saving');
-
   try {
+    prepareForSave();
     const res = await fetch('/api/content', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
@@ -367,17 +518,18 @@ window.saveContent = async function() {
     setSaveStatus('Guardado', 'saved');
     document.querySelector('#last-saved').textContent = 'Guardado às ' + new Date().toLocaleTimeString('pt-PT');
     showToast('✓ Conteúdo guardado com sucesso!');
+    renderAll();
   } catch (err) {
     setSaveStatus('Erro ao guardar', 'error');
     showToast('Erro: ' + err.message, 'error');
+    if (/autorizado/i.test(err.message)) { localStorage.removeItem('cms_token'); }
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Guardar Alterações';
-    btn.insertAdjacentHTML('afterbegin', '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>');
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Guardar Alterações';
   }
 };
 
-/* ─── Image upload ────────────────────────────────────────────────────── */
+/* ─── Image upload / biblioteca ───────────────────────────────────────── */
 async function doUpload(file) {
   const fd = new FormData();
   fd.append('image', file);
@@ -394,38 +546,9 @@ async function doUpload(file) {
   }
 }
 
-window.uploadImage = async function(e, path, previewId) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const url = await doUpload(file);
-  if (url) {
-    setPath(content, path, url);
-    document.querySelector(`[data-path="${path}"]`).value = url;
-    showImgPreview(previewId, url);
-    markDirty();
-  }
-};
-
-function showImgPreview(previewId, url) {
-  if (!url) return;
-  const prev = document.querySelector('#' + previewId);
-  if (!prev) return;
-  const img = prev.querySelector('img');
-  if (img) img.src = url;
-  prev.style.display = '';
-  /* Also update any [data-path] input that matches the url field */
-}
-
-window.removeImage = function(path, previewId) {
-  setPath(content, path, '');
-  document.querySelector(`[data-path="${path}"]`).value = '';
-  document.querySelector('#' + previewId).style.display = 'none';
-  markDirty();
-};
-
-window.uploadToLibrary = async function(e) {
-  const files = Array.from(e.target.files);
-  for (const f of files) await doUpload(f);
+window.uploadToLibrary = async function (e) {
+  for (const f of Array.from(e.target.files)) await doUpload(f);
+  e.target.value = '';
 };
 
 async function loadImages() {
@@ -437,32 +560,26 @@ async function loadImages() {
     if (cnt) cnt.textContent = imgs.length;
     if (!grid) return;
     grid.innerHTML = imgs.map(img => `
-      <div style="position:relative;border-radius:6px;overflow:hidden;background:var(--bg-2);border:1px solid var(--border)">
-        <div style="width:100%;height:100px;display:flex;align-items:center;justify-content:center;background:${img.filename.endsWith('.svg') ? '#fff' : 'transparent'}">
-          <img src="${img.url}" style="max-width:100%;max-height:100px;object-fit:contain" loading="lazy">
+      <div class="lib-item">
+        <div class="lib-thumb" style="background:${img.filename.endsWith('.svg') ? '#fff' : 'transparent'}">
+          <img src="${esc(img.url)}" loading="lazy" alt="">
         </div>
-        <div style="padding:6px 8px">
-          <div style="font-size:.65rem;color:var(--text-m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${img.filename}</div>
-          <div style="font-size:.65rem;color:var(--text-m)">${(img.size/1024).toFixed(0)} KB${img.deletable === false ? ' · SVG fixo' : ''}</div>
+        <div class="lib-meta">
+          <div class="lib-name" title="${esc(img.filename)}">${esc(img.filename)}</div>
+          <div class="lib-size">${(img.size / 1024).toFixed(0)} KB${img.deletable === false ? ' · fixo' : ''}</div>
         </div>
-        <button onclick="copyUrl('${img.url}')" style="position:absolute;top:6px;right:6px;width:24px;height:24px;background:rgba(0,0,0,.7);border:none;border-radius:4px;color:#fff;cursor:pointer;font-size:.7rem" title="Copiar URL">⎘</button>
+        <button type="button" class="lib-copy" onclick="copyUrl('${esc(img.url)}')" title="Copiar URL">⎘</button>
       </div>`).join('');
   } catch {}
 }
 
-function copyUrl(url) {
+window.copyUrl = function (url) {
   navigator.clipboard.writeText(url).then(() => showToast('URL copiado!'));
-}
+};
 
-/* ─── Sidebar nav ─────────────────────────────────────────────────────── */
-function initNav() {
-  const items  = document.querySelectorAll('.nav-item[data-section]');
-  const titles = {
-    geral: 'Informações Gerais', hero: 'Hero', beneficios: 'Benefícios',
-    modalidades: 'Modalidades', sobre: 'Sobre / Estatísticas', horarios: 'Horários',
-    cta: 'Call to Action', contacto: 'Contacto', footer: 'Rodapé', imagens: 'Imagens',
-  };
-
+/* ─── Sidebar ─────────────────────────────────────────────────────────── */
+function initSidebar() {
+  const items = document.querySelectorAll('.nav-item[data-section]');
   items.forEach(item => {
     item.addEventListener('click', () => {
       items.forEach(i => i.classList.remove('active'));
@@ -471,29 +588,14 @@ function initNav() {
       document.querySelectorAll('.editor-section').forEach(s => s.classList.remove('active'));
       const target = document.querySelector(`#sec-${sec}`);
       if (target) target.classList.add('active');
-      document.querySelector('#topbar-title').textContent = titles[sec] || sec;
+      document.querySelector('#topbar-title').textContent = item.dataset.title || item.textContent.trim();
+      document.querySelector('#content-area').scrollTop = 0;
     });
   });
 }
 
-/* ─── Warn on leave ──────────────────────────────────────────────────── */
-window.addEventListener('beforeunload', e => {
-  if (dirty) {
-    e.preventDefault();
-    e.returnValue = '';
-  }
-});
-
-/* ─── Keyboard shortcut Ctrl+S ───────────────────────────────────────── */
+/* ─── Warn on leave / Ctrl+S ──────────────────────────────────────────── */
+window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 window.addEventListener('keydown', e => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-    e.preventDefault();
-    window.saveContent();
-  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); window.saveContent(); }
 });
-
-/* ─── Helpers ─────────────────────────────────────────────────────────── */
-function esc(s) {
-  if (!s) return '';
-  return String(s).replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}

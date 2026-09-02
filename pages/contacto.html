@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="description" content="Contacta a ASBKI Covilhã: morada, telefone, e-mail e formulário.">
+   <title>Contacto — ASBKI Covilhã</title>
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="/assets/css/style.css">
+   <link rel="stylesheet" href="/assets/css/pages.css">
+</head>
+<body data-page="contacto">
+   <div id="site-header"></div>
+   <main>
+      <section class="page-hero">
+         <div class="container">
+            <span class="section-label" id="ph-sub"></span>
+            <h1 class="page-title" id="ph-title"></h1>
+            <p class="page-intro" id="ph-intro"></p>
+         </div>
+      </section>
+      <section class="contact contact-page" style="border-top:0">
+         <div class="container">
+            <div class="contact-grid">
+               <div class="fade-in">
+                  <div id="contact-details"></div>
+                  <div class="contact-dojos" id="contact-dojos"></div>
+               </div>
+               <div class="fade-in fade-in-delay-1">
+                  <div class="contact-form">
+                     <div class="contact-form-title" id="contact-form-title"></div>
+                     <form id="contact-form" onsubmit="handleContactForm(event)">
+                        <div class="form-row">
+                           <div class="form-group">
+                              <label for="f-name" id="label-name">Nome</label>
+                              <input id="f-name" type="text" name="name" required autocomplete="name">
+                           </div>
+                           <div class="form-group">
+                              <label for="f-email" id="label-email">E-mail</label>
+                              <input id="f-email" type="email" name="email" required autocomplete="email">
+                           </div>
+                        </div>
+                        <div class="form-group">
+                           <label for="f-phone" id="label-phone">Telefone</label>
+                           <input id="f-phone" type="tel" name="phone" autocomplete="tel">
+                        </div>
+                        <div class="form-group">
+                           <label for="f-message" id="label-message">Mensagem</label>
+                           <textarea id="f-message" name="message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-accent form-submit" id="label-submit">Enviar</button>
+                     </form>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+   </main>
+   <div id="site-footer"></div>
+   <script src="/assets/js/site.js"></script>
+   <script src="/assets/js/pages.js"></script>
+</body>
+</html>

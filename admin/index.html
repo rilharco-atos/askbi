@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
   <title>ASBKI CMS — Painel de Administração</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/admin/style.css">
 </head>
 <body>
 
@@ -16,9 +17,7 @@
   <div class="login-box">
     <div class="login-logo">
       <div class="login-star">★</div>
-      <div>
-        <div class="login-brand">ASBKI CMS</div>
-      </div>
+      <div><div class="login-brand">ASBKI CMS</div></div>
     </div>
     <div class="login-title">Painel de Administração</div>
     <div class="login-sub">Introduz a password para continuar.</div>
@@ -36,7 +35,6 @@
 <!-- ═══ APP ══════════════════════════════════════════════════════════════ -->
 <div id="app" hidden>
 
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-logo">
@@ -49,66 +47,39 @@
     </div>
 
     <nav class="sidebar-nav">
-      <div class="sidebar-section-label">Website</div>
-      <div class="nav-item active" data-section="geral">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.75"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Geral
-      </div>
-      <div class="nav-item" data-section="hero">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.75"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-        Hero
-      </div>
-      <div class="nav-item" data-section="beneficios">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.75"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        Benefícios
-      </div>
-      <div class="nav-item" data-section="modalidades">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.75"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Modalidades
-      </div>
-      <div class="nav-item" data-section="sobre">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Sobre / Stats
-      </div>
-      <div class="nav-item" data-section="horarios">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Horários
-      </div>
-      <div class="nav-item" data-section="cta">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.75"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
-        Call to Action
-      </div>
-      <div class="nav-item" data-section="contacto">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.75"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.37 18a19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.72a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        Contacto
-      </div>
-      <div class="nav-item" data-section="footer">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.75"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        Rodapé
-      </div>
-      <div class="sidebar-section-label" style="margin-top:16px">Media</div>
-      <div class="nav-item" data-section="imagens">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.75"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        Imagens
-      </div>
+      <div class="sidebar-section-label">Site</div>
+      <div class="nav-item active" data-section="geral" data-title="Geral e menu">Geral &amp; Menu</div>
+      <div class="nav-item" data-section="inicio" data-title="Página inicial">Página inicial</div>
+      <div class="nav-item" data-section="footer" data-title="Rodapé">Rodapé</div>
+
+      <div class="sidebar-section-label" style="margin-top:14px">Páginas</div>
+      <div class="nav-item" data-section="dojos" data-title="Dojos">Dojos</div>
+      <div class="nav-item" data-section="horarios" data-title="Horários e inscrição">Horários &amp; Inscrição</div>
+      <div class="nav-item" data-section="noticias" data-title="Notícias">Notícias</div>
+      <div class="nav-item" data-section="eventos" data-title="Eventos">Eventos</div>
+      <div class="nav-item" data-section="modalidades" data-title="Modalidades">Modalidades</div>
+      <div class="nav-item" data-section="contacto" data-title="Contacto">Contacto</div>
+
+      <div class="sidebar-section-label" style="margin-top:14px">Associação</div>
+      <div class="nav-item" data-section="sobre" data-title="Sobre nós">Sobre nós</div>
+      <div class="nav-item" data-section="historia" data-title="História">História</div>
+      <div class="nav-item" data-section="orgaos" data-title="Órgãos sociais">Órgãos sociais</div>
+      <div class="nav-item" data-section="instrutores" data-title="Instrutores">Instrutores</div>
+      <div class="nav-item" data-section="dojokun" data-title="Dojo Kun">Dojo Kun</div>
+
+      <div class="sidebar-section-label" style="margin-top:14px">Media</div>
+      <div class="nav-item" data-section="imagens" data-title="Biblioteca de imagens">Imagens</div>
     </nav>
 
     <div class="sidebar-footer">
-      <button class="sidebar-preview-btn" onclick="window.open('/', '_blank')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Ver Website
-      </button>
-      <button class="sidebar-preview-btn" id="logout-btn" style="color:#fca5a5">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Sair
-      </button>
+      <button class="sidebar-preview-btn" onclick="window.open('/', '_blank')">Ver website ↗</button>
+      <button class="sidebar-preview-btn" id="logout-btn" style="color:#fca5a5">Sair</button>
     </div>
   </aside>
 
-  <!-- Main -->
   <div class="main">
     <div class="topbar">
-      <div class="topbar-title" id="topbar-title">Geral</div>
+      <div class="topbar-title" id="topbar-title">Geral e menu</div>
       <div class="save-status" id="save-status" style="display:none"></div>
     </div>
 
@@ -116,131 +87,92 @@
 
       <!-- ── GERAL ── -->
       <div class="editor-section active" id="sec-geral">
-        <div class="editor-title">Informações Gerais</div>
-        <div class="editor-desc">Identidade, logo, contactos, redes sociais e menu de navegação.</div>
+        <div class="editor-title">Informações gerais</div>
+        <div class="editor-desc">Identidade, logótipo, contactos, redes sociais e menu de navegação.</div>
 
         <div class="editor-card">
-          <div class="editor-card-title">Identidade &amp; Logo</div>
+          <div class="editor-card-title">Identidade &amp; logótipo</div>
           <div class="field-row">
-            <div class="field"><label>Nome do Clube</label><input type="text" data-path="site.name" placeholder="ASBKI Covilhã"></div>
-            <div class="field"><label>Tagline</label><input type="text" data-path="site.tagline" placeholder="Artes Marciais"></div>
+            <div class="field"><label>Nome do clube</label><input type="text" data-path="site.name" placeholder="ASBKI"></div>
+            <div class="field"><label>Tagline</label><input type="text" data-path="site.tagline" placeholder="Karate Shotokan · Covilhã"></div>
           </div>
-          <div class="field"><label>URL do Logo (PNG/SVG recomendado)</label><input type="text" data-path="site.logo" placeholder="/assets/images/uploads/logo.png"></div>
-          <div class="img-upload-zone" style="padding:14px">
-            <input type="file" accept="image/*" onchange="uploadImage(event,'site.logo','logo-preview')">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            <div class="img-upload-label" style="font-size:.72rem">Upload do logo</div>
-          </div>
-          <div class="img-preview" id="logo-preview" style="display:none;max-height:80px">
-            <img id="logo-preview-img" src="" alt="" style="height:60px;object-fit:contain;background:#222;padding:8px;border-radius:4px">
-            <button class="img-preview-remove" onclick="removeImage('site.logo','logo-preview')">✕</button>
-          </div>
-          <p style="font-size:.72rem;color:var(--text-m);margin-top:8px">Se não tiver logo, é usada a estrela vermelha com o nome do clube.</p>
+          <div class="img-field" data-img="site.logo" data-label="Logótipo (PNG/SVG)" data-help="Se não houver logótipo é usada a estrela vermelha."></div>
         </div>
 
         <div class="editor-card">
           <div class="editor-card-title">Contactos</div>
           <div class="field-row">
-            <div class="field"><label>Telefone</label><input type="text" data-path="site.phone" placeholder="+351 275 000 000"></div>
-            <div class="field"><label>E-mail</label><input type="email" data-path="site.email" placeholder="geral@asbki-covilha.pt"></div>
+            <div class="field"><label>Telefone</label><input type="text" data-path="site.phone"></div>
+            <div class="field"><label>E-mail</label><input type="email" data-path="site.email"></div>
           </div>
-          <div class="field"><label>Morada</label><input type="text" data-path="site.address" placeholder="Covilhã, Portugal"></div>
+          <div class="field"><label>Morada (sede)</label><input type="text" data-path="site.address"></div>
         </div>
 
         <div class="editor-card">
-          <div class="editor-card-title">Redes Sociais</div>
+          <div class="editor-card-title">Redes sociais</div>
           <div class="field-row">
-            <div class="field"><label>Facebook (URL)</label><input type="url" data-path="site.facebook" placeholder="https://facebook.com/…"></div>
-            <div class="field"><label>Instagram (URL)</label><input type="url" data-path="site.instagram" placeholder="https://instagram.com/…"></div>
+            <div class="field"><label>Facebook (URL)</label><input type="url" data-path="site.facebook"></div>
+            <div class="field"><label>Instagram (URL)</label><input type="url" data-path="site.instagram"></div>
           </div>
           <div class="field-row">
-            <div class="field"><label>YouTube (URL)</label><input type="url" data-path="site.youtube" placeholder="https://youtube.com/…"></div>
-            <div class="field"><label>TikTok (URL)</label><input type="url" data-path="site.tiktok" placeholder="https://tiktok.com/…"></div>
+            <div class="field"><label>YouTube (URL)</label><input type="url" data-path="site.youtube"></div>
+            <div class="field"><label>TikTok (URL)</label><input type="url" data-path="site.tiktok"></div>
           </div>
         </div>
 
         <div class="editor-card">
-          <div class="editor-card-title">Menu de Navegação</div>
-          <p style="font-size:.78rem;color:var(--text-m);margin-bottom:16px">Adiciona, remove ou reordena os links do menu. O botão "Aula Gratuita" é configurado no final.</p>
+          <div class="editor-card-title">Menu de navegação</div>
+          <p class="help" style="margin-bottom:14px">Cada item pode ter um submenu (dropdown). A ordem aqui é a ordem no site. O menu também alimenta o "Acesso rápido" do rodapé.</p>
           <div id="nav-links-list"></div>
-          <button class="btn btn-secondary btn-sm" onclick="addNavLink()" style="margin-top:8px">+ Adicionar Link</button>
           <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
             <div class="field-row">
-              <div class="field"><label>Botão CTA — Texto</label><input type="text" data-path="nav.ctaLabel" placeholder="Aula Experimental Gratuita"></div>
-              <div class="field"><label>Botão CTA — Link</label><input type="text" data-path="nav.ctaHref" placeholder="#contacto"></div>
+              <div class="field"><label>Botão CTA — texto</label><input type="text" data-path="nav.ctaLabel"></div>
+              <div class="field"><label>Botão CTA — link</label><input type="text" data-path="nav.ctaHref" placeholder="/inscricao"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ── HERO ── -->
-      <div class="editor-section" id="sec-hero">
-        <div class="editor-title">Secção Hero</div>
-        <div class="editor-desc">A primeira coisa que os visitantes veem.</div>
+      <!-- ── INÍCIO ── -->
+      <div class="editor-section" id="sec-inicio">
+        <div class="editor-title">Página inicial</div>
+        <div class="editor-desc">Hero, benefícios e bloco final. Os treinos, eventos e notícias da página inicial vêm das respetivas secções.</div>
+
         <div class="editor-card">
-          <div class="editor-card-title">Título Principal</div>
+          <div class="editor-card-title">Hero</div>
+          <div class="field"><label>Etiqueta (por cima do título)</label><input type="text" data-path="hero.badge"></div>
           <div class="field-row">
-            <div class="field"><label>Linha 1</label><input type="text" data-path="hero.line1" placeholder="DISCIPLINA."></div>
-            <div class="field"><label>Linha 2</label><input type="text" data-path="hero.line2" placeholder="FOCO."></div>
+            <div class="field"><label>Título — linha 1</label><input type="text" data-path="hero.line1"></div>
+            <div class="field"><label>Título — linha 2</label><input type="text" data-path="hero.line2"></div>
           </div>
-          <div class="field"><label>Linha 3 (em vermelho)</label><input type="text" data-path="hero.line3" placeholder="FORÇA."></div>
           <div class="field"><label>Subtítulo</label><textarea data-path="hero.subtext"></textarea></div>
-        </div>
-        <div class="editor-card">
-          <div class="editor-card-title">Botões</div>
           <div class="field-row">
-            <div class="field"><label>Botão Principal — Texto</label><input type="text" data-path="hero.cta1Label"></div>
-            <div class="field"><label>Botão Principal — Link</label><input type="text" data-path="hero.cta1Href"></div>
+            <div class="field"><label>Botão principal — texto</label><input type="text" data-path="hero.cta1Label"></div>
+            <div class="field"><label>Botão principal — link</label><input type="text" data-path="hero.cta1Href"></div>
           </div>
           <div class="field-row">
-            <div class="field"><label>Botão Secundário — Texto</label><input type="text" data-path="hero.cta2Label"></div>
-            <div class="field"><label>Botão Secundário — Link</label><input type="text" data-path="hero.cta2Href"></div>
+            <div class="field"><label>Botão secundário — texto</label><input type="text" data-path="hero.cta2Label"></div>
+            <div class="field"><label>Botão secundário — link</label><input type="text" data-path="hero.cta2Href"></div>
           </div>
         </div>
         <div class="editor-card">
-          <div class="editor-card-title">Imagem de Fundo (Background)</div>
-          <p style="font-size:.78rem;color:var(--text-m);margin-bottom:12px">Aparece por baixo de tudo, com opacidade reduzida. Pode ser uma textura ou paisagem.</p>
-          <div class="field"><label>URL da imagem</label><input type="text" data-path="hero.backgroundImage" placeholder="/assets/images/uploads/…"></div>
-          <div class="img-upload-zone" id="hero-img-zone">
-            <input type="file" accept="image/*" onchange="uploadImage(event, 'hero.backgroundImage', 'hero-img-preview')">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            <div class="img-upload-label">Clica ou arrasta uma imagem</div>
-          </div>
-          <div class="img-preview" id="hero-img-preview" style="display:none">
-            <img id="hero-img-preview-img" src="" alt="">
-            <button class="img-preview-remove" onclick="removeImage('hero.backgroundImage','hero-img-preview')">✕</button>
-          </div>
+          <div class="editor-card-title">Imagens do hero</div>
+          <div class="img-field" data-img="hero.backgroundImage" data-label="Imagem de fundo" data-help="Aparece por baixo de tudo, com opacidade reduzida."></div>
+          <div style="height:18px"></div>
+          <div class="img-field" data-img="hero.foregroundImage" data-label="Lutador (primeiro plano)" data-help="PNG com fundo transparente."></div>
         </div>
         <div class="editor-card">
-          <div class="editor-card-title">Imagem do Lutador (Primeiro Plano)</div>
-          <p style="font-size:.78rem;color:var(--text-m);margin-bottom:12px">A imagem principal do lado direito — o atleta/lutador. Recomendado: SVG com fundo transparente (como o hero-ink.svg atual) ou PNG recortado. Podes também escrever diretamente o URL de um SVG fixo, ex: <code style="font-size:.7rem;opacity:.7">/assets/images/hero-ink.svg</code></p>
-          <div class="field"><label>URL da imagem</label><input type="text" data-path="hero.foregroundImage" placeholder="/assets/images/hero-ink.svg"></div>
-          <div class="img-upload-zone">
-            <input type="file" accept="image/*,.svg" onchange="uploadImage(event, 'hero.foregroundImage', 'hero-fg-preview')">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            <div class="img-upload-label">Clica ou arrasta (PNG transparente recomendado)</div>
-          </div>
-          <div class="img-preview" id="hero-fg-preview" style="display:none">
-            <img id="hero-fg-preview-img" src="" alt="">
-            <button class="img-preview-remove" onclick="removeImage('hero.foregroundImage','hero-fg-preview')">✕</button>
-          </div>
-        </div>
-        <div class="editor-card">
-          <div class="editor-card-title">Posição &amp; Tamanho do Lutador</div>
+          <div class="editor-card-title">Posição &amp; tamanho do lutador</div>
           <div class="field">
             <label>Tamanho — <strong id="fighter-size-val">88</strong>%</label>
-            <input type="range" id="fighter-size-input" min="40" max="140" value="88" step="1"
-                   style="width:100%;accent-color:var(--accent);margin-top:6px" oninput="updateFighterControls()">
-            <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--text-m);margin-top:3px"><span>40%</span><span>90%</span><span>140%</span></div>
+            <input type="range" id="fighter-size-input" min="40" max="140" value="88" step="1" style="width:100%;accent-color:var(--accent);margin-top:6px" oninput="updateFighterControls()">
           </div>
           <div class="field" style="margin-top:14px">
-            <label>Deslocamento horizontal — <strong id="fighter-offset-val">0</strong>px &nbsp;<span style="opacity:.5;font-weight:400">(+ direita / − esquerda)</span></label>
-            <input type="range" id="fighter-offset-input" min="-300" max="300" value="0" step="10"
-                   style="width:100%;accent-color:var(--accent);margin-top:6px" oninput="updateFighterControls()">
-            <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--text-m);margin-top:3px"><span>← −300px</span><span>0</span><span>+300px →</span></div>
+            <label>Deslocamento horizontal — <strong id="fighter-offset-val">0</strong>px <span style="opacity:.5;font-weight:400">(+ direita / − esquerda)</span></label>
+            <input type="range" id="fighter-offset-input" min="-300" max="300" value="0" step="10" style="width:100%;accent-color:var(--accent);margin-top:6px" oninput="updateFighterControls()">
           </div>
           <div style="margin-top:18px">
-            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-m);margin-bottom:8px">Pré-visualização</div>
+            <div class="help" style="margin-bottom:8px">PRÉ-VISUALIZAÇÃO</div>
             <div class="fighter-preview-box" id="fighter-preview-box">
               <div class="fighter-preview-overlay"></div>
               <div class="fighter-preview-text">
@@ -249,135 +181,41 @@
               </div>
               <img id="fighter-preview-img" src="" alt="" style="display:none">
             </div>
-            <p style="font-size:.7rem;color:var(--text-m);margin-top:8px">Clica em <strong>Guardar Alterações</strong> para aplicar no site.</p>
           </div>
         </div>
-      </div>
 
-      <!-- ── BENEFÍCIOS ── -->
-      <div class="editor-section" id="sec-beneficios">
-        <div class="editor-title">Benefícios</div>
-        <div class="editor-desc">Os 4 pontos de destaque abaixo do hero.</div>
-        <div id="benefits-list"></div>
-      </div>
+        <div class="editor-card">
+          <div class="editor-card-title">Benefícios (4 pontos abaixo do hero)</div>
+          <div id="benefits-list"></div>
+        </div>
 
-      <!-- ── MODALIDADES ── -->
-      <div class="editor-section" id="sec-modalidades">
-        <div class="editor-title">Modalidades</div>
-        <div class="editor-desc">Gerir as modalidades/aulas disponíveis.</div>
         <div class="editor-card">
-          <div class="editor-card-title">Cabeçalho da Secção</div>
+          <div class="editor-card-title">Bloco "Notícias recentes"</div>
           <div class="field-row">
-            <div class="field"><label>Subtítulo (label vermelho)</label><input type="text" data-path="classes.subtitle"></div>
-            <div class="field"><label>Título Principal</label><input type="text" data-path="classes.title"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="news.homeTitle"></div>
+            <div class="field"><label>Link "ver todas"</label><input type="text" data-path="news.homeViewAll"></div>
           </div>
-          <div class="field-row">
-            <div class="field"><label>Texto do botão</label><input type="text" data-path="classes.ctaLabel"></div>
-            <div class="field"><label>Link do botão</label><input type="text" data-path="classes.ctaHref"></div>
-          </div>
+          <div class="field"><label>Título do painel de eventos</label><input type="text" data-path="events.homeTitle"></div>
         </div>
-        <div id="classes-list"></div>
-        <button class="btn btn-secondary" onclick="addClassItem()">+ Adicionar Modalidade</button>
-      </div>
 
-      <!-- ── SOBRE ── -->
-      <div class="editor-section" id="sec-sobre">
-        <div class="editor-title">Sobre / Estatísticas</div>
-        <div class="editor-desc">Secção "Sobre Nós" e os contadores de estatísticas.</div>
         <div class="editor-card">
-          <div class="editor-card-title">Sobre Nós</div>
-          <div class="field-row">
-            <div class="field"><label>Subtítulo (label)</label><input type="text" data-path="about.subtitle"></div>
-            <div class="field"><label>Título</label><input type="text" data-path="about.title"></div>
-          </div>
-          <div class="field"><label>Texto</label><textarea data-path="about.text"></textarea></div>
-          <div class="field"><label>Texto do botão</label><input type="text" data-path="about.ctaLabel"></div>
-          <div class="field-row">
-            <div>
-              <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-m);margin-bottom:8px">Características (uma por linha)</div>
-              <textarea id="about-features-input" style="width:100%;background:var(--bg-2);border:1px solid var(--border-2);border-radius:6px;padding:10px 14px;color:var(--text);font-family:var(--font-b);font-size:.9rem;outline:none;resize:vertical;min-height:90px" placeholder="Instrutores Certificados&#10;Ambiente Positivo&#10;Para Todas as Idades"></textarea>
-            </div>
-          </div>
-        </div>
-        <div class="editor-card">
-          <div class="editor-card-title">Imagem</div>
-          <div class="field"><label>URL da imagem</label><input type="text" data-path="about.image"></div>
-          <div class="img-upload-zone">
-            <input type="file" accept="image/*" onchange="uploadImage(event, 'about.image', 'about-img-preview')">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            <div class="img-upload-label">Clica ou arrasta</div>
-          </div>
-          <div class="img-preview" id="about-img-preview" style="display:none">
-            <img id="about-img-preview-img" src="" alt="">
-            <button class="img-preview-remove" onclick="removeImage('about.image','about-img-preview')">✕</button>
-          </div>
-        </div>
-        <div class="editor-card">
-          <div class="editor-card-title">Bloco de Estatísticas</div>
-          <div class="field-row">
-            <div class="field"><label>Subtítulo (label)</label><input type="text" data-path="about.statsSubtitle"></div>
-            <div class="field"><label>Título</label><input type="text" data-path="about.statsTitle"></div>
-          </div>
-          <div id="stats-list"></div>
-          <button class="btn btn-secondary btn-sm" onclick="addStat()" style="margin-top:8px">+ Adicionar Estatística</button>
-        </div>
-      </div>
-
-      <!-- ── HORÁRIOS ── -->
-      <div class="editor-section" id="sec-horarios">
-        <div class="editor-title">Horários</div>
-        <div class="editor-desc">Define os dias e horários de funcionamento.</div>
-        <div class="editor-card">
-          <div class="editor-card-title">Título da Secção</div>
-          <div class="field"><label>Título</label><input type="text" data-path="schedule.title"></div>
-        </div>
-        <div class="editor-card">
-          <div class="editor-card-title">Horário de Funcionamento</div>
-          <div id="schedule-list"></div>
-          <button class="btn btn-secondary btn-sm" onclick="addScheduleRow()" style="margin-top:8px">+ Adicionar Linha</button>
-        </div>
-      </div>
-
-      <!-- ── CTA ── -->
-      <div class="editor-section" id="sec-cta">
-        <div class="editor-title">Call to Action</div>
-        <div class="editor-desc">A secção de destaque para aula experimental.</div>
-        <div class="editor-card">
+          <div class="editor-card-title">Bloco final (call to action)</div>
           <div class="field"><label>Título</label><input type="text" data-path="trial.title"></div>
-          <div class="field"><label>Subtítulo</label><input type="text" data-path="trial.subtext"></div>
+          <div class="field"><label>Texto</label><textarea data-path="trial.subtext"></textarea></div>
           <div class="field-row">
-            <div class="field"><label>Texto do Botão</label><input type="text" data-path="trial.ctaLabel"></div>
-            <div class="field"><label>Link do Botão</label><input type="text" data-path="trial.ctaHref"></div>
+            <div class="field"><label>Botão — texto</label><input type="text" data-path="trial.ctaLabel"></div>
+            <div class="field"><label>Botão — link</label><input type="text" data-path="trial.ctaHref"></div>
           </div>
         </div>
       </div>
 
-      <!-- ── CONTACTO ── -->
-      <div class="editor-section" id="sec-contacto">
-        <div class="editor-title">Secção de Contacto</div>
-        <div class="editor-card">
-          <div class="field"><label>Título da Secção</label><input type="text" data-path="contact.title"></div>
-          <div class="field"><label>Título do Formulário</label><input type="text" data-path="contact.formTitle"></div>
-          <div class="editor-card-title" style="margin-top:16px">Labels do Formulário</div>
-          <div class="field-row">
-            <div class="field"><label>Campo Nome</label><input type="text" data-path="contact.fields.name"></div>
-            <div class="field"><label>Campo E-mail</label><input type="text" data-path="contact.fields.email"></div>
-          </div>
-          <div class="field-row">
-            <div class="field"><label>Campo Telefone</label><input type="text" data-path="contact.fields.phone"></div>
-            <div class="field"><label>Campo Mensagem</label><input type="text" data-path="contact.fields.message"></div>
-          </div>
-          <div class="field"><label>Texto do Botão Enviar</label><input type="text" data-path="contact.fields.submit"></div>
-        </div>
-      </div>
-
-      <!-- ── FOOTER ── -->
+      <!-- ── RODAPÉ ── -->
       <div class="editor-section" id="sec-footer">
         <div class="editor-title">Rodapé</div>
         <div class="editor-card">
-          <div class="field"><label>Descrição do Clube</label><textarea data-path="footer.description"></textarea></div>
+          <div class="field"><label>Descrição do clube</label><textarea data-path="footer.description"></textarea></div>
           <div class="field-row">
-            <div class="field"><label>Título "Acesso Rápido"</label><input type="text" data-path="footer.quickLinksTitle"></div>
+            <div class="field"><label>Título "Acesso rápido"</label><input type="text" data-path="footer.quickLinksTitle"></div>
             <div class="field"><label>Título "Horário"</label><input type="text" data-path="footer.scheduleTitle"></div>
           </div>
           <div class="field-row">
@@ -387,28 +225,303 @@
         </div>
       </div>
 
-      <!-- ── IMAGENS ── -->
-      <div class="editor-section" id="sec-imagens">
-        <div class="editor-title">Biblioteca de Imagens</div>
-        <div class="editor-desc">Todas as imagens carregadas para o website.</div>
+      <!-- ── DOJOS ── -->
+      <div class="editor-section" id="sec-dojos">
+        <div class="editor-title">Dojos</div>
+        <div class="editor-desc">Cada dojo mostra automaticamente as turmas cujo campo "Dojo" coincide com o nome.</div>
         <div class="editor-card">
-          <div class="editor-card-title">Carregar Nova Imagem</div>
-          <p style="font-size:.72rem;color:var(--text-m);margin-bottom:10px">Suporta JPEG, PNG, WebP, GIF e SVG. Os SVGs fixos do site (hero-ink, logo, etc.) aparecem na biblioteca abaixo mas não podem ser apagados.</p>
-          <div class="img-upload-zone">
-            <input type="file" accept="image/*,.svg" multiple onchange="uploadToLibrary(event)">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            <div class="img-upload-label">Clica para carregar imagens</div>
+          <div class="editor-card-title">Cabeçalho da página</div>
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="dojos.subtitle"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="dojos.title"></div>
+          </div>
+          <div class="field"><label>Introdução</label><textarea data-path="dojos.intro"></textarea></div>
+        </div>
+        <div id="dojos-list"></div>
+      </div>
+
+      <!-- ── HORÁRIOS & INSCRIÇÃO ── -->
+      <div class="editor-section" id="sec-horarios">
+        <div class="editor-title">Horários &amp; inscrição</div>
+        <div class="editor-desc">Turmas, faixas etárias, horário de funcionamento e textos do formulário de aula experimental.</div>
+        <div class="editor-card">
+          <div class="editor-card-title">Títulos</div>
+          <div class="field-row">
+            <div class="field"><label>Título na página inicial</label><input type="text" data-path="schedule.title"></div>
+            <div class="field"><label>Link "horário completo"</label><input type="text" data-path="schedule.viewAllLabel"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Etiqueta (página de horários)</label><input type="text" data-path="schedule.pageSubtitle"></div>
+            <div class="field"><label>Título (página de horários)</label><input type="text" data-path="schedule.pageTitle"></div>
+          </div>
+          <div class="field"><label>Introdução (página de horários)</label><textarea data-path="schedule.pageIntro"></textarea></div>
+        </div>
+        <div class="editor-card">
+          <div class="editor-card-title">Faixas etárias (filtros)</div>
+          <div id="filters-list"></div>
+        </div>
+        <div class="editor-card">
+          <div class="editor-card-title">Turmas</div>
+          <div id="sessions-list"></div>
+        </div>
+        <div class="editor-card">
+          <div class="editor-card-title">Horário de funcionamento (rodapé)</div>
+          <div id="days-list"></div>
+        </div>
+        <div class="editor-card">
+          <div class="editor-card-title">Formulário de aula experimental</div>
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="inscription.badge"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="inscription.title"></div>
+          </div>
+          <div class="field"><label>Passos (um por linha, 3)</label><textarea data-lines="inscription.steps" style="min-height:70px"></textarea></div>
+          <div class="field-row">
+            <div class="field"><label>Passo 1 — pergunta</label><input type="text" data-path="inscription.step1Title"></div>
+            <div class="field"><label>Passo 2 — pergunta</label><input type="text" data-path="inscription.step2Title"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Passo 3 — título</label><input type="text" data-path="inscription.step3Title"></div>
+            <div class="field"><label>Passo 3 — texto</label><input type="text" data-path="inscription.step3Text"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Campo nome</label><input type="text" data-path="inscription.fields.name"></div>
+            <div class="field"><label>Placeholder nome</label><input type="text" data-path="inscription.fields.namePlaceholder"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Campo telemóvel</label><input type="text" data-path="inscription.fields.phone"></div>
+            <div class="field"><label>Placeholder telemóvel</label><input type="text" data-path="inscription.fields.phonePlaceholder"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Campo e-mail</label><input type="text" data-path="inscription.fields.email"></div>
+            <div class="field"><label>Placeholder e-mail</label><input type="text" data-path="inscription.fields.emailPlaceholder"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Botão "continuar"</label><input type="text" data-path="inscription.nextLabel"></div>
+            <div class="field"><label>Botão "voltar"</label><input type="text" data-path="inscription.backLabel"></div>
+          </div>
+          <div class="field"><label>Botão "confirmar"</label><input type="text" data-path="inscription.submitLabel"></div>
+        </div>
+      </div>
+
+      <!-- ── NOTÍCIAS ── -->
+      <div class="editor-section" id="sec-noticias">
+        <div class="editor-title">Notícias &amp; artigos</div>
+        <div class="editor-desc">Os três artigos mais recentes aparecem na página inicial. A ordem no site é por data.</div>
+        <div class="editor-card">
+          <div class="editor-card-title">Cabeçalho da página</div>
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="news.subtitle"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="news.title"></div>
+          </div>
+          <div class="field"><label>Introdução</label><textarea data-path="news.intro"></textarea></div>
+          <div class="field-row">
+            <div class="field"><label>Texto "ler artigo"</label><input type="text" data-path="news.readMore"></div>
+            <div class="field"><label>Texto "voltar"</label><input type="text" data-path="news.backLabel"></div>
           </div>
         </div>
         <div class="editor-card">
-          <div class="editor-card-title">Imagens Carregadas <span class="stat-badge" id="img-count">0</span></div>
-          <div id="images-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:4px"></div>
+          <div class="editor-card-title">Categorias</div>
+          <div id="news-cats-list"></div>
+        </div>
+        <div class="editor-card-title" style="margin:8px 0 12px">Artigos</div>
+        <div id="news-list"></div>
+      </div>
+
+      <!-- ── EVENTOS ── -->
+      <div class="editor-section" id="sec-eventos">
+        <div class="editor-title">Eventos</div>
+        <div class="editor-desc">Competições, exames, estágios e formações. As páginas /competicoes e /formacoes mostram o mesmo calendário filtrado.</div>
+        <div class="editor-card">
+          <div class="editor-card-title">Cabeçalho da página</div>
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="events.subtitle"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="events.title"></div>
+          </div>
+          <div class="field"><label>Introdução</label><textarea data-path="events.intro"></textarea></div>
+          <div class="field"><label>Texto quando não há eventos</label><input type="text" data-path="events.emptyText"></div>
+        </div>
+        <div class="editor-card">
+          <div class="editor-card-title">Tipos de evento</div>
+          <div id="event-types-list"></div>
+        </div>
+        <div class="editor-card-title" style="margin:8px 0 12px">Calendário</div>
+        <div id="events-list"></div>
+      </div>
+
+      <!-- ── MODALIDADES ── -->
+      <div class="editor-section" id="sec-modalidades">
+        <div class="editor-title">Modalidades</div>
+        <div class="editor-card">
+          <div class="editor-card-title">Cabeçalho</div>
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="classes.subtitle"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="classes.title"></div>
+          </div>
+          <div class="field"><label>Introdução (página)</label><textarea data-path="classes.intro"></textarea></div>
+          <div class="field-row">
+            <div class="field"><label>Botão (página inicial) — texto</label><input type="text" data-path="classes.ctaLabel"></div>
+            <div class="field"><label>Botão — link</label><input type="text" data-path="classes.ctaHref"></div>
+          </div>
+        </div>
+        <div id="classes-list"></div>
+        <div class="editor-card" style="margin-top:20px">
+          <div class="editor-card-title">Bloco "Karate infantil" (para pais)</div>
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="kids.subtitle"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="kids.title"></div>
+          </div>
+          <div class="field"><label>Introdução</label><textarea data-path="kids.intro"></textarea></div>
+          <div class="field"><label>Pontos (um por linha)</label><textarea data-lines="kids.bullets" style="min-height:110px"></textarea></div>
+          <div class="field"><label>Frase final</label><textarea data-path="kids.closing"></textarea></div>
+          <div class="field-row">
+            <div class="field"><label>Botão — texto</label><input type="text" data-path="kids.ctaLabel"></div>
+            <div class="field"><label>Botão — link</label><input type="text" data-path="kids.ctaHref"></div>
+          </div>
+          <div class="img-field" data-img="kids.image" data-label="Imagem"></div>
+        </div>
+      </div>
+
+      <!-- ── CONTACTO ── -->
+      <div class="editor-section" id="sec-contacto">
+        <div class="editor-title">Contacto</div>
+        <div class="editor-desc">Os contactos em si (telefone, e-mail, morada) estão em "Geral". Os dojos aparecem automaticamente.</div>
+        <div class="editor-card">
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="contact.subtitle"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="contact.title"></div>
+          </div>
+          <div class="field"><label>Introdução</label><textarea data-path="contact.intro"></textarea></div>
+          <div class="field"><label>Título do formulário</label><input type="text" data-path="contact.formTitle"></div>
+          <div class="field-row">
+            <div class="field"><label>Campo nome</label><input type="text" data-path="contact.fields.name"></div>
+            <div class="field"><label>Campo e-mail</label><input type="text" data-path="contact.fields.email"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Campo telefone</label><input type="text" data-path="contact.fields.phone"></div>
+            <div class="field"><label>Campo mensagem</label><input type="text" data-path="contact.fields.message"></div>
+          </div>
+          <div class="field"><label>Botão enviar</label><input type="text" data-path="contact.fields.submit"></div>
+        </div>
+      </div>
+
+      <!-- ── SOBRE NÓS ── -->
+      <div class="editor-section" id="sec-sobre">
+        <div class="editor-title">Associação — sobre nós</div>
+        <div class="editor-desc">Usado na página inicial (resumo) e na página /associacao (completo).</div>
+        <div class="editor-card">
+          <div class="editor-card-title">Apresentação</div>
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="about.subtitle"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="about.title"></div>
+          </div>
+          <div class="field"><label>Texto</label><textarea data-path="about.text"></textarea></div>
+          <div class="field"><label>Pontos fortes (um por linha)</label><textarea data-lines="about.features" style="min-height:90px"></textarea></div>
+          <div class="field-row">
+            <div class="field"><label>Botão (página inicial) — texto</label><input type="text" data-path="about.ctaLabel"></div>
+            <div class="field"><label>Botão — link</label><input type="text" data-path="about.ctaHref"></div>
+          </div>
+          <div class="img-field" data-img="about.image" data-label="Imagem"></div>
+        </div>
+        <div class="editor-card">
+          <div class="editor-card-title">A nossa abordagem (só na página /associacao)</div>
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="about.approachSubtitle"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="about.approachTitle"></div>
+          </div>
+          <div class="field"><label>Texto</label><textarea data-path="about.approachText" style="min-height:220px"></textarea>
+            <p class="help">Parágrafos separados por linha em branco.</p></div>
+        </div>
+        <div class="editor-card">
+          <div class="editor-card-title">Em números</div>
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="about.statsSubtitle"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="about.statsTitle"></div>
+          </div>
+          <div id="stats-list"></div>
+        </div>
+      </div>
+
+      <!-- ── HISTÓRIA ── -->
+      <div class="editor-section" id="sec-historia">
+        <div class="editor-title">História</div>
+        <div class="editor-card">
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="history.subtitle"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="history.title"></div>
+          </div>
+          <div class="field"><label>Introdução</label><textarea data-path="history.intro"></textarea></div>
+        </div>
+        <div class="editor-card-title" style="margin:8px 0 12px">Cronologia</div>
+        <div id="timeline-list"></div>
+      </div>
+
+      <!-- ── ÓRGÃOS SOCIAIS ── -->
+      <div class="editor-section" id="sec-orgaos">
+        <div class="editor-title">Órgãos sociais</div>
+        <div class="editor-card">
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="board.subtitle"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="board.title"></div>
+          </div>
+          <div class="field"><label>Introdução</label><textarea data-path="board.intro"></textarea></div>
+          <div class="field"><label>Mandato</label><input type="text" data-path="board.mandate" placeholder="Mandato 2025 – 2028"></div>
+        </div>
+        <div id="board-list"></div>
+      </div>
+
+      <!-- ── INSTRUTORES ── -->
+      <div class="editor-section" id="sec-instrutores">
+        <div class="editor-title">Instrutores</div>
+        <div class="editor-card">
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="instructors.subtitle"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="instructors.title"></div>
+          </div>
+          <div class="field"><label>Introdução</label><textarea data-path="instructors.intro"></textarea></div>
+          <div class="field"><label>Linhagem (texto em destaque)</label><textarea data-path="instructors.lineage"></textarea></div>
+        </div>
+        <div id="instructors-list"></div>
+      </div>
+
+      <!-- ── DOJO KUN ── -->
+      <div class="editor-section" id="sec-dojokun">
+        <div class="editor-title">Dojo Kun</div>
+        <div class="editor-card">
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="dojoKun.subtitle"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="dojoKun.title"></div>
+          </div>
+          <div class="field"><label>Introdução</label><textarea data-path="dojoKun.intro" style="min-height:110px"></textarea></div>
+        </div>
+        <div class="editor-card-title" style="margin:8px 0 12px">Os cinco preceitos</div>
+        <div id="kun-list"></div>
+        <div class="editor-card" style="margin-top:20px">
+          <div class="field"><label>Nota sobre o "Hitotsu"</label><textarea data-path="dojoKun.note"></textarea></div>
+          <div class="field"><label>Título do bloco Budo</label><input type="text" data-path="dojoKun.budoTitle"></div>
+          <div class="field"><label>Texto do bloco Budo</label><textarea data-path="dojoKun.budoText" style="min-height:160px"></textarea></div>
+        </div>
+      </div>
+
+      <!-- ── IMAGENS ── -->
+      <div class="editor-section" id="sec-imagens">
+        <div class="editor-title">Biblioteca de imagens</div>
+        <div class="editor-desc">Todas as imagens carregadas. Copia o URL para usar em qualquer campo de imagem.</div>
+        <div class="editor-card">
+          <div class="editor-card-title">Carregar</div>
+          <label class="img-upload-zone">
+            <input type="file" accept="image/*,.svg" multiple onchange="uploadToLibrary(event)">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div class="img-upload-label">Clica para carregar imagens (JPEG, PNG, WebP, GIF, SVG)</div>
+          </label>
+        </div>
+        <div class="editor-card">
+          <div class="editor-card-title">Imagens <span class="stat-badge" id="img-count">0</span></div>
+          <div id="images-grid" class="lib-grid"></div>
         </div>
       </div>
 
     </div><!-- /content-area -->
 
-    <!-- Save bar -->
     <div class="save-bar">
       <span style="font-size:.8rem;color:var(--text-m)" id="last-saved"></span>
       <button class="btn btn-secondary" onclick="loadContent()">↺ Recarregar</button>
@@ -422,6 +535,6 @@
 </div><!-- /app -->
 
 <div class="toast" id="toast"></div>
-<script src="app.js"></script>
+<script src="/admin/app.js"></script>
 </body>
 </html>

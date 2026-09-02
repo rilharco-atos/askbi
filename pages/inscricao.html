@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="description" content="Horários de todas as turmas da ASBKI Covilhã e marcação da aula experimental gratuita.">
+   <title>Horários e aula experimental — ASBKI Covilhã</title>
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="/assets/css/style.css">
+   <link rel="stylesheet" href="/assets/css/pages.css">
+</head>
+<body data-page="inscricao">
+   <div id="site-header"></div>
+   <main>
+      <section class="page-hero inscricao-hero">
+         <div class="container">
+            <span class="section-label" id="ph-sub"></span>
+            <h1 class="page-title" id="ph-title"></h1>
+            <p class="page-intro" id="ph-intro"></p>
+            <div class="page-hero-actions">
+               <a href="#marcar" class="btn btn-accent">Marcar agora</a>
+               <a href="#horarios" class="btn btn-outline-ghost">Ver horários</a>
+            </div>
+         </div>
+      </section>
+
+      <section class="treinar" id="horarios">
+         <div class="section-watermark" aria-hidden="true">01</div>
+         <div class="container">
+            <div class="fade-in" style="margin-bottom:28px">
+               <span class="section-label" id="horarios-sub"></span>
+               <h2 class="section-title" id="horarios-title"></h2>
+               <p class="page-intro" id="horarios-intro" style="margin-top:12px;font-size:17px"></p>
+            </div>
+            <div class="session-filters fade-in" id="session-filters"></div>
+            <div class="session-grid fade-in fade-in-delay-1" id="session-grid"></div>
+         </div>
+      </section>
+
+      <section class="inscription" id="marcar">
+         <div class="inscription-kanji" aria-hidden="true">入門</div>
+         <div class="container">
+            <div class="inscription-intro fade-in">
+               <span class="section-label">Passo a passo</span>
+               <h2 class="section-title">Marca a tua primeira aula</h2>
+            </div>
+            <div class="wizard fade-in fade-in-delay-1" id="wizard">
+               <div class="wizard-progress" id="wizard-progress"></div>
+
+               <div class="wizard-panel active" id="wizard-panel-1">
+                  <h3 class="wizard-step-title" id="wizard-step1-title"></h3>
+                  <div class="session-filters" id="wizard-filters"></div>
+                  <div class="session-grid selectable" id="wizard-session-grid"></div>
+                  <div class="wizard-actions">
+                     <button class="btn btn-accent" id="wizard-btn-1" disabled>Continuar</button>
+                  </div>
+               </div>
+
+               <div class="wizard-panel" id="wizard-panel-2">
+                  <h3 class="wizard-step-title" id="wizard-step2-title"></h3>
+                  <div class="wizard-selected-session" id="wizard-selected"></div>
+                  <div class="wizard-form">
+                     <div class="form-group">
+                        <label for="wiz-name" id="wiz-lbl-name"></label>
+                        <input type="text" id="wiz-name" autocomplete="given-name">
+                     </div>
+                     <div class="form-group">
+                        <label for="wiz-phone" id="wiz-lbl-phone"></label>
+                        <input type="tel" id="wiz-phone" autocomplete="tel">
+                     </div>
+                     <div class="form-group">
+                        <label for="wiz-email" id="wiz-lbl-email"></label>
+                        <input type="email" id="wiz-email" autocomplete="email">
+                     </div>
+                  </div>
+                  <div class="wizard-actions">
+                     <button class="btn btn-ghost" id="wizard-back-2">Voltar</button>
+                     <button class="btn btn-accent" id="wizard-btn-2">Continuar</button>
+                  </div>
+               </div>
+
+               <div class="wizard-panel" id="wizard-panel-3">
+                  <div class="wizard-success">
+                     <div class="wizard-check">✓</div>
+                     <h3 class="wizard-step-title" id="wizard-step3-title"></h3>
+                     <p class="wizard-success-text" id="wizard-step3-text"></p>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+   </main>
+   <div id="site-footer"></div>
+   <script src="/assets/js/site.js"></script>
+   <script src="/assets/js/pages.js"></script>
+</body>
+</html>
