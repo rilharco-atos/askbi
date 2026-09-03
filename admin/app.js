@@ -351,7 +351,7 @@ listEditor('#nav-links-list', 'nav.links', {
   newItem: () => ({ label: 'Novo item', href: '/', children: [] }),
   fields: [
     { key: 'label', label: 'Texto', placeholder: 'Dojos' },
-    { key: 'href',  label: 'Link',  placeholder: '/dojos', help: 'Páginas: / · /dojos · /noticias · /eventos · /competicoes · /formacoes · /associacao · /associacao/historia · /associacao/orgaos-sociais · /associacao/instrutores · /associacao/dojo-kun · /modalidades · /inscricao · /contacto' },
+    { key: 'href',  label: 'Link',  placeholder: '/dojos', help: 'Páginas: / · /associacao · /associacao/historia · /associacao/instrutores · /associacao/orgaos-sociais · /associacao/dojo-kun · /karate · /karate/kihon · /karate/kata · /karate/kumite · /dojos · /dojos/&lt;slug&gt; · /noticias · /contacto · /inscricao. Máximo dois níveis.' },
     { key: 'children', label: 'Submenu (dropdown)', type: 'sublist', addLabel: 'Adicionar ao submenu',
       newItem: { label: 'Novo', href: '/' }, fields: [{ key: 'label', label: 'Texto' }, { key: 'href', label: 'Link' }] },
   ],
@@ -396,19 +396,41 @@ listEditor('#days-list', 'schedule.days', {
 /* Dojos */
 listEditor('#dojos-list', 'dojos.items', {
   title: d => d.name || 'Dojo', addLabel: 'Adicionar dojo',
-  newItem: () => ({ id: uid('d'), name: '', address: '', phone: '', email: '', mapUrl: '', image: '', notes: '' }),
+  newItem: () => ({ id: uid('d'), slug: '', name: '', short: '', address: '', phone: '', email: '', mapUrl: '', image: '', notes: '', intro: '' }),
   fields: [
-    { key: 'name', label: 'Nome' }, { key: 'address', label: 'Morada' },
+    { key: 'name', label: 'Nome completo', placeholder: 'Dojo Covilhã' },
+    { key: 'short', label: 'Nome curto (menu)', placeholder: 'Covilhã' },
+    { key: 'slug', label: 'Endereço (slug)', placeholder: 'gerado automaticamente', help: 'Fica em /dojos/&lt;slug&gt;. Usa este link no submenu "Dojos".' },
+    { key: 'address', label: 'Morada' },
     { key: 'phone', label: 'Telefone' }, { key: 'email', label: 'E-mail' },
     { key: 'mapUrl', label: 'Link do mapa (Google Maps)', placeholder: 'https://maps.google.com/?q=…' },
-    { key: 'notes', label: 'Nota curta', placeholder: 'Turmas infantis e adultos.' },
+    { key: 'notes', label: 'Nota curta (cartão)', placeholder: 'Turmas infantis e adultos.' },
+    { key: 'intro', label: 'Apresentação (página do dojo)', type: 'textarea' },
     { key: 'image', label: 'Fotografia', type: 'image' },
   ],
 });
 
-/* Modalidades */
+/* Karate: disciplinas */
+listEditor('#disciplines-list', 'karate.disciplines', {
+  title: d => d.name || 'Disciplina', addLabel: 'Adicionar disciplina',
+  newItem: () => ({ slug: '', name: '', jp: '', kicker: '', excerpt: '', intro: '', body: '', points: [], image: '' }),
+  fields: [
+    { key: 'name', label: 'Nome', placeholder: 'Kihon' },
+    { key: 'slug', label: 'Endereço (slug)', placeholder: 'gerado automaticamente', help: 'Fica em /karate/&lt;slug&gt;.' },
+    { key: 'jp', label: 'Kanji', placeholder: '基本' },
+    { key: 'kicker', label: 'Etiqueta curta', placeholder: 'A base' },
+    { key: 'excerpt', label: 'Resumo (cartão)', type: 'textarea' },
+    { key: 'intro', label: 'Introdução (cabeçalho da página)', type: 'textarea' },
+    { key: 'body', label: 'Texto da página', type: 'textarea', rows: 12, help: 'Parágrafos separados por linha em branco. <code>## Título</code>, <code>- item</code>, <code>**negrito**</code>.' },
+    { key: 'points', label: 'Conceitos-chave (coluna lateral)', type: 'sublist', addLabel: 'Adicionar conceito', newItem: { title: '', text: '' },
+      fields: [{ key: 'title', label: 'Termo', placeholder: 'Kime' }, { key: 'text', label: 'Explicação curta' }] },
+    { key: 'image', label: 'Imagem', type: 'image' },
+  ],
+});
+
+/* Turmas (cartões na home e em /karate) */
 listEditor('#classes-list', 'classes.items', {
-  title: c => c.name || 'Modalidade', addLabel: 'Adicionar modalidade',
+  title: c => c.name || 'Turma', addLabel: 'Adicionar turma',
   newItem: () => ({ name: '', description: '', image: '' }),
   fields: [{ key: 'name', label: 'Nome' }, { key: 'description', label: 'Descrição', type: 'textarea' }, { key: 'image', label: 'Imagem', type: 'image' }],
 });
@@ -473,13 +495,8 @@ listEditor('#news-list', 'news.items', {
 /* Eventos */
 listEditor('#event-types-list', 'events.types', {
   title: t => t.label || 'Tipo', addLabel: 'Adicionar tipo',
-  newItem: () => ({ key: uid('t'), label: '', path: '', pageTitle: '', pageIntro: '' }),
-  fields: [
-    { key: 'label', label: 'Nome' }, { key: 'key', label: 'Chave interna' },
-    { key: 'path', label: 'Página própria (opcional)', placeholder: '/competicoes', help: 'Só /competicoes e /formacoes existem como páginas.' },
-    { key: 'pageTitle', label: 'Título da página' },
-    { key: 'pageIntro', label: 'Introdução da página', type: 'textarea' },
-  ],
+  newItem: () => ({ key: uid('t'), label: '' }),
+  fields: [{ key: 'label', label: 'Nome' }, { key: 'key', label: 'Chave interna' }],
 });
 listEditor('#events-list', 'events.items', {
   title: e => `${e.date || '—'} · ${e.title || 'Sem título'}`, addLabel: 'Adicionar evento',
@@ -498,7 +515,11 @@ function prepareForSave() {
   (content.news?.items || []).forEach(n => { if (!n.slug) n.slug = slugify(n.title); });
   (content.events?.items || []).forEach(e => { if (!e.id) e.id = uid('e'); });
   (content.schedule?.sessions || []).forEach(s => { if (!s.id) s.id = uid('s'); });
-  (content.dojos?.items || []).forEach(d => { if (!d.id) d.id = slugify(d.name) || uid('d'); });
+  (content.dojos?.items || []).forEach(d => {
+    if (!d.id) d.id = slugify(d.name) || uid('d');
+    if (!d.slug) d.slug = slugify(d.short || d.name) || d.id;
+  });
+  (content.karate?.disciplines || []).forEach(d => { if (!d.slug) d.slug = slugify(d.name); });
 }
 
 window.saveContent = async function () {

@@ -17,7 +17,7 @@
     const d = fmtDate(n.date);
     return `
       <article class="card" data-group="${esc(n.category)}">
-        <a href="/noticias/${esc(n.slug)}" class="card-img" aria-label="${esc(n.title)}">
+        <a href="/noticias/${esc(n.slug)}" class="card-img" tabindex="-1" aria-hidden="true">
           ${n.image ? `<img src="${esc(n.image)}" alt="${esc(n.title)}" loading="lazy">`
                     : `<div class="card-img-placeholder">${svg(ICONS.shield, 36)}<span>ASBKI</span></div>`}
         </a>
@@ -63,10 +63,10 @@
     const next = upcoming(events.items, 3);
     document.querySelector('#events-list').innerHTML = next.length
       ? next.map(e => `
-        <a class="event-item" href="/eventos">
+        <div class="event-item">
           <span class="event-date">${esc(fmtDate(e.date).short)}</span>
-          <span class="event-label">${esc(e.title)}${e.location ? ` · ${esc(e.location)}` : ''}</span>
-        </a>`).join('')
+          <span class="event-label">${e.link ? `<a href="${esc(e.link)}" target="_blank" rel="noopener">${esc(e.title)}</a>` : esc(e.title)}${e.location ? ` · ${esc(e.location)}` : ''}</span>
+        </div>`).join('')
       : `<p class="panel-text">${esc(events.emptyText || 'Sem eventos marcados.')}</p>`;
 
     /* --- BENEFÍCIOS --- */

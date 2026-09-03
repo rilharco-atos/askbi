@@ -3,36 +3,46 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta name="description" content="Os instrutores da ASBKI Covilhã e a linhagem Shotokan que seguimos.">
-   <title>Instrutores — ASBKI Covilhã</title>
+   <meta name="description" content="Dojo da ASBKI Covilhã: morada, contactos e horário de treinos.">
+   <title>Dojo — ASBKI Covilhã</title>
    <link rel="preconnect" href="https://fonts.googleapis.com">
    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
    <link rel="stylesheet" href="/assets/css/style.css">
    <link rel="stylesheet" href="/assets/css/pages.css">
 </head>
-<body data-page="instrutores">
+<body data-page="dojo">
    <div id="site-header"></div>
    <main>
       <section class="page-hero">
          <div class="container">
-            <nav class="breadcrumb"><a href="/associacao">Quem Somos</a><span>/</span>Instrutores</nav>
+            <nav class="breadcrumb" aria-label="Caminho"><a href="/dojos">Dojos</a><span>/</span><span id="ph-crumb" aria-current="page"></span></nav>
             <span class="section-label" id="ph-sub"></span>
             <h1 class="page-title" id="ph-title"></h1>
             <p class="page-intro" id="ph-intro"></p>
+            <div class="dojo-hero-meta" id="dojo-hero-meta"></div>
          </div>
       </section>
       <section class="page-section surface-paper">
          <div class="container">
-            <div class="card-grid" id="instructors-grid"></div>
+            <div class="two-col">
+               <div class="fade-in">
+                  <div class="dojo-photo" id="dojo-photo"></div>
+               </div>
+               <div class="dojo-info fade-in fade-in-delay-1" id="dojo-info"></div>
+            </div>
          </div>
       </section>
-      <section class="page-section surface-paper alt">
+      <section class="page-section surface-paper alt" id="horario">
          <div class="container">
-            <span class="section-label">Linhagem</span>
-            <h2 class="section-title" style="margin-bottom:24px">De onde vem o nosso karate</h2>
-            <div id="lineage"></div>
+            <h2 class="dojo-schedule-title fade-in" id="dojo-schedule-title">Horário</h2>
+            <div class="session-filters fade-in" id="dojo-filters"></div>
+            <div class="session-grid fade-in fade-in-delay-1" id="dojo-sessions"></div>
+            <div class="dojo-switch fade-in" id="dojo-switch"></div>
          </div>
+      </section>
+      <section class="page-cta" aria-label="Marcar aula experimental">
+         <div class="container" id="dojo-cta"></div>
       </section>
    </main>
    <div id="site-footer"></div>

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "site": {
     "name": "ASBKI",
     "tagline": "Karate Shotokan · Covilhã",
@@ -16,60 +16,75 @@
     "links": [
       {
         "label": "Início",
-        "href": "/"
+        "href": "/",
+        "children": []
       },
       {
-        "label": "Dojos",
-        "href": "/dojos"
-      },
-      {
-        "label": "Notícias",
-        "href": "/noticias"
-      },
-      {
-        "label": "Eventos",
-        "href": "/eventos"
-      },
-      {
-        "label": "Competições",
-        "href": "/competicoes"
-      },
-      {
-        "label": "Formações",
-        "href": "/formacoes"
-      },
-      {
-        "label": "Associação",
+        "label": "Quem Somos",
         "href": "/associacao",
         "children": [
           {
-            "label": "Sobre nós",
-            "href": "/associacao"
-          },
-          {
             "label": "História",
             "href": "/associacao/historia"
-          },
-          {
-            "label": "Órgãos Sociais",
-            "href": "/associacao/orgaos-sociais"
           },
           {
             "label": "Instrutores",
             "href": "/associacao/instrutores"
           },
           {
-            "label": "Dojo Kun",
-            "href": "/associacao/dojo-kun"
+            "label": "Órgãos Sociais",
+            "href": "/associacao/orgaos-sociais"
           },
           {
-            "label": "Modalidades",
-            "href": "/modalidades"
+            "label": "Dojo Kun",
+            "href": "/associacao/dojo-kun"
           }
         ]
+      },
+      {
+        "label": "Karate",
+        "href": "/karate",
+        "children": [
+          {
+            "label": "Kihon",
+            "href": "/karate/kihon"
+          },
+          {
+            "label": "Kata",
+            "href": "/karate/kata"
+          },
+          {
+            "label": "Kumite",
+            "href": "/karate/kumite"
+          }
+        ]
+      },
+      {
+        "label": "Dojos",
+        "href": "/dojos",
+        "children": [
+          {
+            "label": "Covilhã",
+            "href": "/dojos/covilha"
+          },
+          {
+            "label": "Tortosendo",
+            "href": "/dojos/tortosendo"
+          }
+        ]
+      },
+      {
+        "label": "Notícias",
+        "href": "/noticias",
+        "children": []
+      },
+      {
+        "label": "Contactos",
+        "href": "/contacto",
+        "children": []
       }
     ],
-    "ctaLabel": "Marcar aula experimental",
+    "ctaLabel": "Aula grátis",
     "ctaHref": "/inscricao"
   },
   "hero": {
@@ -77,7 +92,7 @@
     "line1": "Karate na Covilhã,",
     "line2": "dos 5 aos 70 anos.",
     "line3": "",
-    "subtext": "Três dojos, quinze turmas, treinos todas as semanas. A primeira aula é gratuita e não precisa de equipamento.",
+    "subtext": "Dois dojos, turmas dos 5 aos 70 anos, treinos todas as semanas. A primeira aula é gratuita e não precisa de equipamento.",
     "cta1Label": "Marcar aula experimental",
     "cta1Href": "/inscricao",
     "cta2Label": "Ver horários",
@@ -115,7 +130,7 @@
         "daysShort": "SEG · QUA · SEX",
         "time": "18:00 – 19:00",
         "label": "Infantis 5–9 anos",
-        "location": "Dojo Municipal",
+        "location": "Dojo Covilhã",
         "slotsText": "4 vagas",
         "status": "open"
       },
@@ -125,19 +140,9 @@
         "daysShort": "SEG · QUA · SEX",
         "time": "19:15 – 20:30",
         "label": "Juvenis 10–15 anos",
-        "location": "Dojo Municipal",
+        "location": "Dojo Covilhã",
         "slotsText": "7 vagas",
         "status": "open"
-      },
-      {
-        "id": "s3",
-        "group": "adultos",
-        "daysShort": "TER · QUI",
-        "time": "20:00 – 21:30",
-        "label": "Adultos",
-        "location": "Pavilhão da Boidobra",
-        "slotsText": "Lista de espera",
-        "status": "waitlist"
       },
       {
         "id": "s4",
@@ -145,8 +150,18 @@
         "daysShort": "SÁB",
         "time": "09:00 – 10:30",
         "label": "Adultos",
-        "location": "Dojo Municipal",
+        "location": "Dojo Covilhã",
         "slotsText": "3 vagas",
+        "status": "open"
+      },
+      {
+        "id": "s6",
+        "group": "5-9",
+        "daysShort": "TER · QUI",
+        "time": "17:30 – 18:15",
+        "label": "Infantis 5–9 anos",
+        "location": "Dojo Tortosendo",
+        "slotsText": "6 vagas",
         "status": "open"
       },
       {
@@ -155,9 +170,19 @@
         "daysShort": "TER · QUI",
         "time": "18:30 – 19:45",
         "label": "Juvenis 10–15 anos",
-        "location": "Pavilhão do Teixoso",
+        "location": "Dojo Tortosendo",
         "slotsText": "5 vagas",
         "status": "open"
+      },
+      {
+        "id": "s3",
+        "group": "adultos",
+        "daysShort": "TER · QUI",
+        "time": "20:00 – 21:30",
+        "label": "Adultos",
+        "location": "Dojo Tortosendo",
+        "slotsText": "Lista de espera",
+        "status": "waitlist"
       }
     ],
     "days": [
@@ -185,7 +210,7 @@
       {
         "key": "competicao",
         "label": "Competições",
-        "path": "/competicoes",
+        "path": "",
         "pageTitle": "Competições",
         "pageIntro": "Torneios e campeonatos em que a ASBKI participa ou organiza. Os atletas inscrevem-se junto do seu instrutor até à data limite indicada."
       },
@@ -206,7 +231,7 @@
       {
         "key": "formacao",
         "label": "Formações",
-        "path": "/formacoes",
+        "path": "",
         "pageTitle": "Formações",
         "pageIntro": "Cursos de treinadores, arbitragem, primeiros socorros e estágios técnicos. Abertos a sócios e, quando indicado, a praticantes de outros clubes."
       },
@@ -298,11 +323,11 @@
     }
   ],
   "classes": {
-    "subtitle": "AS NOSSAS MODALIDADES",
+    "subtitle": "TURMAS",
     "title": "O que praticamos",
     "intro": "O karate Shotokan é a nossa base. À volta dele organizamos turmas por idade e objetivo, para que cada pessoa treine com quem está no mesmo ponto do caminho.",
-    "ctaLabel": "Ver todas as modalidades",
-    "ctaHref": "/modalidades",
+    "ctaLabel": "Conhecer o karate",
+    "ctaHref": "/karate",
     "items": [
       {
         "name": "Karate Shotokan",
@@ -348,9 +373,9 @@
     "image": ""
   },
   "about": {
-    "subtitle": "SOBRE NÓS",
-    "title": "Uma associação, três dojos",
-    "text": "A ASBKI Covilhã existe desde 1998. Começámos com um dojo no centro da cidade; hoje temos três espaços e quinze turmas em funcionamento. A nossa missão é oferecer karate de qualidade a toda a família, com os melhores instrutores da região.",
+    "subtitle": "QUEM SOMOS",
+    "title": "Uma associação, dois dojos",
+    "text": "A ASBKI Covilhã existe desde 1998. Começámos com um dojo no centro da cidade; hoje temos dois dojos e turmas para todas as idades. A nossa missão é oferecer karate de qualidade a toda a família, com os melhores instrutores da região.",
     "features": [
       "Instrutores federados com mais de 10 anos de experiência",
       "Ambiente seguro e positivo para todas as idades",
@@ -373,7 +398,7 @@
         "label": "Alunos ativos"
       },
       {
-        "value": "3",
+        "value": "2",
         "suffix": "",
         "label": "Dojos na Covilhã"
       },
@@ -415,7 +440,7 @@
       {
         "year": "2026",
         "title": "Hoje",
-        "text": "Quinze turmas, mais de 300 praticantes, dos 5 aos 70 anos."
+        "text": "Turmas em dois dojos, mais de 300 praticantes, dos 5 aos 70 anos."
       }
     ]
   },
@@ -553,37 +578,33 @@
   "dojos": {
     "subtitle": "ONDE TREINAMOS",
     "title": "Os nossos dojos",
-    "intro": "Três espaços em três zonas do concelho da Covilhã. Escolhe o mais perto de ti. Em qualquer deles, a primeira aula é gratuita.",
+    "intro": "Dois espaços no concelho da Covilhã, cada um com o seu horário. Escolhe o mais perto de ti. Em qualquer deles, a primeira aula é gratuita.",
     "items": [
       {
-        "id": "municipal",
-        "name": "Dojo Municipal",
-        "address": "Complexo Desportivo da Covilhã (morada a confirmar)",
+        "id": "covilha",
+        "slug": "covilha",
+        "name": "Dojo Covilhã",
+        "short": "Covilhã",
+        "address": "Covilhã (morada a confirmar)",
         "phone": "+351 275 000 000",
         "email": "geral@asbki-covilha.pt",
-        "mapUrl": "https://maps.google.com/?q=Complexo+Desportivo+da+Covilhã",
+        "mapUrl": "https://maps.google.com/?q=Covilhã",
         "image": "",
-        "notes": "Sede da associação. Turmas infantis, juvenis e adultos."
+        "notes": "Sede da associação. Turmas infantis, juvenis e adultos.",
+        "intro": "O dojo principal da ASBKI, no centro da Covilhã. É aqui que funcionam a maior parte das turmas e onde se realizam os exames de graduação."
       },
       {
-        "id": "boidobra",
-        "name": "Pavilhão da Boidobra",
-        "address": "Boidobra, Covilhã (morada a confirmar)",
+        "id": "tortosendo",
+        "slug": "tortosendo",
+        "name": "Dojo Tortosendo",
+        "short": "Tortosendo",
+        "address": "Tortosendo, Covilhã (morada a confirmar)",
         "phone": "+351 275 000 000",
         "email": "geral@asbki-covilha.pt",
-        "mapUrl": "https://maps.google.com/?q=Boidobra+Covilhã",
+        "mapUrl": "https://maps.google.com/?q=Tortosendo+Covilhã",
         "image": "",
-        "notes": "Turmas de adultos e treino de competição."
-      },
-      {
-        "id": "teixoso",
-        "name": "Pavilhão do Teixoso",
-        "address": "Teixoso, Covilhã (morada a confirmar)",
-        "phone": "+351 275 000 000",
-        "email": "geral@asbki-covilha.pt",
-        "mapUrl": "https://maps.google.com/?q=Teixoso+Covilhã",
-        "image": "",
-        "notes": "Turmas juvenis. Estacionamento junto ao pavilhão."
+        "notes": "Turmas infantis, juvenis e adultos ao fim da tarde.",
+        "intro": "O nosso dojo no Tortosendo serve as famílias da vila e das freguesias vizinhas, com turmas para todas as idades ao fim da tarde."
       }
     ]
   },
@@ -769,10 +790,103 @@
     }
   },
   "footer": {
-    "description": "Karate Shotokan na Covilhã desde 1998. Três dojos, quinze turmas, todas as idades.",
+    "description": "Karate Shotokan na Covilhã desde 1998. Dois dojos, turmas para todas as idades.",
     "quickLinksTitle": "Acesso rápido",
     "scheduleTitle": "Horário",
     "contactTitle": "Contacte-nos",
     "copyright": "© 2026 ASBKI Covilhã. Todos os Direitos Reservados."
+  },
+  "karate": {
+    "subtitle": "KARATE SHOTOKAN",
+    "title": "Kihon, Kata e Kumite",
+    "intro": "O treino de karate Shotokan assenta em três pilares que se alimentam uns aos outros. Aprende-se a técnica isolada, organiza-se em sequências com sentido e, por fim, testa-se com um parceiro.",
+    "turmasTitle": "Turmas por idade e objetivo",
+    "turmasIntro": "O karate é o mesmo para todos; o que muda é o ritmo e a forma de ensinar. Por isso organizamos as turmas por idade e objetivo.",
+    "disciplines": [
+      {
+        "slug": "kihon",
+        "name": "Kihon",
+        "jp": "基本",
+        "kicker": "A base",
+        "excerpt": "As técnicas fundamentais, repetidas até o corpo as fazer sem pensar: posições, deslocamentos, defesas, socos e pontapés.",
+        "intro": "Kihon significa «fundamentos». É a parte do treino em que cada técnica se pratica isolada, sem adversário, com atenção total à forma.",
+        "body": "Onde está o peso, como roda a anca, em que momento o punho fecha. Parece simples e é o que há de mais exigente no karate. Um soco frontal tem meia dúzia de detalhes que levam anos a afinar. Repetir mil vezes não chega; é preciso repetir mil vezes bem.\n\n## O que se treina\n\n- Posições (dachi): zenkutsu, kokutsu, kiba-dachi\n- Deslocamentos e rotações\n- Defesas (uke): age-uke, soto-uke, uchi-uke, gedan-barai\n- Socos (zuki) e ataques de mão\n- Pontapés (geri): mae-geri, mawashi-geri, yoko-geri\n\n## Porque importa\n\nTudo o que aparece no kata e no kumite vem daqui. Um praticante com bom kihon aprende qualquer kata em metade do tempo e defende-se em kumite sem pensar na técnica, porque a técnica já está no corpo.",
+        "points": [
+          {
+            "title": "Postura",
+            "text": "A força começa nas pernas e na anca. Sem posição estável, o resto não existe."
+          },
+          {
+            "title": "Respiração",
+            "text": "Expirar no impacto, inspirar na preparação. O ritmo da respiração marca o ritmo da técnica."
+          },
+          {
+            "title": "Kime",
+            "text": "O momento de contração total no fim do movimento. É o que distingue um soco de um gesto."
+          },
+          {
+            "title": "Hikite",
+            "text": "O braço que recua com a mesma energia do que avança. A potência vem do par, não de um só."
+          }
+        ],
+        "image": ""
+      },
+      {
+        "slug": "kata",
+        "name": "Kata",
+        "jp": "型",
+        "kicker": "A forma",
+        "excerpt": "Sequências fixas de técnicas contra adversários imaginários. Cada kata conta uma história de combate e guarda séculos de conhecimento.",
+        "intro": "Kata é uma sequência fixa de técnicas contra adversários imaginários. O praticante executa-a sozinho, mas nunca está sozinho na cabeça.",
+        "body": "Cada kata conta uma história de combate: quem ataca, de onde, como se responde. No Shotokan há 26 kata oficiais. Começa-se pelos Heian, cinco kata de iniciação, e progride-se para Tekki, Bassai, Kanku, Jion, Empi e os kata superiores. Cada graduação exige kata novos e mais profundidade nos antigos.\n\n## Mais do que coreografia\n\nUm kata bem executado tem ritmo: técnicas lentas e rápidas, pausas, explosões. Tem bunkai, a aplicação prática de cada movimento. E tem zanshin, a atenção que se mantém depois do último gesto.\n\n## Kata na competição\n\nEm prova, o kata é avaliado pela precisão técnica, estabilidade, ritmo, potência e expressão. Os nossos atletas competem individualmente e por equipas, em que três praticantes executam o mesmo kata em sincronia.",
+        "points": [
+          {
+            "title": "Heian",
+            "text": "Os cinco kata de iniciação. Contêm a maior parte das técnicas que se usam até ao cinto negro."
+          },
+          {
+            "title": "Bunkai",
+            "text": "A aplicação de cada movimento. Sem bunkai, o kata é uma dança."
+          },
+          {
+            "title": "Embusen",
+            "text": "A linha de deslocamento. Cada kata começa e acaba no mesmo ponto."
+          },
+          {
+            "title": "Zanshin",
+            "text": "Consciência que permanece. O kata só acaba quando a mente relaxa, não quando o corpo para."
+          }
+        ],
+        "image": ""
+      },
+      {
+        "slug": "kumite",
+        "name": "Kumite",
+        "jp": "組手",
+        "kicker": "O combate",
+        "excerpt": "O treino com parceiro, do movimento combinado ao combate livre. Distância, tempo e controlo, sempre com segurança.",
+        "intro": "Kumite é o treino com parceiro. É onde a técnica deixa de ser abstrata: há distância a gerir, tempo a ler, alguém que reage ao que fazemos.",
+        "body": "Não se começa a combater livremente no primeiro dia. O kumite tem uma progressão pensada para que cada pessoa avance com segurança, do movimento combinado ao combate livre.\n\n## A progressão\n\n- Gohon kumite: cinco ataques combinados, cinco defesas. Aprende-se distância e timing.\n- Kihon ippon kumite: um ataque anunciado, uma defesa e contra-ataque.\n- Jiyu ippon kumite: um ataque, mas com posição livre e movimento.\n- Jiyu kumite: combate livre, com controlo.\n\n## Segurança e controlo\n\nNo Shotokan o kumite é de contacto controlado. Aprende-se a parar a técnica a um centímetro do alvo, o que exige mais domínio do que acertar. As crianças e os iniciantes treinam sempre com proteções e sob supervisão direta do instrutor.\n\n## Kumite desportivo\n\nEm competição, o kumite segue as regras da federação: pontuação por técnica válida, categorias por idade, peso e graduação. A nossa equipa de competição treina especificamente para provas regionais e nacionais.",
+        "points": [
+          {
+            "title": "Maai",
+            "text": "A distância certa. Perto demais não há tempo; longe demais não há técnica."
+          },
+          {
+            "title": "Timing",
+            "text": "Atacar quando o adversário se prepara, se move ou acaba de atacar. Três momentos, três estratégias."
+          },
+          {
+            "title": "Controlo",
+            "text": "Parar a técnica antes do impacto. É mais difícil do que acertar e é o que torna o treino seguro."
+          },
+          {
+            "title": "Respeito",
+            "text": "Cada combate começa e acaba com uma saudação. O parceiro não é um inimigo: é quem nos faz melhorar."
+          }
+        ],
+        "image": ""
+      }
+    ]
   }
 }

@@ -29,24 +29,29 @@ const PAGES = {
   '/':                          'index.html',
   '/dojos':                     'pages/dojos.html',
   '/noticias':                  'pages/noticias.html',
-  '/eventos':                   'pages/eventos.html',
-  '/competicoes':               'pages/eventos.html',
-  '/formacoes':                 'pages/eventos.html',
+  '/karate':                    'pages/karate.html',
   '/associacao':                'pages/associacao.html',
   '/associacao/historia':       'pages/historia.html',
   '/associacao/orgaos-sociais': 'pages/orgaos-sociais.html',
   '/associacao/instrutores':    'pages/instrutores.html',
   '/associacao/dojo-kun':       'pages/dojo-kun.html',
-  '/modalidades':               'pages/modalidades.html',
   '/inscricao':                 'pages/inscricao.html',
   '/contacto':                  'pages/contacto.html',
 };
 
+/* URLs antigas → novos destinos (301) */
+const REDIRECTS = {
+  '/modalidades': '/karate',
+  '/eventos':     '/noticias',
+  '/competicoes': '/noticias',
+  '/formacoes':   '/noticias',
+};
+
 /* ─── Defaults + migração de conteúdo antigo ──────────────────────────── */
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 const ANCHOR_MAP = {
   '#inicio': '/', '#beneficios': '/', '#treinar': '/inscricao#horarios',
-  '#horarios': '/inscricao#horarios', '#modalidades': '/modalidades',
+  '#horarios': '/inscricao#horarios', '#modalidades': '/karate',
   '#sobre': '/associacao', '#inscricao': '/inscricao', '#contacto': '/contacto',
   '#galeria': '/noticias', '#blogue': '/noticias',
 };
@@ -70,26 +75,48 @@ function mergeDefaults(def, saved) {
 }
 
 function fixHref(v) {
-  if (typeof v !== 'string' || !v.startsWith('#')) return v;
-  return ANCHOR_MAP[v] || '/';
+  if (typeof v !== 'string') return v;
+  if (v.startsWith('#')) return ANCHOR_MAP[v] || '/';
+  const base = v.split('#')[0];
+  return REDIRECTS[base] ? REDIRECTS[base] + v.slice(base.length) : v;
 }
+
+/* Dojos placeholder da v2 (inventados antes do esquema do cliente) */
+const V2_PLACEHOLDER_DOJOS = new Set(['municipal', 'boidobra', 'teixoso']);
 
 function migrate(saved) {
   const defaults = readDefaults();
   const c = mergeDefaults(defaults, saved || {});
-  if ((Number(saved?.schemaVersion) || 1) < SCHEMA_VERSION) {
-    /* v1 era página única com âncoras — o menu novo vem dos defaults */
+  const version = Number(saved?.schemaVersion) || 1;
+  if (version < SCHEMA_VERSION) {
+    /* v1 → página única com âncoras; v2 → menu de 7 itens.
+       Em ambos os casos o menu novo vem dos defaults. */
     c.nav = defaults.nav;
-    c.hero.cta1Href        = fixHref(c.hero.cta1Href);
-    c.hero.cta2Href        = fixHref(c.hero.cta2Href);
+    for (const k of ['cta1Href', 'cta2Href']) c.hero[k] = fixHref(c.hero[k]);
     c.schedule.viewAllHref = fixHref(c.schedule.viewAllHref);
     c.classes.ctaHref      = fixHref(c.classes.ctaHref);
     c.about.ctaHref        = fixHref(c.about.ctaHref);
     c.trial.ctaHref        = fixHref(c.trial.ctaHref);
+    if (c.kids) c.kids.ctaHref = fixHref(c.kids.ctaHref);
     if (Array.isArray(saved?.events)) c.events = defaults.events;
+    /* v3: as páginas /competicoes e /formacoes deixaram de existir */
+    (c.events.types || []).forEach(t => { t.path = ''; });
+    /* v3: se os dojos ainda são os placeholders da v2, usa os do esquema do cliente
+       (e os horários que lhes correspondem). Dojos editados pelo cliente ficam. */
+    const items = saved?.dojos?.items;
+    if (!Array.isArray(items) || items.every(d => V2_PLACEHOLDER_DOJOS.has(d.id))) {
+      c.dojos.items = defaults.dojos.items;
+      c.schedule.sessions = defaults.schedule.sessions;
+    }
+    c.dojos.items.forEach(d => { if (!d.slug) d.slug = d.id || slugifyServer(d.name); });
     c.schemaVersion = SCHEMA_VERSION;
   }
   return c;
+}
+
+function slugifyServer(s) {
+  return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
 /* ─── Leitura/escrita do conteúdo (local ou Blob) ─────────────────────── */
@@ -308,6 +335,13 @@ const sendPage = file => (_req, res) => {
 };
 for (const [route, file] of Object.entries(PAGES)) app.get(route, sendPage(file));
 app.get('/noticias/:slug', sendPage('pages/noticia.html'));
+app.get('/karate/:slug',   sendPage('pages/disciplina.html'));
+app.get('/dojos/:slug',    sendPage('pages/dojo.html'));
+/* Redirecionamentos permanentes das URLs que desapareceram */
+for (const [from, to] of Object.entries(REDIRECTS)) {
+  app.get(from, (_req, res) => res.redirect(301, to));
+  app.get(from + '/*', (_req, res) => res.redirect(301, to));
+}
 app.get('/favicon.ico', (_req, res) => res.status(204).end());
 
 /* 404 */
@@ -327,3 +361,4 @@ if (require.main === module) {
 
 module.exports = app;
 module.exports._migrate = migrate;
+module.exports._redirects = REDIRECTS;

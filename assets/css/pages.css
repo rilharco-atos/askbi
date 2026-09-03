@@ -5,16 +5,19 @@
 .nav-item { position: relative; display: flex; align-items: center; gap: 2px; }
 .nav-caret {
   display: flex; align-items: center; justify-content: center;
-  padding: 4px; margin-left: -2px;
+  width: 44px; height: 44px;          /* alvo de toque, visualmente compacto */
+  margin: 0 -12px 0 -14px;
   color: var(--text-2);
   border-radius: 4px;
   transition: color var(--tr), transform var(--tr);
 }
+.nav-caret:hover { color: #fff; }
 .nav-caret svg { display: block; }
 .nav-item.has-children:hover .nav-caret,
 .nav-item.open .nav-caret,
 .nav-item.is-active .nav-caret { color: #fff; }
-.nav-item.open .nav-caret { transform: rotate(180deg); }
+.nav-item.open .nav-caret svg { transform: rotate(180deg); }
+.nav-caret svg { transition: transform var(--tr); }
 
 /* ponte invisível para o hover não cair entre o link e o dropdown */
 .nav-item.has-children::after {
@@ -45,32 +48,36 @@
 .nav-item.open .nav-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
 .nav-dropdown li { display: block; }
 .nav-links .nav-dropdown a {
-  display: block; padding: 10px 12px;
+  display: flex; align-items: center; justify-content: flex-start;
+  min-height: 44px; min-width: 0; padding: 8px 12px;
   font-size: 14.5px; font-weight: 600;
   color: var(--text-2); border-radius: 4px;
-  padding-bottom: 10px;
 }
 .nav-links .nav-dropdown a::after { display: none; }
 .nav-links .nav-dropdown a:hover,
-.nav-links .nav-dropdown a.active { background: var(--accent-bg); color: #fff; }
+.nav-links .nav-dropdown a.active,
+.nav-links .nav-dropdown a[aria-current="page"] { background: var(--accent-bg); color: #fff; }
+.nav-cta-mobile { display: none; }
 
 /* Navbar mantém sempre tokens escuros (também no tema claro mobile) */
 .navbar, .nav-links.mobile-open {
   --text: #ece8e1; --text-2: #c4bfb7; --text-muted: #8b857d; --border: #34323a;
 }
 
-/* Colapsar para hamburger mais cedo: 7 itens + CTA não cabem abaixo de 1180px */
-@media (max-width: 1180px) {
+/* Colapsar para hamburger: 6 itens + CTA não cabem abaixo de 1024px */
+@media (max-width: 1024px) {
   .nav-links, .nav-cta { display: none; }
   .nav-toggle { display: flex; }
+  /* Menu em ecrã cheio */
   .nav-links.mobile-open {
-    display: flex; flex-direction: column;
+    display: flex; flex-direction: column; align-items: stretch;
     position: fixed;
-    top: var(--nav-h); left: 0; right: 0;
-    max-height: calc(100vh - var(--nav-h));
+    top: var(--nav-h); left: 0; right: 0; bottom: 0;
+    height: calc(100dvh - var(--nav-h));
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     background: rgba(13,13,13,.98);
-    padding: 16px 24px 32px; gap: 0;
+    padding: 12px 24px 40px; gap: 0;
     border-top: 1px solid var(--border);
     margin-left: 0;
   }
@@ -78,35 +85,39 @@
     display: block; border-bottom: 1px solid var(--border);
   }
   .nav-links.mobile-open .nav-item > a {
-    display: block; padding: 16px 0; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: flex-start;
+    width: 100%; min-height: 56px; padding: 12px 0; font-size: 1.1rem;
   }
   .nav-links.mobile-open .nav-item.has-children { position: relative; }
-  .nav-links.mobile-open .nav-item.has-children > a { padding-right: 48px; }
+  .nav-links.mobile-open .nav-item.has-children > a { padding-right: 56px; }
   .nav-links.mobile-open .nav-caret {
-    position: absolute; top: 12px; right: 0;
-    width: 40px; height: 40px; margin: 0;
+    position: absolute; top: 4px; right: -8px;
+    width: 48px; height: 48px; margin: 0;
   }
-  .nav-links.mobile-open .nav-caret svg { width: 20px; height: 20px; }
+  .nav-links.mobile-open .nav-caret svg { width: 22px; height: 22px; }
   .nav-links.mobile-open .nav-item.has-children::after { display: none; }
+  /* Submenus em acordeão */
   .nav-links.mobile-open .nav-dropdown {
     display: none;
     position: static; opacity: 1; visibility: visible; transform: none;
     background: transparent; border: 0; box-shadow: none;
-    min-width: 0; padding: 0 0 12px 14px;
+    min-width: 0; padding: 0 0 12px 16px;
   }
   .nav-links.mobile-open .nav-dropdown::before { display: none; }
   .nav-links.mobile-open .nav-item.open .nav-dropdown { display: block; }
-  .nav-links.mobile-open .nav-dropdown a { padding: 10px 0; font-size: 1rem; }
+  .nav-links.mobile-open .nav-dropdown a { min-height: 48px; padding: 8px 0; font-size: 1rem; width: 100%; justify-content: flex-start; }
   .nav-links.mobile-open .nav-dropdown a:hover,
-  .nav-links.mobile-open .nav-dropdown a.active { background: transparent; color: var(--accent-text); }
+  .nav-links.mobile-open .nav-dropdown a.active,
+  .nav-links.mobile-open .nav-dropdown a[aria-current="page"] { background: transparent; color: var(--accent-text); }
   .nav-links.mobile-open .nav-item.has-children > a::after { display: none; }
   .nav-links.mobile-open .nav-cta-mobile {
-    display: flex; justify-content: center; margin-top: 20px; width: 100%;
+    display: flex; justify-content: center; margin-top: 24px; width: 100%; border-bottom: 0;
   }
+  .nav-links.mobile-open .nav-cta-mobile .btn { width: 100%; justify-content: center; min-height: 52px; }
   body.nav-open { overflow: hidden; }
 }
-@media (max-width: 1280px) and (min-width: 1181px) {
-  .nav-links { gap: 20px; }
+@media (max-width: 1180px) and (min-width: 1025px) {
+  .nav-links { gap: 18px; }
   .nav-links a { font-size: 14.5px; }
 }
 
@@ -407,9 +418,6 @@
   .article-body p, .article-body li { font-size: 17px; }
   .article-body p:first-child { font-size: 18px; }
   .page-hero::before { background: radial-gradient(ellipse 80% 60% at 80% 10%, rgba(227,30,36,.08), transparent 60%); }
-  .nav-dropdown { --text: inherit; --text-2: inherit; --text-muted: inherit; }
-  .navbar { --text: #ece8e1; --text-2: #c4bfb7; --text-muted: #8b857d; --border: #34323a; }
-  .card-img { background: linear-gradient(135deg, #2a1010, #4a1010); }
   .home-news { padding: 56px 0; }
 }
 
@@ -422,6 +430,108 @@
 }
 .trial-inner { position: relative; z-index: 1; max-width: 720px; }
 .trial-sub { font-size: 19px; line-height: 1.6; color: var(--text-2); margin: 18px 0 32px; text-wrap: pretty; }
-.event-item { text-decoration: none; }
-.event-item:hover .event-label { color: var(--text); }
 @media (max-width: 768px) { .trial { padding: 60px 0; } }
+
+/* ─── Faixa de CTA no fim das páginas secundárias (registo escuro) ────── */
+.page-cta {
+  background: var(--bg-2);
+  border-top: 1px solid var(--border-sep);
+  padding: 56px 0;
+}
+.page-cta .inscricao-cta-row { margin-top: 0; }
+.page-cta .section-title { font-size: clamp(1.4rem, 2.6vw, 2rem); margin-bottom: 20px; max-width: 640px; }
+
+/* ─── Ajustes do registo papel (elementos com cores fixas) ────────────── */
+.surface-paper .section-watermark { color: rgba(22,19,15,.05); }
+.surface-paper .kanji-bg { color: rgba(184,17,24,.06); }
+.surface-paper .card:hover { border-color: #b9b2a7; }
+.surface-paper .card-img { background: linear-gradient(135deg, #e6e1d8, #d4cdc1); }
+.surface-paper .card-img-placeholder { color: rgba(22,19,15,.38); }
+.surface-paper .instructor-card .card-img { background: linear-gradient(160deg, #e6e1d8, #cfc7bb); }
+.surface-paper .tag-pill { background: rgba(184,17,24,.08); border-color: rgba(184,17,24,.25); }
+.surface-paper .filter-pill:hover { border-color: #8f887f; }
+.surface-paper .filter-pill.active { color: #fff; }
+.surface-paper .contact-detail-icon { background: rgba(184,17,24,.08); border-color: rgba(184,17,24,.22); }
+.surface-paper .contact-detail-icon svg { stroke: var(--accent-ink); }
+.surface-paper .form-group input:focus,
+.surface-paper .form-group textarea:focus { border-color: var(--accent-ink); }
+.surface-paper .kids-visual { background: linear-gradient(160deg, #e6e1d8, #cfc7bb); }
+.surface-paper .kids-visual .kanji { color: rgba(22,19,15,.08); }
+.surface-paper .class-card:hover { border-color: #b9b2a7; box-shadow: var(--shadow); }
+.surface-paper .about-center { background: #e6e1d8; }
+.surface-paper .about-img-placeholder { color: var(--ink-2); }
+.surface-paper .socio-panel .btn-accent { color: #fff; }
+.surface-paper .event-row:hover { border-color: #b9b2a7; }
+.surface-paper .session-slots.open { color: #1f7a3d; }
+.surface-paper .session-slots.full { color: var(--accent-ink); }
+.surface-paper .session-grid.selectable .session-card.selected { box-shadow: 0 0 0 2px rgba(184,17,24,.25); }
+/* Transição entre registos: sempre na fronteira de secção, com 1px */
+.surface-paper + .surface-paper { border-top: 1px solid var(--paper-border); }
+.page-hero + .surface-paper { border-top: 0; }
+
+/* ─── Karate: disciplinas (Kihon · Kata · Kumite) ─────────────────────── */
+.discipline-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.discipline-card { position: relative; padding: 32px 30px 30px; min-height: 260px; }
+.discipline-card .card-body { padding: 0; }
+.discipline-jp {
+  position: absolute; right: 20px; top: 12px;
+  font-size: 4.2rem; font-weight: 900; line-height: 1;
+  color: rgba(184,17,24,.10); pointer-events: none; user-select: none;
+}
+.discipline-card .card-title { font-size: 1.6rem; margin-top: 6px; }
+.discipline-kicker { font-family: var(--font-mono); font-size: .75rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-text); }
+.discipline-hero-jp {
+  display: inline-block; font-size: clamp(2.4rem, 5vw, 3.6rem); font-weight: 900; line-height: 1;
+  color: rgba(255,106,94,.55); margin-bottom: 8px;
+}
+.discipline-nav { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
+.discipline-nav a {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 8px 18px;
+  border: 1.5px solid var(--border); border-radius: 100px;
+  font-size: 15px; font-weight: 600; color: var(--text-2);
+  transition: border-color var(--tr), color var(--tr), background var(--tr);
+}
+.discipline-nav a:hover { border-color: var(--accent-ink); color: var(--accent-ink); }
+.discipline-nav a[aria-current="page"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.discipline-points { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+.discipline-point { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: 18px 20px; }
+.discipline-point strong { display: block; font-family: var(--font-h); font-size: 1.02rem; color: var(--text); margin-bottom: 4px; }
+.discipline-point span { font-size: 15px; color: var(--text-2); line-height: 1.55; }
+
+/* ─── Dojo (página individual) ────────────────────────────────────────── */
+.dojo-hero-meta { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 22px; }
+.dojo-hero-meta span { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; color: var(--text-2); }
+.dojo-hero-meta svg { stroke: var(--accent-text); flex-shrink: 0; }
+.dojo-photo { aspect-ratio: 16 / 9; border-radius: var(--r); overflow: hidden; border: 1px solid var(--border); background: linear-gradient(135deg, #e6e1d8, #d4cdc1); display: flex; align-items: center; justify-content: center; }
+.dojo-photo img { width: 100%; height: 100%; object-fit: cover; }
+.dojo-info { display: flex; flex-direction: column; gap: 14px; }
+.dojo-info .dojo-detail { font-size: 16px; }
+.dojo-info .dojo-detail svg { stroke: var(--accent-ink); }
+.dojo-schedule-title { font-family: var(--font-h); font-size: 1.5rem; font-weight: 800; letter-spacing: -.02em; color: var(--text); margin-bottom: 20px; }
+.dojo-switch { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+.dojo-switch a {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 18px;
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  font-size: 15px; font-weight: 600; color: var(--text-2);
+}
+.dojo-switch a:hover { border-color: var(--accent-ink); color: var(--accent-ink); }
+.dojo-switch a[aria-current="page"] { background: var(--bg-card); color: var(--text); border-color: var(--accent-ink); }
+
+/* ─── Tamanhos mínimos de texto (nada abaixo de 12px) ─────────────────── */
+.nav-brand-sub, .section-label, .hero-badge, .card-meta, .tag-pill,
+.card-img-placeholder span, .class-img-placeholder span, .dojo-sessions-title,
+.dojo-session .days, .session-days, .wizard-dot-label, .wizard-selected-label,
+.wizard-dot, .event-date-block .m, .event-date-block .y, .instructor-grade,
+.instructor-role, .breadcrumb, .stat-label, .mandate,
+.contact-detail-label, .footer-admin-link, .benefit-text, .notfound-code { font-size: .75rem; }
+.benefit-text { font-size: .82rem; }
+.section-label, .hero-badge { font-size: .76rem; }
+
+@media (max-width: 1100px) {
+  .discipline-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .discipline-points { grid-template-columns: 1fr; }
+  .discipline-card { min-height: 0; padding: 26px 22px; }
+  .page-cta { padding: 44px 0; }
+}

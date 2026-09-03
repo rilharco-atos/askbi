@@ -145,16 +145,22 @@ window.ASBKI = (function () {
     }
   }
 
-  /* Defesa contra conteúdo antigo (v1) que possa chegar sem migração */
+  /* Defesa contra conteúdo antigo que possa chegar sem migração */
   function normalize(c) {
     if (Array.isArray(c.events)) c.events = { title: 'Eventos', types: [], items: [] };
     c.events.items = c.events.items || [];
     c.news = c.news || { items: [], categories: [] };
     c.news.items = (c.news.items || []).map(n => ({ ...n, slug: n.slug || slugify(n.title) }));
     c.dojos = c.dojos || { items: [] };
+    c.dojos.items = (c.dojos.items || []).map(d => ({ ...d, slug: d.slug || d.id || slugify(d.name) }));
+    c.karate = c.karate || { disciplines: [] };
+    c.karate.disciplines = (c.karate.disciplines || []).map(d => ({ ...d, slug: d.slug || slugify(d.name), points: d.points || [] }));
     c.nav.links = (c.nav.links || []).map(l => ({ ...l, children: l.children || [] }));
     return c;
   }
+
+  const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const scrollBehavior = () => (reducedMotion() ? 'auto' : 'smooth');
 
   /* ─── Layout: header + footer ───────────────────────────────────────── */
   function isActive(href) {
@@ -176,18 +182,31 @@ window.ASBKI = (function () {
       </div>`;
   }
 
+  /* A página actual: aria-current="page" só no link exacto; o pai de uma
+     subpágina fica com a classe .active (sublinhado) sem aria-current. */
+  function isCurrent(href) {
+    const p = location.pathname.replace(/\/+$/, '') || '/';
+    const h = (href || '').split('#')[0].replace(/\/+$/, '') || '/';
+    return p === h;
+  }
+  function linkAttrs(href, active) {
+    return `${active ? ' class="active"' : ''}${isCurrent(href) ? ' aria-current="page"' : ''}`;
+  }
+
   function navLinksHTML(links) {
-    return links.map(l => {
+    return links.map((l, i) => {
       const kids = l.children || [];
       const active = isActive(l.href) || kids.some(k => isActive(k.href));
       if (!kids.length)
-        return `<li class="nav-item"><a href="${esc(l.href)}"${active ? ' class="active"' : ''}>${esc(l.label)}</a></li>`;
+        return `<li class="nav-item"><a href="${esc(l.href)}"${linkAttrs(l.href, active)}>${esc(l.label)}</a></li>`;
+      const id = `nav-sub-${i}`;
       return `
         <li class="nav-item has-children${active ? ' is-active' : ''}">
-          <a href="${esc(l.href)}"${active ? ' class="active"' : ''}>${esc(l.label)}</a>
-          <button class="nav-caret" type="button" aria-label="Abrir submenu ${esc(l.label)}" aria-expanded="false">${svg(ICONS.chevron, 14)}</button>
-          <ul class="nav-dropdown">
-            ${kids.map(k => `<li><a href="${esc(k.href)}"${isActive(k.href) && k.href.split('#')[0] !== l.href ? ' class="active"' : ''}>${esc(k.label)}</a></li>`).join('')}
+          <a href="${esc(l.href)}"${linkAttrs(l.href, active)}>${esc(l.label)}</a>
+          <button class="nav-caret" type="button" aria-label="Submenu ${esc(l.label)}"
+                  aria-haspopup="true" aria-expanded="false" aria-controls="${id}">${svg(ICONS.chevron, 14)}</button>
+          <ul class="nav-dropdown" id="${id}" aria-label="${esc(l.label)}">
+            ${kids.map(k => `<li><a href="${esc(k.href)}"${linkAttrs(k.href, isActive(k.href) && k.href.split('#')[0] !== l.href)}>${esc(k.label)}</a></li>`).join('')}
           </ul>
         </li>`;
     }).join('');
@@ -197,13 +216,16 @@ window.ASBKI = (function () {
     const el = document.querySelector('#site-header');
     if (!el) return;
     el.innerHTML = `
-      <nav class="navbar" id="navbar">
+      <nav class="navbar" id="navbar" aria-label="Principal">
         <div class="container">
           <div class="nav-inner">
-            <a href="/" class="nav-brand" aria-label="${esc(c.site.name)} — início">${brandHTML(c.site, 'nav')}</a>
-            <ul class="nav-links" id="nav-links">${navLinksHTML(c.nav.links)}</ul>
-            <a href="${esc(c.nav.ctaHref)}" class="btn btn-accent nav-cta" id="nav-cta">${esc(c.nav.ctaLabel)}</a>
-            <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menu" aria-expanded="false">
+            <a href="/" class="nav-brand">${brandHTML(c.site, 'nav')}</a>
+            <ul class="nav-links" id="nav-links">
+              ${navLinksHTML(c.nav.links)}
+              <li class="nav-item nav-cta-mobile"><a href="${esc(c.nav.ctaHref)}" class="btn btn-accent"${isCurrent(c.nav.ctaHref) ? ' aria-current="page"' : ''}>${esc(c.nav.ctaLabel)}</a></li>
+            </ul>
+            <a href="${esc(c.nav.ctaHref)}" class="btn btn-accent nav-cta" id="nav-cta"${isCurrent(c.nav.ctaHref) ? ' aria-current="page"' : ''}>${esc(c.nav.ctaLabel)}</a>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-links">
               <span></span><span></span><span></span>
             </button>
           </div>
@@ -230,7 +252,7 @@ window.ASBKI = (function () {
             <div>
               <div class="footer-col-title">${esc(footer.quickLinksTitle)}</div>
               <ul class="footer-links">
-                ${nav.links.map(l => `<li><a href="${esc(l.href)}">${esc(l.label)}</a></li>`).join('')}
+                ${nav.links.filter(l => l.href !== '/').map(l => `<li><a href="${esc(l.href)}">${esc(l.label)}</a></li>`).join('')}
                 <li><a href="${esc(nav.ctaHref)}">${esc(nav.ctaLabel)}</a></li>
               </ul>
             </div>
@@ -276,40 +298,85 @@ window.ASBKI = (function () {
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
-    if (bt) bt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    if (bt) bt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: scrollBehavior() }));
   }
 
   function initMobileNav() {
     const toggle = document.querySelector('#nav-toggle');
     const links  = document.querySelector('#nav-links');
     if (!toggle || !links) return;
-    toggle.addEventListener('click', () => {
-      const open = toggle.classList.toggle('open');
+
+    const setSub = (li, open) => {
+      li.classList.toggle('open', open);
+      const caret = li.querySelector('.nav-caret');
+      if (caret) caret.setAttribute('aria-expanded', String(open));
+    };
+    const closeAllSubs = except => links.querySelectorAll('.nav-item.has-children').forEach(li => { if (li !== except) setSub(li, false); });
+    const setMenu = open => {
+      toggle.classList.toggle('open', open);
       links.classList.toggle('mobile-open', open);
       toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
       document.body.classList.toggle('nav-open', open);
-    });
-    /* Submenus: o caret abre/fecha (mobile e teclado) */
+      if (!open) closeAllSubs();
+    };
+
+    toggle.addEventListener('click', () => setMenu(!toggle.classList.contains('open')));
+
+    /* Submenus: o caret abre/fecha (toque e teclado) */
     links.addEventListener('click', e => {
       const caret = e.target.closest('.nav-caret');
       if (caret) {
         e.preventDefault();
         const li = caret.closest('.nav-item');
-        const open = li.classList.toggle('open');
-        caret.setAttribute('aria-expanded', String(open));
-        links.querySelectorAll('.nav-item.open').forEach(o => { if (o !== li) o.classList.remove('open'); });
+        const open = !li.classList.contains('open');
+        closeAllSubs(li);
+        setSub(li, open);
+        if (open) { const first = li.querySelector('.nav-dropdown a'); if (first && !isTouchLayout()) first.focus(); }
         return;
       }
-      if (e.target.closest('a')) {
-        toggle.classList.remove('open');
-        links.classList.remove('mobile-open');
-        document.body.classList.remove('nav-open');
+      if (e.target.closest('a')) setMenu(false);
+    });
+
+    /* Teclado: ao entrar por Tab o submenu abre (CSS :focus-within) — reflectir em aria-expanded.
+       O caret fica de fora: o seu click é que decide. */
+    links.addEventListener('focusin', e => {
+      if (e.target.closest('.nav-caret')) return;
+      const li = e.target.closest('.nav-item.has-children');
+      if (li && !isTouchLayout()) setSub(li, true);
+    });
+    links.addEventListener('focusout', e => {
+      const li = e.target.closest('.nav-item.has-children');
+      if (li && !isTouchLayout() && !li.contains(e.relatedTarget)) setSub(li, false);
+    });
+    /* Rato (desktop): hover abre via CSS; aqui só se mantém o aria-expanded coerente */
+    links.querySelectorAll('.nav-item.has-children').forEach(li => {
+      li.addEventListener('mouseenter', () => { if (!isTouchLayout()) setSub(li, true); });
+      li.addEventListener('mouseleave', () => { if (!isTouchLayout() && !li.contains(document.activeElement)) setSub(li, false); });
+    });
+
+    /* Escape fecha o submenu aberto (e devolve o foco ao caret) ou o menu mobile */
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      const openLi = links.querySelector('.nav-item.open');
+      if (openLi) {
+        setSub(openLi, false);
+        const caret = openLi.querySelector('.nav-caret');
+        if (caret && openLi.contains(document.activeElement)) caret.focus();
+        return;
       }
+      if (toggle.classList.contains('open')) { setMenu(false); toggle.focus(); }
     });
+
     document.addEventListener('click', e => {
-      if (!e.target.closest('.nav-item.has-children'))
-        links.querySelectorAll('.nav-item.open').forEach(o => o.classList.remove('open'));
+      if (!e.target.closest('.nav-item.has-children')) closeAllSubs();
     });
+  }
+
+  /* O menu está em modo hamburger (accordion) quando o toggle é visível */
+  function isTouchLayout() {
+    const t = document.querySelector('#nav-toggle');
+    return !!t && getComputedStyle(t).display !== 'none';
   }
 
   /* ─── Animações ─────────────────────────────────────────────────────── */
@@ -393,11 +460,11 @@ window.ASBKI = (function () {
     /* Âncora na URL (ex.: /inscricao#horarios) depois do render */
     if (location.hash) {
       const target = document.querySelector(location.hash);
-      if (target) setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+      if (target) setTimeout(() => target.scrollIntoView({ behavior: scrollBehavior(), block: 'start' }), 60);
     }
   }
 
-  /* ─── Cartões de modalidade (home + /modalidades) ───────────────────── */
+  /* ─── Cartões de turma (home + /karate) ─────────────────────────────── */
   const CLASS_ICONS = ['M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', 'M17 12h-5v5h5v-5zM17 7h-5v4h5V7z', 'M6 4v16M18 4v16M4 8h4m8 0h4M4 16h4m8 0h4M8 4h8', 'M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z', ICONS.shield];
   function classCards(items) {
     return (items || []).map((cl, i) => `
@@ -420,6 +487,6 @@ window.ASBKI = (function () {
   return {
     ICONS, svg, esc, slugify, fmtDate, parseDate, richText,
     sessionCardHTML, renderFilterPills, filterCards, classCards,
-    loadContent, setMeta, boot, isActive,
+    loadContent, setMeta, boot, isActive, isCurrent, scrollBehavior,
   };
 })();

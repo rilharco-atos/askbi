@@ -32,7 +32,7 @@
     const cat = (c.news.categories || []).find(k => k.key === n.category);
     return `
       <article class="card" data-group="${esc(n.category)}">
-        <a href="/noticias/${esc(n.slug)}" class="card-img" aria-label="${esc(n.title)}">${imgOrPlaceholder(n.image, n.title)}</a>
+        <a href="/noticias/${esc(n.slug)}" class="card-img" tabindex="-1" aria-hidden="true">${imgOrPlaceholder(n.image, n.title)}</a>
         <div class="card-body">
           <div class="card-meta"><span class="tag">${esc(cat ? cat.label : n.category)}</span><span>${esc(fmtDate(n.date).short)}</span></div>
           <h3 class="card-title"><a href="/noticias/${esc(n.slug)}">${esc(n.title)}</a></h3>
@@ -53,9 +53,9 @@
       const sessions = c.schedule.sessions.filter(s => s.location === dj.name);
       return `
         <article class="card dojo-card fade-in">
-          <div class="card-img">${imgOrPlaceholder(dj.image, dj.name, ICONS.pin, dj.name)}</div>
+          <a href="/dojos/${esc(dj.slug)}" class="card-img" tabindex="-1" aria-hidden="true">${imgOrPlaceholder(dj.image, dj.name, ICONS.pin, dj.short || dj.name)}</a>
           <div class="card-body">
-            <h3 class="card-title">${esc(dj.name)}</h3>
+            <h3 class="card-title"><a href="/dojos/${esc(dj.slug)}">${esc(dj.name)}</a></h3>
             ${dj.notes ? `<p class="card-text" style="flex:0">${esc(dj.notes)}</p>` : ''}
             <div class="dojo-details">
               ${dj.address ? `<div class="dojo-detail">${svg(ICONS.pin, 16)}<span>${esc(dj.address)}</span></div>` : ''}
@@ -73,7 +73,7 @@
               </div>` : ''}
             <div class="card-foot">
               ${dj.mapUrl ? `<a href="${esc(dj.mapUrl)}" target="_blank" rel="noopener" class="link-arrow">Ver no mapa ${svg(ICONS.external, 14)}</a>` : '<span></span>'}
-              <a href="/inscricao" class="link-arrow">Marcar aula →</a>
+              <a href="/dojos/${esc(dj.slug)}" class="link-arrow">Ver dojo e horário →</a>
             </div>
           </div>
         </article>`;
@@ -92,7 +92,7 @@
     const cat = k => (n.categories.find(x => x.key === k) || {}).label || k;
     setHTML('#news-featured', `
       <article class="card news-featured fade-in" data-group="${esc(first.category)}">
-        <a href="/noticias/${esc(first.slug)}" class="card-img">${imgOrPlaceholder(first.image, first.title)}</a>
+        <a href="/noticias/${esc(first.slug)}" class="card-img" tabindex="-1" aria-hidden="true">${imgOrPlaceholder(first.image, first.title)}</a>
         <div class="card-body">
           <div class="card-meta"><span class="tag">${esc(cat(first.category))}</span><span>${esc(fmtDate(first.date).long)}</span></div>
           <h2 class="card-title"><a href="/noticias/${esc(first.slug)}">${esc(first.title)}</a></h2>
@@ -153,43 +153,49 @@
     }
   }
 
-  /* ─── Eventos / Competições / Formações ─────────────────────────────── */
-  function eventos(c) {
-    const ev = c.events;
-    const path = location.pathname.replace(/\/+$/, '');
-    const type = ev.types.find(t => t.path && t.path === path);
-    pageHero(ev.subtitle, type ? (type.pageTitle || type.label) : ev.title, type ? (type.pageIntro || ev.intro) : ev.intro);
-    setMeta(`${type ? type.pageTitle || type.label : ev.title} — ${c.site.name}`);
+  /* ─── Dojo (página individual, /dojos/:slug) ────────────────────────── */
+  function dojo(c) {
+    const slug = decodeURIComponent(location.pathname.split('/').filter(Boolean).pop() || '');
+    const dj = c.dojos.items.find(d => d.slug === slug || d.id === slug);
+    if (!dj) {
+      pageHero(c.dojos.subtitle, 'Não encontrámos este dojo.', 'O endereço pode estar errado ou o dojo pode ter mudado de nome.');
+      setMeta(`Dojo não encontrado — ${c.site.name}`);
+      setHTML('#dojo-switch', `<a href="/dojos" class="btn btn-accent">Ver todos os dojos</a>`);
+      return;
+    }
+    pageHero(c.dojos.subtitle, dj.name, dj.intro || dj.notes || '');
+    setText('#ph-crumb', dj.short || dj.name);
+    setMeta(`${dj.name} — ${c.site.name}`, dj.intro || dj.notes);
+    setHTML('#dojo-hero-meta', [
+      dj.address && `<span>${svg(ICONS.pin, 16)}${esc(dj.address)}</span>`,
+      dj.phone   && `<span>${svg(ICONS.phone, 16)}<a href="tel:${esc(dj.phone.replace(/\s/g, ''))}">${esc(dj.phone)}</a></span>`,
+    ].filter(Boolean).join(''));
 
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    const withDate = ev.items.map(e => ({ ...e, _d: parseDate(e.date) }));
-    const future = withDate.filter(e => e._d && e._d >= today).sort((a, b) => a.date.localeCompare(b.date));
-    const past   = withDate.filter(e => !e._d || e._d < today).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-    const label  = k => (ev.types.find(t => t.key === k) || {}).label || k;
+    const photo = $('#dojo-photo');
+    if (photo) photo.innerHTML = imgOrPlaceholder(dj.image, dj.name, ICONS.pin, dj.short || dj.name);
+    setHTML('#dojo-info', [
+      dj.address && `<div class="dojo-detail">${svg(ICONS.pin, 18)}<span>${esc(dj.address)}</span></div>`,
+      dj.phone   && `<div class="dojo-detail">${svg(ICONS.phone, 18)}<a href="tel:${esc(dj.phone.replace(/\s/g, ''))}">${esc(dj.phone)}</a></div>`,
+      dj.email   && `<div class="dojo-detail">${svg(ICONS.mail, 18)}<a href="mailto:${esc(dj.email)}">${esc(dj.email)}</a></div>`,
+      dj.notes && dj.intro && `<p class="card-text" style="flex:0">${esc(dj.notes)}</p>`,
+      dj.mapUrl  && `<div><a href="${esc(dj.mapUrl)}" target="_blank" rel="noopener" class="btn btn-outline-ghost" style="min-height:48px;padding:10px 20px">Ver no mapa ${svg(ICONS.external, 14)}</a></div>`,
+    ].filter(Boolean).join(''));
 
-    const row = (e, isPast) => {
-      const d = fmtDate(e.date);
-      return `
-        <article class="event-row${isPast ? ' past' : ''}" data-group="${esc(e.type)}">
-          <div class="event-date-block"><div class="d">${esc(d.day)}</div><div class="m">${esc(d.mon)}</div><div class="y">${esc(d.year || '')}</div></div>
-          <div class="event-main">
-            <span class="tag-pill">${esc(label(e.type))}${isPast ? ' · realizado' : ''}</span>
-            <h3 class="event-title">${esc(e.title)}</h3>
-            ${e.location ? `<div class="event-loc">${svg(ICONS.pin, 14)}${esc(e.location)}</div>` : ''}
-            ${e.description ? `<p class="event-desc">${esc(e.description)}</p>` : ''}
-          </div>
-          <div class="event-side">
-            ${e.link ? `<a href="${esc(e.link)}" target="_blank" rel="noopener" class="btn btn-outline-ghost">Mais informação ${svg(ICONS.external, 14)}</a>` : ''}
-          </div>
-        </article>`;
-    };
-    setHTML('#event-list', [...future.map(e => row(e, false)), ...past.map(e => row(e, true))].join(''));
+    /* Horário deste dojo */
+    const sessions = c.schedule.sessions.filter(s => s.location === dj.name);
+    setText('#dojo-schedule-title', `Horário · ${dj.short || dj.name}`);
+    if (sessions.length) {
+      setHTML('#dojo-sessions', sessions.map(s => sessionCardHTML(s)).join(''));
+      const used = (c.schedule.filters || []).filter(f => sessions.some(s => s.group === f.key));
+      if (used.length > 1) renderFilterPills('#dojo-filters', used, '#dojo-sessions', { allLabel: 'Todas' });
+    } else {
+      setHTML('#dojo-sessions', '<p class="empty">Horário a anunciar. Contacta-nos para saber mais.</p>');
+    }
 
-    renderFilterPills('#event-filters', ev.types.map(t => ({ key: t.key, label: t.label })), '#event-list', {
-      allLabel: 'Todos', initial: type ? type.key : '__all',
-      cardSelector: '.event-row', emptyText: ev.emptyText || 'Não há eventos nesta categoria.',
-    });
-    setHTML('#eventos-cta', ctaBar(c));
+    /* Outros dojos */
+    setHTML('#dojo-switch', c.dojos.items.map(d => `
+      <a href="/dojos/${esc(d.slug)}"${d.slug === dj.slug ? ' aria-current="page"' : ''}>${svg(ICONS.pin, 14)}${esc(d.short || d.name)}</a>`).join(''));
+    setHTML('#dojo-cta', ctaBar(c));
   }
 
   /* ─── Associação: sobre nós ─────────────────────────────────────────── */
@@ -213,7 +219,7 @@
     /* Sub-navegação da associação a partir do menu */
     const parent = c.nav.links.find(l => (l.children || []).length && l.children.some(k => k.href.startsWith('/associacao')));
     const kids = (parent ? parent.children : []).filter(k => k.href !== '/associacao');
-    const icons = { historia: ICONS.clock, 'orgaos-sociais': ICONS.user, instrutores: ICONS.shield, 'dojo-kun': ICONS.target, modalidades: ICONS.dumbbell };
+    const icons = { historia: ICONS.clock, 'orgaos-sociais': ICONS.user, instrutores: ICONS.shield, 'dojo-kun': ICONS.target };
     setHTML('#assoc-links', kids.map(k => {
       const key = k.href.split('/').filter(Boolean).pop();
       return `
@@ -294,11 +300,28 @@
     setHTML('#budo-text', richText(k.budoText));
   }
 
-  /* ─── Modalidades + karate infantil ─────────────────────────────────── */
-  function modalidades(c) {
-    const cl = c.classes, kids = c.kids;
-    pageHero(cl.subtitle, cl.title, cl.intro);
-    setMeta(`${cl.title} — ${c.site.name}`, cl.intro);
+  /* ─── Karate: visão geral (Kihon · Kata · Kumite + turmas + infantil) ── */
+  function disciplineCard(d) {
+    return `
+      <a class="card discipline-card fade-in" href="/karate/${esc(d.slug)}">
+        <span class="discipline-jp" aria-hidden="true">${esc(d.jp)}</span>
+        <div class="card-body">
+          <span class="discipline-kicker">${esc(d.kicker || '')}</span>
+          <h3 class="card-title">${esc(d.name)}</h3>
+          <p class="card-text">${esc(d.excerpt)}</p>
+          <div class="card-foot"><span class="link-arrow">Saber mais →</span></div>
+        </div>
+      </a>`;
+  }
+
+  function karate(c) {
+    const k = c.karate, cl = c.classes, kids = c.kids;
+    pageHero(k.subtitle, k.title, k.intro);
+    setMeta(`${k.title} — ${c.site.name}`, k.intro);
+    setHTML('#discipline-grid', k.disciplines.map(disciplineCard).join(''));
+    setText('#turmas-sub', cl.subtitle);
+    setText('#turmas-title', k.turmasTitle || cl.title);
+    setText('#turmas-intro', k.turmasIntro || cl.intro);
     setHTML('#classes-grid', ASBKI.classCards(cl.items));
     setText('#kids-sub', kids.subtitle);
     setText('#kids-title', kids.title);
@@ -308,7 +331,35 @@
     const cta = $('#kids-cta'); if (cta) { cta.textContent = kids.ctaLabel; cta.href = kids.ctaHref || '/inscricao'; }
     const vis = $('#kids-visual');
     if (vis && kids.image) vis.innerHTML = `<img src="${esc(kids.image)}" alt="${esc(kids.title)}">`;
-    setHTML('#modalidades-cta', ctaBar(c));
+    setHTML('#karate-cta', ctaBar(c));
+  }
+
+  /* ─── Karate: disciplina (/karate/:slug) ────────────────────────────── */
+  function disciplina(c) {
+    const k = c.karate;
+    const slug = decodeURIComponent(location.pathname.split('/').filter(Boolean).pop() || '');
+    const d = k.disciplines.find(x => x.slug === slug);
+    if (!d) {
+      pageHero(k.subtitle, 'Não encontrámos esta página.', 'O endereço pode estar errado.');
+      setMeta(`Página não encontrada — ${c.site.name}`);
+      setHTML('#discipline-nav', `<a href="/karate" class="btn btn-accent">Ver Kihon, Kata e Kumite</a>`);
+      return;
+    }
+    setText('#ph-jp', d.jp || '');
+    setText('#ph-crumb', d.name);
+    pageHero(d.kicker ? `${k.subtitle} · ${d.kicker}` : k.subtitle, d.name, d.intro);
+    setMeta(`${d.name} — ${c.site.name}`, d.intro || d.excerpt);
+    setHTML('#discipline-nav', k.disciplines.map(x => `
+      <a href="/karate/${esc(x.slug)}"${x.slug === d.slug ? ' aria-current="page"' : ''}>${esc(x.name)}</a>`).join(''));
+    setHTML('#discipline-body', richText(d.body));
+    setHTML('#discipline-points', (d.points || []).map(p => `
+      <div class="discipline-point fade-in"><strong>${esc(p.title)}</strong><span>${esc(p.text)}</span></div>`).join(''));
+    const img = $('#discipline-image');
+    if (img) {
+      if (d.image) img.innerHTML = `<img src="${esc(d.image)}" alt="${esc(d.name)}" loading="lazy">`;
+      else img.hidden = true;
+    }
+    setHTML('#discipline-cta', ctaBar(c));
   }
 
   /* ─── Inscrição: horários completos + wizard ────────────────────────── */
@@ -356,7 +407,7 @@
     function goToStep(n) {
       panels.forEach((p, i) => p.classList.toggle('active', i + 1 === n));
       dots.forEach((d, i) => { d.classList.toggle('active', i + 1 === n); d.classList.toggle('done', i + 1 < n); });
-      $('#wizard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      $('#wizard').scrollIntoView({ behavior: ASBKI.scrollBehavior(), block: 'start' });
     }
     selGrid.addEventListener('click', e => {
       const card = e.target.closest('.session-card');
@@ -411,9 +462,9 @@
   function notfound(c) { setMeta(`Página não encontrada — ${c.site.name}`); }
 
   const PAGES = {
-    dojos, noticias, noticia, eventos, associacao, historia,
+    dojos, dojo, noticias, noticia, associacao, historia,
     'orgaos-sociais': orgaos, instrutores, 'dojo-kun': dojoKun,
-    modalidades, inscricao, contacto, '404': notfound,
+    karate, disciplina, inscricao, contacto, '404': notfound,
   };
 
   const page = document.body.dataset.page;

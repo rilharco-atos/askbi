@@ -53,14 +53,14 @@
       <div class="nav-item" data-section="footer" data-title="Rodapé">Rodapé</div>
 
       <div class="sidebar-section-label" style="margin-top:14px">Páginas</div>
+      <div class="nav-item" data-section="karate" data-title="Karate">Karate</div>
       <div class="nav-item" data-section="dojos" data-title="Dojos">Dojos</div>
       <div class="nav-item" data-section="horarios" data-title="Horários e inscrição">Horários &amp; Inscrição</div>
       <div class="nav-item" data-section="noticias" data-title="Notícias">Notícias</div>
-      <div class="nav-item" data-section="eventos" data-title="Eventos">Eventos</div>
-      <div class="nav-item" data-section="modalidades" data-title="Modalidades">Modalidades</div>
-      <div class="nav-item" data-section="contacto" data-title="Contacto">Contacto</div>
+      <div class="nav-item" data-section="eventos" data-title="Próximas provas (página inicial)">Próximas provas</div>
+      <div class="nav-item" data-section="contacto" data-title="Contactos">Contactos</div>
 
-      <div class="sidebar-section-label" style="margin-top:14px">Associação</div>
+      <div class="sidebar-section-label" style="margin-top:14px">Quem Somos</div>
       <div class="nav-item" data-section="sobre" data-title="Sobre nós">Sobre nós</div>
       <div class="nav-item" data-section="historia" data-title="História">História</div>
       <div class="nav-item" data-section="orgaos" data-title="Órgãos sociais">Órgãos sociais</div>
@@ -122,7 +122,7 @@
 
         <div class="editor-card">
           <div class="editor-card-title">Menu de navegação</div>
-          <p class="help" style="margin-bottom:14px">Cada item pode ter um submenu (dropdown). A ordem aqui é a ordem no site. O menu também alimenta o "Acesso rápido" do rodapé.</p>
+          <p class="help" style="margin-bottom:14px">Seis entradas de topo, no máximo dois níveis. Cada item pode ter um submenu (dropdown). A ordem aqui é a ordem no site. O menu também alimenta o "Acesso rápido" do rodapé.</p>
           <div id="nav-links-list"></div>
           <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
             <div class="field-row">
@@ -228,7 +228,7 @@
       <!-- ── DOJOS ── -->
       <div class="editor-section" id="sec-dojos">
         <div class="editor-title">Dojos</div>
-        <div class="editor-desc">Cada dojo mostra automaticamente as turmas cujo campo "Dojo" coincide com o nome.</div>
+        <div class="editor-desc">Cada dojo tem página própria em /dojos/&lt;slug&gt; com o seu horário: aparecem as turmas cujo campo "Dojo" coincide com o nome. Depois de adicionar um dojo, acrescenta-o ao submenu "Dojos" em Geral &amp; Menu.</div>
         <div class="editor-card">
           <div class="editor-card-title">Cabeçalho da página</div>
           <div class="field-row">
@@ -329,16 +329,13 @@
 
       <!-- ── EVENTOS ── -->
       <div class="editor-section" id="sec-eventos">
-        <div class="editor-title">Eventos</div>
-        <div class="editor-desc">Competições, exames, estágios e formações. As páginas /competicoes e /formacoes mostram o mesmo calendário filtrado.</div>
+        <div class="editor-title">Próximas provas</div>
+        <div class="editor-desc">Competições, exames e estágios. Os três próximos aparecem no painel "Próximas provas" da página inicial. Para dar mais detalhe a um evento, publica uma notícia.</div>
         <div class="editor-card">
-          <div class="editor-card-title">Cabeçalho da página</div>
           <div class="field-row">
-            <div class="field"><label>Etiqueta</label><input type="text" data-path="events.subtitle"></div>
-            <div class="field"><label>Título</label><input type="text" data-path="events.title"></div>
+            <div class="field"><label>Título do painel</label><input type="text" data-path="events.homeTitle"></div>
+            <div class="field"><label>Texto quando não há eventos</label><input type="text" data-path="events.emptyText"></div>
           </div>
-          <div class="field"><label>Introdução</label><textarea data-path="events.intro"></textarea></div>
-          <div class="field"><label>Texto quando não há eventos</label><input type="text" data-path="events.emptyText"></div>
         </div>
         <div class="editor-card">
           <div class="editor-card-title">Tipos de evento</div>
@@ -348,16 +345,30 @@
         <div id="events-list"></div>
       </div>
 
-      <!-- ── MODALIDADES ── -->
-      <div class="editor-section" id="sec-modalidades">
-        <div class="editor-title">Modalidades</div>
+      <!-- ── KARATE ── -->
+      <div class="editor-section" id="sec-karate">
+        <div class="editor-title">Karate</div>
+        <div class="editor-desc">Página /karate (visão geral) e as páginas de cada disciplina: Kihon, Kata e Kumite. As turmas e o bloco infantil aparecem em baixo na mesma página.</div>
         <div class="editor-card">
-          <div class="editor-card-title">Cabeçalho</div>
+          <div class="editor-card-title">Cabeçalho da página /karate</div>
+          <div class="field-row">
+            <div class="field"><label>Etiqueta</label><input type="text" data-path="karate.subtitle"></div>
+            <div class="field"><label>Título</label><input type="text" data-path="karate.title"></div>
+          </div>
+          <div class="field"><label>Introdução</label><textarea data-path="karate.intro"></textarea></div>
+        </div>
+        <div class="editor-card-title" style="margin:8px 0 12px">Disciplinas (Kihon · Kata · Kumite)</div>
+        <div id="disciplines-list"></div>
+        <div class="editor-card" style="margin-top:20px">
+          <div class="editor-card-title">Bloco "Turmas"</div>
           <div class="field-row">
             <div class="field"><label>Etiqueta</label><input type="text" data-path="classes.subtitle"></div>
-            <div class="field"><label>Título</label><input type="text" data-path="classes.title"></div>
+            <div class="field"><label>Título (página inicial)</label><input type="text" data-path="classes.title"></div>
           </div>
-          <div class="field"><label>Introdução (página)</label><textarea data-path="classes.intro"></textarea></div>
+          <div class="field-row">
+            <div class="field"><label>Título (em /karate)</label><input type="text" data-path="karate.turmasTitle"></div>
+            <div class="field"><label>Introdução (em /karate)</label><input type="text" data-path="karate.turmasIntro"></div>
+          </div>
           <div class="field-row">
             <div class="field"><label>Botão (página inicial) — texto</label><input type="text" data-path="classes.ctaLabel"></div>
             <div class="field"><label>Botão — link</label><input type="text" data-path="classes.ctaHref"></div>
@@ -383,7 +394,7 @@
 
       <!-- ── CONTACTO ── -->
       <div class="editor-section" id="sec-contacto">
-        <div class="editor-title">Contacto</div>
+        <div class="editor-title">Contactos</div>
         <div class="editor-desc">Os contactos em si (telefone, e-mail, morada) estão em "Geral". Os dojos aparecem automaticamente.</div>
         <div class="editor-card">
           <div class="field-row">
@@ -406,7 +417,7 @@
 
       <!-- ── SOBRE NÓS ── -->
       <div class="editor-section" id="sec-sobre">
-        <div class="editor-title">Associação — sobre nós</div>
+        <div class="editor-title">Quem Somos — sobre nós</div>
         <div class="editor-desc">Usado na página inicial (resumo) e na página /associacao (completo).</div>
         <div class="editor-card">
           <div class="editor-card-title">Apresentação</div>
