@@ -146,7 +146,7 @@
     const bo = Math.exp(-x * x) * 0.6;
     if (Math.abs(bo - bloomOp) > 0.01 || (bo === 0 && bloomOp !== 0)) { bloomOp = bo; bloom.style.opacity = bo.toFixed(3); }
     const lit = scrollP > 0.82;
-    if (lit !== litState) { litState = lit; room.classList.toggle('lit', lit); stage.classList.toggle('inside', lit); }
+    if (lit !== litState) { litState = lit; room.classList.toggle('lit', lit); stage.classList.toggle('inside', lit); if (lit) loadPreviews(); }
     if (lit || flying) positionLabels();
     const past = scrollP > 0.05;
     if (past !== pastState) { pastState = past; stage.classList.toggle('past', past); }
@@ -168,6 +168,14 @@
       cam.pitch = lerp(fly.from.pitch, lookPitch, k);
       cam.persp = lerp(fly.from.persp, fly.from.persp + 240, smoothstep(u, 0.5, 1));
       roll = Math.sin(u * Math.PI) * 1.4 * fly.dir;
+      // quando a porta já enche o ecrã, corta-se para a própria página em 2D nítida (match cut): continua-se a entrar
+      // com um leve zoom e a luz sobe, e a página de destino chega com essa mesma luz a dissipar-se
+      if (u >= fly.cut) {
+        if (!fly.cutDone) { fly.cutDone = true; passage.style.backgroundImage = 'url(' + previewFor(fly.href) + ')'; passage.classList.add('on'); }
+        const pu = smoothstep(u, fly.cut, 1);
+        passage.style.transform = 'scale(' + (1 + 0.05 * pu).toFixed(4) + ')';
+        passage.style.setProperty('--veil', (0.85 * smoothstep(u, 0.82, 1)).toFixed(3));
+      }
     } else {
       const a = 1 - Math.pow(1 - 0.24, dt / 16.667);
       scrollTargets();
@@ -188,7 +196,21 @@
   function wake() { if (rafId === null && (heroOnScreen || flying)) rafId = requestAnimationFrame(tick); }
   function onScroll() { scrollP = heroProgress(); wake(); }
   let overDoor = false;                                  // com o cursor sobre uma porta, a sala pára de girar
-  doors.forEach(d => { d.addEventListener('pointerenter', () => { overDoor = true; }); d.addEventListener('pointerleave', () => { overDoor = false; }); });
+  doors.forEach(d => { d.addEventListener('pointerenter', () => { overDoor = true; speculate(d.getAttribute('href')); }); d.addEventListener('pointerleave', () => { overDoor = false; }); });
+  // Ao passar numa porta, o browser pré-carrega (ou pré-renderiza, no Chrome) a página do outro lado: quando a porta abre, a página já lá está.
+  const speculated = new Set();
+  function speculate(href) {
+    if (!href || speculated.has(href)) return; speculated.add(href);
+    try {
+      if (window.HTMLScriptElement && HTMLScriptElement.supports && HTMLScriptElement.supports('speculationrules')) {
+        const s = document.createElement('script'); s.type = 'speculationrules';
+        s.textContent = JSON.stringify({ prerender: [{ urls: [href], eagerness: 'immediate' }] });
+        document.head.appendChild(s);
+      } else {
+        const l = document.createElement('link'); l.rel = 'prefetch'; l.href = href; document.head.appendChild(l);
+      }
+    } catch (e) {}
+  }
   function onMouse(e) {
     if (flying || overDoor) return;
     mouseX = clamp((e.clientX / innerWidth) * 2 - 1, -1, 1);
@@ -224,16 +246,16 @@
     const vpOff = (innerHeight / 2 - (sr.top + U.VPY * upx)) / upx;    // unidades entre o ponto de fuga e o centro do ecrã
     const dur = side ? 1900 : 1600;
     flying = true; stage.classList.add('flying');
-    fly = { t0: performance.now(), dur, P0, P1, P2, C, vpOff, dir: Math.sign(P2.x - P0.x) || 1, from: { yaw: cam.yaw, pitch: cam.pitch, persp: cam.persp } };
+    fly = { t0: performance.now(), dur, P0, P1, P2, C, vpOff, dir: Math.sign(P2.x - P0.x) || 1, from: { yaw: cam.yaw, pitch: cam.pitch, persp: cam.persp },
+            href: door.getAttribute('href'), cut: side ? 0.6 : 0.62, cutDone: false };
     wake();
     setTimeout(() => door.classList.add('open'), dur * 0.28);
-    setTimeout(() => flash.classList.add('on'), dur * 0.78);
     setTimeout(() => { if (done) done(); }, dur);
   }
   // Se ainda estamos à porta, primeiro entra-se (scroll suave até ao fim do hero) e só depois se voa até à porta.
   function heroEndY() { return hero.getBoundingClientRect().top + scrollY + hero.offsetHeight - innerHeight; }
   function approachAndFly(door, href) {
-    const go = () => flyTo(door, () => { try { sessionStorage.setItem('asbki-door', href); } catch (e) {} location.href = href; });
+    const go = () => flyTo(door, () => { try { sessionStorage.setItem('asbki-door', href); sessionStorage.setItem('asbki-arrive', 'door'); } catch (e) {} location.href = href; });
     if (scrollP > 0.8) return go();
     window.scrollTo({ top: heroEndY(), behavior: 'smooth' });
     const t0 = performance.now();
@@ -269,7 +291,7 @@
     document.querySelectorAll('#site-header a[href]').forEach(a => {
       const door = doors.find(d => d.getAttribute('href') === a.getAttribute('href'));
       if (!door) return;
-      a.addEventListener('mouseenter', () => door.classList.add('hot'));
+      a.addEventListener('mouseenter', () => { door.classList.add('hot'); speculate(door.getAttribute('href')); });
       a.addEventListener('mouseleave', () => door.classList.remove('hot'));
       a.addEventListener('click', e => {
         if (!scrubOn || !heroOnScreen || modified(e)) return;
@@ -296,7 +318,7 @@
     wake();
   }
   // Se o visitante voltar com o botão de retroceder, a página vem do cache com a porta aberta.
-  addEventListener('pageshow', e => { if (e.persisted) { busy = false; flying = false; fly = null; roll = 0; stage.classList.remove('flying'); doors.forEach(d => d.classList.remove('open')); flash.classList.remove('on'); scrollTargets(); wake(); } });
+  addEventListener('pageshow', e => { if (e.persisted) { busy = false; flying = false; fly = null; roll = 0; stage.classList.remove('flying'); passage.classList.remove('on'); passage.style.transform = ''; passage.style.setProperty('--veil', '0'); doors.forEach(d => d.classList.remove('open')); flash.classList.remove('on'); scrollTargets(); wake(); } });
 
   /* ── Arquitectura e legendas das portas ─────────────────────────────────
      Cada porta ganha uma travessa de madeira; o kanji fica marcado no papel (via data-kanji na
@@ -305,9 +327,23 @@
   const labelsLayer = document.createElement('div');
   labelsLayer.className = 'dj-labels'; labelsLayer.setAttribute('aria-hidden', 'true');
   stage.appendChild(labelsLayer);
+  // Do outro lado de cada porta está a própria página: uma pré-visualização (assets/dojo/preview-*.jpg, gerada por
+  // Karate/review/pages-previews.mjs) por trás das folhas, visível quando a porta abre.
+  const previewFor = href => '/assets/dojo/preview-' + String(href || '').replace(/^\/+/, '').split(/[\/?#]/)[0] + '.jpg';
+  let previewsLoaded = false;
+  function loadPreviews() {
+    if (previewsLoaded) return; previewsLoaded = true;
+    doors.forEach(d => { const url = previewFor(d.getAttribute('href')); const im = new Image(); im.src = url; const pg = d.querySelector('.dj-page'); if (pg) pg.style.backgroundImage = 'url(' + url + ')'; });
+  }
+  const passage = document.createElement('div');
+  passage.className = 'dj-passage'; passage.setAttribute('aria-hidden', 'true');
+  stage.appendChild(passage);
   const labels = doors.map(d => {
     const light = d.querySelector('.dj-light');
     if (light) light.dataset.kanji = d.dataset.kanji || '';
+    const page = document.createElement('span'); page.className = 'dj-page';
+    const leaves = d.querySelector('.dj-leaves');
+    if (leaves) d.insertBefore(page, leaves); else d.appendChild(page);
     const lintel = document.createElement('span'); lintel.className = 'dj-lintel'; d.appendChild(lintel);
     const a = document.createElement('a');
     a.className = 'dj-label' + (d.classList.contains('red') ? ' red' : '');
@@ -315,7 +351,7 @@
     const k = document.createElement('i'); k.textContent = d.dataset.kanji || '';
     const n = document.createElement('span'); n.textContent = d.dataset.label || '';
     a.appendChild(k); a.appendChild(n);
-    a.addEventListener('mouseenter', () => { d.classList.add('hot'); overDoor = true; });
+    a.addEventListener('mouseenter', () => { d.classList.add('hot'); overDoor = true; speculate(d.getAttribute('href')); });
     a.addEventListener('mouseleave', () => { d.classList.remove('hot'); overDoor = false; });
     d.addEventListener('pointerenter', () => a.classList.add('hot'));
     d.addEventListener('pointerleave', () => a.classList.remove('hot'));

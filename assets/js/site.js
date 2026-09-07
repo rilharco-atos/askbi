@@ -20,13 +20,13 @@ window.ASBKIShoji = (function () {
   const here = location.pathname.replace(/\/+$/, '') || '/';
   const isHome = document.body.dataset.page === 'home' || here === '/';
   const current = doorFor(here);
-  let overlay = null, opened = false, t0 = performance.now();
+  let overlay = null, opened = false, veil = false, contentReady = false, t0 = performance.now();
 
   // A folha de estilos completa vem do ficheiro; o essencial para pintar as folhas
   // fechadas antes de esse ficheiro chegar segue inline.
   if (!isHome) {
     const st = document.createElement('style');
-    st.textContent = '.shoji{position:fixed;inset:0;z-index:3000;display:grid;place-items:center;overflow:hidden}.shoji-leaf{position:absolute;top:0;bottom:0;width:50.6%;background:#eee3cf}.shoji-leaf.l{left:0}.shoji-leaf.r{right:0}';
+    st.textContent = '.shoji{position:fixed;inset:0;z-index:3000;display:grid;place-items:center;overflow:hidden}.shoji-leaf{position:absolute;top:0;bottom:0;width:50.6%;background:#eee3cf}.shoji-leaf.l{left:0}.shoji-leaf.r{right:0}.shoji-veil{position:fixed;inset:0;z-index:3000;background:#f3ece2;pointer-events:none}';
     document.head.appendChild(st);
     const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = '/assets/css/shoji.css';
     document.head.appendChild(link);
@@ -41,13 +41,29 @@ window.ASBKIShoji = (function () {
     document.body.appendChild(overlay);
     return overlay;
   }
+  // Quem chega pela porta do dojo já viu a porta abrir-se sobre esta página: não há segundo shoji,
+  // só a luz da passagem a dissipar-se (véu) e a página a assentar.
+  function fromDoor() {
+    try { const v = sessionStorage.getItem('asbki-arrive'); if (v) sessionStorage.removeItem('asbki-arrive'); return v === 'door'; } catch (e) { return false; }
+  }
+  function buildVeil() {
+    if (overlay) overlay.remove();
+    overlay = document.createElement('div');
+    overlay.className = 'shoji-veil';
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(overlay);
+    document.body.classList.add('arrived');
+    veil = true;
+    return overlay;
+  }
   function open() {
+    contentReady = true;
     if (opened || !overlay) return; opened = true;
-    // deixa as folhas visíveis um instante, para se verem, e depois abre
-    const wait = Math.max(0, 420 - (performance.now() - t0));
+    // deixa as folhas visíveis um instante, para se verem, e depois abre (o véu dissipa-se quase de imediato)
+    const wait = Math.max(0, (veil ? 90 : 420) - (performance.now() - t0));
     setTimeout(() => {
       overlay.classList.remove('closed'); overlay.classList.add('open');
-      setTimeout(() => { if (overlay) { overlay.remove(); overlay = null; } }, 1100);
+      setTimeout(() => { if (overlay) { overlay.remove(); overlay = null; } }, veil ? 900 : 1100);
     }, wait);
   }
   let leaving = false;
@@ -68,8 +84,14 @@ window.ASBKIShoji = (function () {
     return { href: u.pathname + u.search + u.hash, path };
   }
   if (!isHome) {
-    build(current, 'closed');
-    setTimeout(open, 2600);                   // se o conteúdo demorar, as folhas abrem na mesma
+    // Numa página pré-renderizada (speculation rules) a decisão fica para a activação: só então se sabe se se chegou pela porta.
+    const arrive = () => {
+      t0 = performance.now();
+      if (fromDoor()) buildVeil(); else build(current, 'closed');
+      setTimeout(open, 2600);                 // se o conteúdo demorar, as folhas abrem na mesma
+      if (contentReady) open();               // conteúdo já renderizado durante a pré-renderização
+    };
+    if (document.prerendering) document.addEventListener('prerenderingchange', arrive, { once: true }); else arrive();
     document.addEventListener('click', e => {
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const a = e.target.closest('a[href]');
