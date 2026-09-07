@@ -1,0 +1,68 @@
+name: Regenerar pré-visualizações
+
+# Regenera assets/dojo/preview-*.jpg sempre que content.json muda: as
+# pré-visualizações são estáticas e ficam desatualizadas se ninguém as
+# regenerar (ver review/pages-previews.mjs, portado em scripts/previews.mjs).
+
+on:
+  push:
+    branches: [dojo-home, master]
+    paths:
+      - content.json
+
+env:
+  PORT: 3104
+  ASBKI_BASE_URL: http://127.0.0.1:3104
+  CHROME_DEBUG_PORT: 9504
+  ADMIN_PASSWORD: ci-test-password
+
+permissions:
+  contents: write
+
+jobs:
+  previews:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: browser-actions/setup-chrome@v1
+        id: setup-chrome
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Arrancar o servidor
+        run: |
+          nohup node server.js > server.log 2>&1 &
+          echo $! > server.pid
+          for i in $(seq 1 30); do
+            curl -sf "$ASBKI_BASE_URL/" > /dev/null && break
+            sleep 1
+          done
+          curl -sf "$ASBKI_BASE_URL/" > /dev/null || (echo "servidor não respondeu" && cat server.log && exit 1)
+
+      - name: Gerar pré-visualizações
+        run: npm run previews
+        env:
+          CHROME_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
+
+      - name: Parar o servidor
+        if: always()
+        run: |
+          if [ -f server.pid ]; then kill "$(cat server.pid)" || true; fi
+
+      - name: Commit automático (só se houver diferenças)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/dojo/preview-*.jpg
+          if git diff --cached --quiet; then
+            echo "sem alterações às pré-visualizações"
+          else
+            git commit -m "chore: regenerar pré-visualizações das páginas (content.json mudou)"
+            git push
+          fi
