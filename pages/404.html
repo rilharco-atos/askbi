@@ -5,6 +5,7 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta name="robots" content="noindex">
    <title>Página não encontrada — ASBKI Covilhã</title>
+   <meta name="theme-color" content="#0f0d10">
    <link rel="preconnect" href="https://fonts.googleapis.com">
    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -12,22 +13,49 @@
    <link rel="stylesheet" href="/assets/css/pages.css">
 </head>
 <body data-page="404">
+
+   <a class="skip-link" href="#conteudo">Saltar para o conteúdo</a>
    <div id="site-header"></div>
-   <main>
+
+   <main id="conteudo" tabindex="-1">
       <section class="notfound">
-         <div class="container">
+         <div class="container notfound-inner">
+
+            <div class="nf-door" aria-hidden="true">
+               <span class="nf-door-jamb"></span>
+               <span class="nf-door-leaf l"></span>
+               <span class="nf-door-leaf r"></span>
+               <span class="nf-door-knot"></span>
+            </div>
+
             <div class="notfound-code">Erro 404</div>
-            <h1 class="page-title">Esta página saiu do tatami.</h1>
-            <p class="page-intro">O endereço pode estar errado ou a página pode ter sido movida.</p>
+            <h1 class="page-title">Esta porta não existe.</h1>
+            <p class="page-intro">O endereço pode estar errado ou a página foi movida. As outras seis portas do dojo continuam abertas.</p>
+
             <div class="page-hero-actions">
                <a href="/" class="btn btn-accent">Voltar ao início</a>
                <a href="/inscricao" class="btn btn-outline-ghost">Marcar aula experimental</a>
             </div>
+
+            <nav class="nf-doors" aria-label="Páginas do site">
+               <a href="/associacao"><span class="nf-kanji" aria-hidden="true">会</span>Quem Somos</a>
+               <a href="/karate"><span class="nf-kanji" aria-hidden="true">空手</span>Karate</a>
+               <a href="/dojos"><span class="nf-kanji" aria-hidden="true">道場</span>Dojos</a>
+               <a href="/noticias"><span class="nf-kanji" aria-hidden="true">報</span>Notícias</a>
+               <a href="/contacto"><span class="nf-kanji" aria-hidden="true">連絡</span>Contactos</a>
+               <a href="/inscricao"><span class="nf-kanji" aria-hidden="true">入門</span>Aula grátis</a>
+            </nav>
+
          </div>
       </section>
    </main>
+
    <div id="site-footer"></div>
    <script src="/assets/js/site.js"></script>
-   <script src="/assets/js/pages.js"></script>
+   <script>
+      ASBKI.boot(function (c) {
+         ASBKI.setMeta('Página não encontrada — ' + c.site.name);
+      });
+   </script>
 </body>
 </html>
