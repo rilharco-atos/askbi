@@ -69,6 +69,10 @@
 
       <div class="sidebar-section-label" style="margin-top:14px">Media</div>
       <div class="nav-item" data-section="imagens" data-title="Biblioteca de imagens">Imagens</div>
+
+      <div class="sidebar-section-label" style="margin-top:14px">Sistema</div>
+      <div class="nav-item" data-section="leads" data-title="Marcações e contactos">Leads</div>
+      <div class="nav-item" data-section="versoes" data-title="Histórico de versões">Versões</div>
     </nav>
 
     <div class="sidebar-footer">
@@ -156,13 +160,13 @@
           </div>
         </div>
         <div class="editor-card">
-          <div class="editor-card-title">Imagens do hero</div>
-          <div class="img-field" data-img="hero.backgroundImage" data-label="Imagem de fundo" data-help="Aparece por baixo de tudo, com opacidade reduzida."></div>
+          <div class="editor-card-title">Imagens do hero <span class="stat-badge" title="Estes campos ficaram do site anterior; a página inicial actual é a sala 3D e não os usa">página antiga</span></div>
+          <div class="img-field" data-img="hero.backgroundImage" data-label="Imagem de fundo" data-help="Aparece por baixo de tudo, com opacidade reduzida. Sem efeito na página inicial actual (sala 3D)."></div>
           <div style="height:18px"></div>
-          <div class="img-field" data-img="hero.foregroundImage" data-label="Lutador (primeiro plano)" data-help="PNG com fundo transparente."></div>
+          <div class="img-field" data-img="hero.foregroundImage" data-label="Lutador (primeiro plano)" data-help="PNG com fundo transparente. Sem efeito na página inicial actual (sala 3D)."></div>
         </div>
         <div class="editor-card">
-          <div class="editor-card-title">Posição &amp; tamanho do lutador</div>
+          <div class="editor-card-title">Posição &amp; tamanho do lutador <span class="stat-badge" title="Estes campos ficaram do site anterior; a página inicial actual é a sala 3D e não os usa">página antiga</span></div>
           <div class="field">
             <label>Tamanho — <strong id="fighter-size-val">88</strong>%</label>
             <input type="range" id="fighter-size-input" min="40" max="140" value="88" step="1" style="width:100%;accent-color:var(--accent);margin-top:6px" oninput="updateFighterControls()">
@@ -528,6 +532,35 @@
         <div class="editor-card">
           <div class="editor-card-title">Imagens <span class="stat-badge" id="img-count">0</span></div>
           <div id="images-grid" class="lib-grid"></div>
+        </div>
+      </div>
+
+      <!-- ── LEADS ── -->
+      <div class="editor-section" id="sec-leads">
+        <div class="editor-title">Marcações e contactos</div>
+        <div class="editor-desc">Pedidos recebidos pelos formulários de aula experimental e de contacto do site. Guardados durante 12 meses.</div>
+        <div class="editor-card">
+          <div class="field-row" style="align-items:center">
+            <button class="btn btn-secondary" onclick="loadLeads()">↺ Atualizar</button>
+            <button class="btn btn-secondary" onclick="exportLeadsCsv()">⬇ Exportar CSV</button>
+          </div>
+        </div>
+        <div class="editor-card">
+          <div class="editor-card-title">Pedidos <span class="stat-badge" id="leads-count">0</span></div>
+          <div id="leads-list"></div>
+        </div>
+      </div>
+
+      <!-- ── VERSÕES ── -->
+      <div class="editor-section" id="sec-versoes">
+        <div class="editor-title">Histórico de versões</div>
+        <div class="editor-desc">Cada vez que guardas alterações fica uma versão nova. Restaurar uma versão antiga cria também uma versão nova — nunca apaga o histórico. Mantidas as últimas 30 versões.</div>
+        <div class="editor-card">
+          <button class="btn btn-secondary" onclick="loadVersions()">↺ Atualizar lista</button>
+        </div>
+        <div class="editor-card">
+          <div class="editor-card-title">Versões <span class="stat-badge" id="versions-count">0</span></div>
+          <div id="versions-list"></div>
         </div>
       </div>
 
