@@ -6,6 +6,8 @@
    <meta name="description" content="ASBKI Covilhã — Karate Shotokan desde 1998. Dois dojos, turmas dos 5 aos 70 anos. Primeira aula gratuita.">
    <title>ASBKI Covilhã — Karate Shotokan</title>
    <meta name="theme-color" content="#0d0d0d">
+   <style>html.dj-return::before{content:"";position:fixed;inset:0;z-index:4000;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,#fff8ec,#efe3cf 60%,#e6d6bd);transition:opacity .9s cubic-bezier(.22,.61,.36,1)}html.dj-return.dj-return-open::before{opacity:0}</style>
+   <script>try{if(sessionStorage.getItem('asbki-door')&&matchMedia('(min-width:1025px)').matches)document.documentElement.classList.add('dj-return')}catch(e){}</script>
    <meta property="og:type" content="website">
    <meta property="og:title" content="ASBKI Covilhã — Dá o primeiro passo">
    <meta property="og:description" content="Karate Shotokan na Covilhã e no Tortosendo desde 1998. Dos 5 aos 70 anos. A primeira aula é gratuita.">
@@ -21,9 +23,10 @@
 
 <body data-page="home">
 
+   <a class="skip-link" href="#conteudo">Saltar para o conteúdo</a>
    <div id="site-header"></div>
 
-   <main>
+   <main id="conteudo" tabindex="-1">
 
       <!-- ═══ O DOJO: a página inicial é a própria sala ═══════════════════ -->
       <section class="dojo" id="inicio" aria-label="Entrar no dojo">
@@ -34,19 +37,19 @@
                   <div class="dj-face ceiling"></div>
                   <div class="dj-face floor"></div>
                   <div class="dj-face left">
-                     <a class="dj-door" href="/associacao" data-face="left" data-label="Quem Somos" data-kanji="会" style="--dx:600"><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
-                     <a class="dj-door" href="/karate" data-face="left" data-label="Karate" data-kanji="空手" style="--dx:470"><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
-                     <a class="dj-door" href="/dojos" data-face="left" data-label="Dojos" data-kanji="道場" style="--dx:340"><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
+                     <a class="dj-door" href="/associacao" data-face="left" data-label="Quem Somos" aria-label="Quem Somos" data-kanji="会" style="--dx:600"><span class="dj-jamb"></span><span class="dj-light" aria-hidden="true"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
+                     <a class="dj-door" href="/karate" data-face="left" data-label="Karate" aria-label="Karate" data-kanji="空手" style="--dx:470"><span class="dj-jamb"></span><span class="dj-light" aria-hidden="true"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
+                     <a class="dj-door" href="/dojos" data-face="left" data-label="Dojos" aria-label="Dojos" data-kanji="道場" style="--dx:340"><span class="dj-jamb"></span><span class="dj-light" aria-hidden="true"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
                   </div>
                   <div class="dj-face right">
-                     <a class="dj-door red" href="/inscricao" data-face="right" data-label="Aula grátis" data-kanji="入門" style="--dx:200"><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
+                     <a class="dj-door red" href="/inscricao" data-face="right" data-label="Aula grátis" aria-label="Aula grátis" data-kanji="入門" style="--dx:200"><span class="dj-jamb"></span><span class="dj-light" aria-hidden="true"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
                   </div>
                   <div class="dj-face back">
                      <span class="dj-emblem-glow" aria-hidden="true"></span>
-                     <a class="dj-door" href="/noticias" data-face="back" data-label="Notícias" data-kanji="報" style="--dx:75"><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
-                     <a class="dj-door" href="/contacto" data-face="back" data-label="Contactos" data-kanji="連絡" style="--dx:298"><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
+                     <a class="dj-door" href="/noticias" data-face="back" data-label="Notícias" aria-label="Notícias" data-kanji="報" style="--dx:75"><span class="dj-jamb"></span><span class="dj-light" aria-hidden="true"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
+                     <a class="dj-door" href="/contacto" data-face="back" data-label="Contactos" aria-label="Contactos" data-kanji="連絡" style="--dx:298"><span class="dj-jamb"></span><span class="dj-light" aria-hidden="true"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
                   </div>
-                  <div class="dj-gate" id="dj-gate" aria-hidden="true"><span class="dj-gate-glow"></span><span class="dj-gate-leaf l"><i>道</i></span><span class="dj-gate-leaf r"><i>場</i></span><span class="dj-gate-lintel"></span><span class="dj-gate-sill"></span></div>
+                  <div class="dj-gate" id="dj-gate" aria-hidden="true"><span class="dj-gate-glow"></span><span class="dj-gate-track"><span class="dj-gate-leaf l"><i>道</i></span><span class="dj-gate-leaf r"><i>場</i></span></span><span class="dj-gate-jamb l"></span><span class="dj-gate-jamb r"></span><span class="dj-gate-lintel"></span><span class="dj-gate-sill"></span></div>
                   <div class="dj-frame" aria-hidden="true"></div>
                </div>
             </div>
@@ -62,6 +65,7 @@
                <div class="dj-band" data-a="0" data-b="0.16" data-entrance="approach">
                   <p class="dj-kicker">Associação Shotokan Karatedo · Beira Interior</p>
                   <h1 class="dj-line">O caminho começa à porta.</h1>
+                  <p class="dj-sub">Karate Shotokan na Covilhã e no Tortosendo. Dos 5 aos 70 anos, e a primeira aula é grátis.</p>
                </div>
                <div class="dj-band" data-a="0.22" data-b="0.46" data-entrance="blur">
                   <div class="dj-blurpair">
@@ -83,6 +87,7 @@
             </div>
 
             <div class="dj-hint" aria-hidden="true">Seis portas · seis páginas</div>
+            <button type="button" class="dj-motion" aria-pressed="true" title="Parar o movimento da sala"><span class="dj-motion-dot"></span>Movimento</button>
             <button type="button" class="dj-cue" aria-label="Entrar no dojo"><span>Entrar</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16m0 0 6-6m-6 6-6-6"/></svg></button>
 
             <div class="dj-static">
