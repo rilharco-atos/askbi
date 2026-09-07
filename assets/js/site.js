@@ -323,16 +323,61 @@ window.ASBKI = (function () {
     }
   }
 
+  /* Placeholders do CMS: texto que o cliente ainda não preencheu.
+     Usado no rodapé para não mostrar "+351 275 000 000" como se fosse real. */
+  function isPlaceholder(v) {
+    return /a confirmar|a definir|000 000|lorem/i.test(v == null ? '' : String(v));
+  }
+
+  /* Navegação mínima para quando o conteúdo falha por completo (ver loadContent):
+     as seis rotas fixas, sem depender do CMS. */
+  const FALLBACK_SITE = { name: 'ASBKI', tagline: 'Karate Shotokan — Covilhã' };
+  const FALLBACK_NAV = {
+    links: [
+      { label: 'Início',      href: '/',           children: [] },
+      { label: 'Quem Somos',  href: '/associacao',  children: [] },
+      { label: 'Karate',      href: '/karate',      children: [] },
+      { label: 'Dojos',       href: '/dojos',       children: [] },
+      { label: 'Notícias',    href: '/noticias',    children: [] },
+      { label: 'Contactos',   href: '/contacto',    children: [] },
+    ],
+    ctaLabel: 'Aula grátis', ctaHref: '/inscricao',
+  };
+
   /* ─── Conteúdo ──────────────────────────────────────────────────────── */
-  async function loadContent() {
+  /* O servidor injecta o conteúdo já lido em <script id="asbki-content">
+     antes de </head> (evita o round-trip a /api/content). Páginas antigas,
+     ou uma injecção inválida, caem no fetch com timeout + 1 repetição. */
+  function readInlineContent() {
+    const el = document.getElementById('asbki-content');
+    if (!el) return null;
+    try { return JSON.parse(el.textContent); }
+    catch (err) { console.error('Conteúdo injectado inválido', err); return null; }
+  }
+
+  async function fetchJSON(url, timeoutMs) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
     try {
-      const res = await fetch('/api/content');
-      if (!res.ok) throw new Error(res.status);
-      return normalize(await res.json());
-    } catch (err) {
-      console.error('Não foi possível carregar o conteúdo', err);
-      return null;
+      const res = await fetch(url, { signal: ctrl.signal });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.json();
+    } finally {
+      clearTimeout(timer);
     }
+  }
+
+  async function loadContent() {
+    const inline = readInlineContent();
+    if (inline) return normalize(inline);
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        return normalize(await fetchJSON('/api/content', 5000));
+      } catch (err) {
+        if (attempt === 2) console.error('Não foi possível carregar o conteúdo', err);
+      }
+    }
+    return null;
   }
 
   /* Defesa contra conteúdo antigo que possa chegar sem migração */
@@ -360,16 +405,31 @@ window.ASBKI = (function () {
     return p === h || p.startsWith(h + '/');
   }
 
+  /* Marca do cabeçalho/rodapé: emblema próprio (SVG, 36 KB), não o ficheiro
+     que o cliente possa ter carregado via CMS em site.logo — esse chegou a
+     pesar ~2 MB (PNG de assets/images/uploads) e nunca deveria ir para uma
+     zona de 36×36px. Dimensões explícitas evitam layout shift. */
+  const BRAND_LOGO_SRC = '/assets/images/logo.svg';
   function brandHTML(site, idPrefix) {
-    const logo = site.logo
-      ? `<img src="${esc(site.logo)}" alt="${esc(site.name)}" style="width:100%;height:100%;object-fit:contain;border-radius:50%">`
-      : '★';
     return `
-      <div class="nav-star" ${site.logo ? 'style="background:transparent;padding:2px"' : ''}>${logo}</div>
+      <div class="nav-star" style="background:transparent;padding:2px">
+        <img src="${BRAND_LOGO_SRC}" width="36" height="36" alt="${esc(site.name)}" style="width:100%;height:100%;object-fit:contain">
+      </div>
       <div>
         <span class="nav-brand-name" id="${idPrefix}-brand-name">${esc(site.name)}</span>
         <span class="nav-brand-sub" id="${idPrefix}-brand-sub">${esc(site.tagline)}</span>
       </div>`;
+  }
+
+  /* Kanji da porta ao lado do rótulo, só no acordeão do menu móvel (CSS
+     .nav-kanji esconde-o no desktop). Os mesmos seis usados no shoji. */
+  const NAV_KANJI = {
+    '/associacao': '会', '/karate': '空手', '/dojos': '道場',
+    '/noticias': '報', '/contacto': '連絡', '/inscricao': '入門',
+  };
+  function kanjiSpan(href) {
+    const k = NAV_KANJI[href];
+    return k ? `<span class="nav-kanji" aria-hidden="true">${k}</span>` : '';
   }
 
   /* A página actual: aria-current="page" só no link exacto; o pai de uma
@@ -387,12 +447,13 @@ window.ASBKI = (function () {
     return links.map((l, i) => {
       const kids = l.children || [];
       const active = isActive(l.href) || kids.some(k => isActive(k.href));
+      const kanji = kanjiSpan(l.href);
       if (!kids.length)
-        return `<li class="nav-item"><a href="${esc(l.href)}"${linkAttrs(l.href, active)}>${esc(l.label)}</a></li>`;
+        return `<li class="nav-item"><a href="${esc(l.href)}"${linkAttrs(l.href, active)}>${kanji}${esc(l.label)}</a></li>`;
       const id = `nav-sub-${i}`;
       return `
         <li class="nav-item has-children${active ? ' is-active' : ''}">
-          <a href="${esc(l.href)}"${linkAttrs(l.href, active)}>${esc(l.label)}</a>
+          <a href="${esc(l.href)}"${linkAttrs(l.href, active)}>${kanji}${esc(l.label)}</a>
           <button class="nav-caret" type="button" aria-label="Submenu ${esc(l.label)}"
                   aria-haspopup="true" aria-expanded="false" aria-controls="${id}">${svg(ICONS.chevron, 14)}</button>
           <ul class="nav-dropdown" id="${id}" aria-label="${esc(l.label)}">
@@ -412,7 +473,7 @@ window.ASBKI = (function () {
             <a href="/" class="nav-brand">${brandHTML(c.site, 'nav')}</a>
             <ul class="nav-links" id="nav-links">
               ${navLinksHTML(c.nav.links)}
-              <li class="nav-item nav-cta-mobile"><a href="${esc(c.nav.ctaHref)}" class="btn btn-accent"${isCurrent(c.nav.ctaHref) ? ' aria-current="page"' : ''}>${esc(c.nav.ctaLabel)}</a></li>
+              <li class="nav-item nav-cta-mobile"><a href="${esc(c.nav.ctaHref)}" class="btn btn-accent"${isCurrent(c.nav.ctaHref) ? ' aria-current="page"' : ''}>${kanjiSpan(c.nav.ctaHref)}${esc(c.nav.ctaLabel)}</a></li>
             </ul>
             <a href="${esc(c.nav.ctaHref)}" class="btn btn-accent nav-cta" id="nav-cta"${isCurrent(c.nav.ctaHref) ? ' aria-current="page"' : ''}>${esc(c.nav.ctaLabel)}</a>
             <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-links">
@@ -423,21 +484,50 @@ window.ASBKI = (function () {
       </nav>`;
   }
 
+  /* Horário do rodapé: content.schedule.days já vem pré-agrupado do CMS
+     (ex.: "Segunda — Sexta" / "18:00 — 21:30") e é a fonte usada. Só quando
+     esse array vier vazio (schedule editado à mão de forma incompleta, ou
+     um esquema futuro que deixe de o gravar) se agrupa a partir das sessões
+     individuais, por daysShort, juntando os horários dessa combinação. */
+  function deriveScheduleSummary(schedule) {
+    if (Array.isArray(schedule.days) && schedule.days.length) return schedule.days;
+    const byDays = new Map();
+    (schedule.sessions || []).forEach(s => {
+      const key = s.daysShort || '—';
+      if (!byDays.has(key)) byDays.set(key, []);
+      if (s.time) byDays.get(key).push(s.time);
+    });
+    return [...byDays.entries()].map(([day, times]) => ({ day, hours: times.join(' · ') || '—' }));
+  }
+
+  /* Ano do copyright sempre actual: substitui o primeiro ano de 4 dígitos
+     no texto gravado (ex.: "© 2026 ASBKI…") pelo ano corrente. */
+  function withCurrentYear(copyright) {
+    const year = String(new Date().getFullYear());
+    const text = copyright || '';
+    return /\d{4}/.test(text) ? text.replace(/\d{4}/, year) : `© ${year} ${text}`.trim();
+  }
+
   function renderFooter(c) {
     const el = document.querySelector('#site-footer');
     if (!el) return;
     const { site, footer, nav, schedule } = c;
-    const socials = ['facebook', 'instagram', 'youtube', 'tiktok'].filter(k => site[k]);
+    const socials = ['facebook', 'instagram', 'youtube', 'tiktok'].filter(k => site[k] && !isPlaceholder(site[k]));
+    const days = deriveScheduleSummary(schedule || {});
+    const showAddress = site.address && !isPlaceholder(site.address);
+    const showPhone   = site.phone && !isPlaceholder(site.phone);
+    const showEmail   = site.email && !isPlaceholder(site.email);
     el.innerHTML = `
       <footer class="footer">
+        <div class="tatami-strip" aria-hidden="true"></div>
         <div class="container">
           <div class="footer-grid">
             <div class="footer-brand">
               <div class="footer-brand-logo">${brandHTML(site, 'footer')}</div>
               <p class="footer-desc">${esc(footer.description)}</p>
-              <div class="footer-social">
+              ${socials.length ? `<div class="footer-social">
                 ${socials.map(k => `<a href="${esc(site[k])}" class="social-link" target="_blank" rel="noopener" aria-label="${k}">${svg(ICONS[k], 18)}</a>`).join('')}
-              </div>
+              </div>` : ''}
             </div>
             <div>
               <div class="footer-col-title">${esc(footer.quickLinksTitle)}</div>
@@ -449,7 +539,7 @@ window.ASBKI = (function () {
             <div>
               <div class="footer-col-title">${esc(footer.scheduleTitle)}</div>
               <div class="footer-schedule">
-                ${(schedule.days || []).map(d => `
+                ${days.map(d => `
                   <div class="schedule-row${d.hours === 'Fechado' ? ' closed' : ''}">
                     <span class="schedule-day">${esc(d.day)}</span>
                     <span class="schedule-hours">${esc(d.hours)}</span>
@@ -459,15 +549,18 @@ window.ASBKI = (function () {
             <div>
               <div class="footer-col-title">${esc(footer.contactTitle)}</div>
               <div class="footer-contact">
-                ${site.address ? `<div class="footer-contact-item">${svg(ICONS.pin, 16)}<span>${esc(site.address)}</span></div>` : ''}
-                ${site.phone   ? `<div class="footer-contact-item">${svg(ICONS.phone, 16)}<a href="tel:${esc(site.phone.replace(/\s/g, ''))}">${esc(site.phone)}</a></div>` : ''}
-                ${site.email   ? `<div class="footer-contact-item">${svg(ICONS.mail, 16)}<a href="mailto:${esc(site.email)}">${esc(site.email)}</a></div>` : ''}
+                ${showAddress ? `<div class="footer-contact-item">${svg(ICONS.pin, 16)}<span>${esc(site.address)}</span></div>` : ''}
+                ${showPhone   ? `<div class="footer-contact-item">${svg(ICONS.phone, 16)}<a href="tel:${esc(site.phone.replace(/\s/g, ''))}">${esc(site.phone)}</a></div>` : ''}
+                ${showEmail   ? `<div class="footer-contact-item">${svg(ICONS.mail, 16)}<a href="mailto:${esc(site.email)}">${esc(site.email)}</a></div>` : ''}
               </div>
             </div>
           </div>
           <div class="footer-bottom">
-            <span class="footer-copy">${esc(footer.copyright)}</span>
-            <a href="/admin" class="footer-admin-link">Área Reservada</a>
+            <span class="footer-copy">${esc(withCurrentYear(footer.copyright))}</span>
+            <ul class="footer-legal">
+              <li><a href="/privacidade">Privacidade</a></li>
+              <li><a href="/termos">Termos</a></li>
+            </ul>
           </div>
         </div>
       </footer>
@@ -558,6 +651,28 @@ window.ASBKI = (function () {
       if (toggle.classList.contains('open')) { setMenu(false); toggle.focus(); }
     });
 
+    /* Setas do teclado dentro de um dropdown aberto (desktop): ArrowDown a
+       partir do caret abre e entra no primeiro item; dentro da lista,
+       Up/Down percorre os itens (com wrap), Home/End vai ao primeiro/último. */
+    links.addEventListener('keydown', e => {
+      const li = e.target.closest('.nav-item.has-children');
+      if (!li) return;
+      const items = [...li.querySelectorAll('.nav-dropdown a')];
+      if (!items.length) return;
+      const onCaretOrLink = e.target.closest('.nav-caret') || e.target === li.querySelector(':scope > a');
+      if (onCaretOrLink && e.key === 'ArrowDown' && !isTouchLayout()) {
+        e.preventDefault();
+        closeAllSubs(li); setSub(li, true); items[0].focus();
+        return;
+      }
+      if (!e.target.closest('.nav-dropdown')) return;
+      const idx = items.indexOf(e.target);
+      if (e.key === 'ArrowDown') { e.preventDefault(); items[(idx + 1) % items.length].focus(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); items[(idx - 1 + items.length) % items.length].focus(); }
+      else if (e.key === 'Home') { e.preventDefault(); items[0].focus(); }
+      else if (e.key === 'End') { e.preventDefault(); items[items.length - 1].focus(); }
+    });
+
     document.addEventListener('click', e => {
       if (!e.target.closest('.nav-item.has-children')) closeAllSubs();
     });
@@ -628,17 +743,70 @@ window.ASBKI = (function () {
     }, 1200);
   };
 
+  /* Cabeçalho impresso (ver @media print em style.css): nome, telefone e
+     morada, só quando não são placeholder do CMS. */
+  function setPrintHeader(c) {
+    const main = document.querySelector('main');
+    if (!main) return;
+    const parts = [c.site.name];
+    if (c.site.phone && !isPlaceholder(c.site.phone)) parts.push(c.site.phone);
+    if (c.site.address && !isPlaceholder(c.site.address)) parts.push(c.site.address);
+    main.setAttribute('data-print-header', parts.join(' · '));
+  }
+
+  /* Faixa discreta mostrada quando o conteúdo falha por completo — nunca
+     substitui <main>, só avisa e oferece tentar de novo. */
+  function showLoadErrorBanner() {
+    if (document.querySelector('.load-error-banner')) return;
+    const bar = document.createElement('div');
+    bar.className = 'load-error-banner';
+    bar.setAttribute('role', 'alert');
+    bar.innerHTML = '<span>Não foi possível carregar tudo.</span><button type="button">Tentar novamente</button>';
+    bar.querySelector('button').addEventListener('click', () => location.reload());
+    document.body.prepend(bar);
+    /* O navbar (e o shoji, se estiver a decorrer) também são fixed no topo:
+       sem esta classe ficariam por baixo da faixa (ver style.css). */
+    document.body.classList.add('has-load-error');
+  }
+
+  /* Analytics: clique em telefone, só quando o Plausible estiver presente
+     (nunca falha sem ele). */
+  function initTelTracking() {
+    document.addEventListener('click', e => {
+      if (!e.target.closest('a[href^="tel:"]')) return;
+      if (typeof window.plausible !== 'function') return;
+      try { window.plausible('tel_click'); } catch (err) { /* nunca bloqueia o clique */ }
+    });
+  }
+
   /* ─── Boot ──────────────────────────────────────────────────────────── */
   async function boot(renderPage) {
     const c = await loadContent();
+    initTelTracking();
     if (!c) {
-      const main = document.querySelector('main');
-      if (main) main.innerHTML = '<div class="container" style="padding:160px 0"><p>Não foi possível carregar o conteúdo. Tenta recarregar a página.</p></div>';
+      /* Falha total (sem conteúdo injectado e sem resposta de /api/content):
+         mantém a página tal como está — nunca apaga <main> nem a home —,
+         renderiza um cabeçalho/rodapé mínimo com as seis rotas fixas, e
+         avisa com uma faixa discreta em vez de um ecrã em branco. */
+      renderHeader({ site: FALLBACK_SITE, nav: FALLBACK_NAV });
+      renderFooter({
+        site: FALLBACK_SITE,
+        footer: {
+          description: '', quickLinksTitle: 'Acesso rápido', scheduleTitle: 'Horário',
+          contactTitle: 'Contacte-nos', copyright: '© ASBKI Covilhã.',
+        },
+        nav: FALLBACK_NAV,
+        schedule: { days: [] },
+      });
+      initNavbar();
+      initMobileNav();
+      showLoadErrorBanner();
       if (window.ASBKIShoji) ASBKIShoji.open();
       return;
     }
     renderHeader(c);
     renderFooter(c);
+    setPrintHeader(c);
     initNavbar();
     initMobileNav();
     try {
@@ -665,7 +833,7 @@ window.ASBKI = (function () {
       <div class="class-img" data-class="${i % 5}">
         ${cl.image
           ? `<img src="${esc(cl.image)}" alt="${esc(cl.name)}" loading="lazy">`
-          : `<div class="class-img-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="${CLASS_ICONS[i % 5]}"/></svg></div>`}
+          : `<div class="class-img-placeholder"><img src="/assets/images/placeholder.svg" width="40" height="40" alt="" loading="lazy"></div>`}
         <div class="class-icon-badge">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#140908" stroke-width="2"><path d="${CLASS_ICONS[i % 5]}"/></svg>
         </div>
@@ -681,5 +849,6 @@ window.ASBKI = (function () {
     ICONS, svg, esc, slugify, fmtDate, parseDate, richText,
     sessionCardHTML, renderFilterPills, filterCards, classCards,
     loadContent, setMeta, boot, isActive, isCurrent, scrollBehavior,
+    isPlaceholder,
   };
 })();
