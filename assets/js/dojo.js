@@ -418,7 +418,8 @@
     for (const L of labels) {
       const p = project(L.w.X, L.w.Y - U.DH / 2, L.w.Z, bow || 0);
       if (!p) continue;
-      const x = Math.round(p.x - stageRect.left), y = Math.round(p.y - stageRect.top - 14);
+      // a legenda da porta mais próxima pode projectar-se junto ao rebordo do ecrã: fica sempre inteira dentro do palco
+      const x = Math.round(clamp(p.x - stageRect.left, 72, stageRect.width - 72)), y = Math.round(p.y - stageRect.top - 14);
       if (Math.abs(x - L.x) > 0.5 || Math.abs(y - L.y) > 0.5) { L.x = x; L.y = y; L.a.style.transform = 'translate(' + x + 'px,' + y + 'px) translate(-50%,-100%)'; }
     }
   }
