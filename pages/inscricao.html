@@ -12,8 +12,9 @@
    <link rel="stylesheet" href="/assets/css/pages.css">
 </head>
 <body data-page="inscricao">
+   <a class="skip-link" href="#conteudo">Saltar para o conteúdo</a>
    <div id="site-header"></div>
-   <main>
+   <main id="conteudo" tabindex="-1">
       <section class="page-hero inscricao-hero">
          <div class="container">
             <span class="section-label" id="ph-sub"></span>
@@ -61,24 +62,48 @@
                <div class="wizard-panel" id="wizard-panel-2">
                   <h3 class="wizard-step-title" id="wizard-step2-title"></h3>
                   <div class="wizard-selected-session" id="wizard-selected"></div>
-                  <div class="wizard-form">
+                  <form class="wizard-form" id="wiz-form" novalidate>
                      <div class="form-group">
                         <label for="wiz-name" id="wiz-lbl-name"></label>
-                        <input type="text" id="wiz-name" autocomplete="given-name">
+                        <input type="text" id="wiz-name" name="name" autocomplete="given-name" required aria-describedby="wiz-err-name">
+                        <p class="form-error" id="wiz-err-name" role="alert" hidden></p>
                      </div>
                      <div class="form-group">
                         <label for="wiz-phone" id="wiz-lbl-phone"></label>
-                        <input type="tel" id="wiz-phone" autocomplete="tel">
+                        <input type="tel" id="wiz-phone" name="phone" autocomplete="tel" inputmode="tel"
+                               pattern="^(\+351\s?)?9\d{2}\s?\d{3}\s?\d{3}$" required aria-describedby="wiz-err-phone">
+                        <p class="form-error" id="wiz-err-phone" role="alert" hidden></p>
                      </div>
                      <div class="form-group">
                         <label for="wiz-email" id="wiz-lbl-email"></label>
-                        <input type="email" id="wiz-email" autocomplete="email">
+                        <input type="email" id="wiz-email" name="email" autocomplete="email" aria-describedby="wiz-err-email">
+                        <p class="form-error" id="wiz-err-email" role="alert" hidden></p>
                      </div>
-                  </div>
-                  <div class="wizard-actions">
-                     <button class="btn btn-ghost" id="wizard-back-2">Voltar</button>
-                     <button class="btn btn-accent" id="wizard-btn-2">Continuar</button>
-                  </div>
+                     <div class="form-group">
+                        <label for="wiz-age" id="wiz-lbl-age"></label>
+                        <input type="number" id="wiz-age" name="age" min="3" max="99" inputmode="numeric" aria-describedby="wiz-err-age">
+                        <p class="form-error" id="wiz-err-age" role="alert" hidden></p>
+                     </div>
+                     <div class="form-group" id="wiz-guardian-group" hidden>
+                        <label for="wiz-guardian" id="wiz-lbl-guardian"></label>
+                        <input type="text" id="wiz-guardian" name="guardian" autocomplete="name" aria-describedby="wiz-err-guardian">
+                        <p class="form-error" id="wiz-err-guardian" role="alert" hidden></p>
+                     </div>
+                     <p class="form-honeypot" aria-hidden="true">
+                        <label for="wiz-website">Não preencher</label>
+                        <input type="text" id="wiz-website" name="website" tabindex="-1" autocomplete="off">
+                     </p>
+                     <div class="form-consent">
+                        <input type="checkbox" id="wiz-consent" name="consent" required aria-describedby="wiz-err-consent">
+                        <label for="wiz-consent" id="wiz-lbl-consent"></label>
+                        <p class="form-error" id="wiz-err-consent" role="alert" hidden></p>
+                     </div>
+                     <p class="form-status" id="wiz-form-status" role="alert" aria-live="polite" hidden></p>
+                     <div class="wizard-actions">
+                        <button type="button" class="btn btn-ghost" id="wizard-back-2">Voltar</button>
+                        <button type="submit" class="btn btn-accent" id="wizard-btn-2">Continuar</button>
+                     </div>
+                  </form>
                </div>
 
                <div class="wizard-panel" id="wizard-panel-3">
@@ -86,13 +111,31 @@
                      <div class="wizard-check">✓</div>
                      <h3 class="wizard-step-title" id="wizard-step3-title"></h3>
                      <p class="wizard-success-text" id="wizard-step3-text"></p>
+                     <div class="wizard-summary" id="wizard-summary"></div>
                   </div>
                </div>
             </div>
          </div>
       </section>
+
+      <section class="page-section surface-paper" id="precos">
+         <div class="container">
+            <span class="section-label fade-in">Mensalidades</span>
+            <h2 class="section-title fade-in fade-in-delay-1">Quanto custa treinar</h2>
+            <div id="pricing-block" class="fade-in fade-in-delay-1"></div>
+         </div>
+      </section>
+
+      <section class="page-section" id="faq" aria-label="Perguntas frequentes">
+         <div class="container">
+            <span class="section-label fade-in">Perguntas frequentes</span>
+            <h2 class="section-title fade-in fade-in-delay-1">Antes de marcares</h2>
+            <div id="faq-list" class="faq-list"></div>
+         </div>
+      </section>
    </main>
    <div id="site-footer"></div>
+   <div class="sticky-cta-bar" id="sticky-cta-bar" hidden></div>
    <script src="/assets/js/site.js"></script>
    <script src="/assets/js/pages.js"></script>
 </body>

@@ -12,13 +12,21 @@
    <link rel="stylesheet" href="/assets/css/pages.css">
 </head>
 <body data-page="noticias">
+   <a class="skip-link" href="#conteudo">Saltar para o conteúdo</a>
    <div id="site-header"></div>
-   <main>
+   <main id="conteudo" tabindex="-1">
       <section class="page-hero">
          <div class="container">
             <span class="section-label" id="ph-sub"></span>
             <h1 class="page-title" id="ph-title"></h1>
             <p class="page-intro" id="ph-intro"></p>
+         </div>
+      </section>
+      <section class="page-section" id="agenda" aria-label="Agenda">
+         <div class="container">
+            <span class="section-label fade-in">Agenda</span>
+            <h2 class="section-title fade-in fade-in-delay-1">Próximas datas</h2>
+            <div id="agenda-list" class="agenda-list"></div>
          </div>
       </section>
       <section class="page-section surface-paper">

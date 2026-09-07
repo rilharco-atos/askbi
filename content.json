@@ -379,7 +379,7 @@
     "features": [
       "Instrutores federados com mais de 10 anos de experiência",
       "Ambiente seguro e positivo para todas as idades",
-      "Sem mensalidades mínimas — paga só o que treinas"
+      "Sem mensalidades mínimas, paga só o que treinas"
     ],
     "ctaLabel": "Conhecer a associação",
     "ctaHref": "/associacao",
@@ -430,12 +430,14 @@
       {
         "year": "2012",
         "title": "Segundo dojo",
-        "text": "Abertura das turmas na Boidobra e primeiras turmas infantis."
+        "text": "Abertura das turmas na Boidobra e primeiras turmas infantis.",
+        "confirmar": true
       },
       {
         "year": "2019",
         "title": "Terceiro dojo",
-        "text": "Chegada ao Teixoso. A associação passa a cobrir três zonas do concelho."
+        "text": "Chegada ao Teixoso. A associação passa a cobrir três zonas do concelho.",
+        "confirmar": true
       },
       {
         "year": "2026",
@@ -757,18 +759,28 @@
     "step1Title": "Que treinos te interessam?",
     "step2Title": "Como te contactamos?",
     "step3Title": "Tudo certo!",
-    "step3Text": "Confirmamos por SMS em 24h. Sem compromisso — a primeira aula é gratuita e não precisas de equipamento.",
+    "step3Text": "Recebemos o teu pedido. Vamos confirmar contigo em breve.",
     "fields": {
       "name": "Nome do praticante",
       "namePlaceholder": "Ex: Ana Silva",
       "phone": "Telemóvel",
       "phonePlaceholder": "9__ ___ ___",
       "email": "Email (opcional)",
-      "emailPlaceholder": "para receber confirmação"
+      "emailPlaceholder": "para receber confirmação",
+      "age": "Idade",
+      "agePlaceholder": "Ex: 8",
+      "guardian": "Nome do encarregado de educação",
+      "guardianPlaceholder": "Obrigatório para menores de 18 anos",
+      "consent": "Li e aceito a",
+      "consentLink": "política de privacidade"
     },
     "nextLabel": "Continuar",
     "backLabel": "Voltar",
-    "submitLabel": "Confirmar marcação"
+    "submitLabel": "Confirmar marcação",
+    "consentRequired": "Tens de aceitar a política de privacidade para continuar.",
+    "sendingLabel": "A enviar…",
+    "errorGeneric": "Não foi possível enviar o pedido. Tenta novamente ou liga-nos diretamente.",
+    "summaryLabel": "Resumo do pedido"
   },
   "trial": {
     "title": "Chega de esperar o momento perfeito.",
@@ -786,8 +798,15 @@
       "email": "E-mail",
       "phone": "Telefone",
       "message": "Mensagem",
-      "submit": "Enviar"
-    }
+      "submit": "Enviar",
+      "consent": "Li e aceito a",
+      "consentLink": "política de privacidade"
+    },
+    "whatsapp": "",
+    "consentRequired": "Tens de aceitar a política de privacidade para continuar.",
+    "sendingLabel": "A enviar…",
+    "successLabel": "Mensagem enviada. Vamos responder em breve.",
+    "errorGeneric": "Não foi possível enviar a mensagem. Tenta novamente ou liga-nos diretamente."
   },
   "footer": {
     "description": "Karate Shotokan na Covilhã desde 1998. Dois dojos, turmas para todas as idades.",
@@ -888,5 +907,52 @@
         "image": ""
       }
     ]
+  },
+  "faq": [
+    {
+      "q": "O que é que o meu filho precisa de levar na primeira aula?",
+      "a": "Roupa confortável que permita mexer-te à vontade (fato de treino, t-shirt) e uma garrafa de água. Não precisas de kimono nem de qualquer equipamento para a aula experimental."
+    },
+    {
+      "q": "A partir de que idade é que as crianças podem começar?",
+      "a": "As turmas infantis começam a partir dos 5 anos. Para adultos não há idade máxima: temos praticantes até aos 70 anos."
+    },
+    {
+      "q": "Posso experimentar sem compromisso?",
+      "a": "Sim. A primeira aula é gratuita e sem qualquer compromisso de inscrição. Marca a tua turma e aparece."
+    },
+    {
+      "q": "E se eu não estiver em forma física?",
+      "a": "Não há problema nenhum. O treino de karate adapta-se ao ritmo de cada praticante, e a condição física melhora com a prática regular, não é um requisito de entrada."
+    },
+    {
+      "q": "Quanto custa a mensalidade?",
+      "a": "Os valores variam consoante a turma e o dojo. Contacta-nos e informamos-te das mensalidades em vigor."
+    },
+    {
+      "q": "Preciso de equipamento antes de começar?",
+      "a": "Não. Para as primeiras aulas basta roupa de treino confortável. Se decidires continuar, o instrutor explica-te quando e o que é preciso adquirir."
+    },
+    {
+      "q": "Com que frequência há treinos?",
+      "a": "Depende da turma: consulta os horários de cada dojo na página de Horários e escolhe os dias que melhor se encaixam na tua semana."
+    },
+    {
+      "q": "Os dois dojos têm as mesmas turmas?",
+      "a": "Cada dojo tem o seu próprio horário. Consulta a página de cada dojo para veres as turmas disponíveis nesse local."
+    }
+  ],
+  "pricing": {
+    "items": []
+  },
+  "legal": {
+    "entidade": {
+      "denominacao": "",
+      "nif": "",
+      "sede": "",
+      "email": ""
+    },
+    "privacidade": [],
+    "termos": []
   }
 }

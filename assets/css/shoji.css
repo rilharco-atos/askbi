@@ -114,11 +114,14 @@ body.arrived main{animation:shoji-arrive .9s cubic-bezier(.22,.61,.36,1) both;tr
 @keyframes pin-pulse{0%{transform:scale(.85);opacity:.9}70%{transform:scale(1.35);opacity:0}100%{transform:scale(1.35);opacity:0}}
 
 /* ── Karate: os três cartões ─────────────────────────────────────────────
-   Correcção: dentro do registo "papel" o token --text passa a tinta escura, e os cartões
-   continuam escuros, por isso os títulos Kihon, Kata e Kumite ficavam invisíveis. */
-.surface-paper .discipline-card .card-title,.surface-paper .discipline-card .card-title a{color:#ece8e1}
-.surface-paper .discipline-card .card-text{color:#c4bfb7}
-.surface-paper .discipline-card:hover .card-title{color:#ff6a5e}
+   Correcção (auditada ao pixel): dentro do registo "papel" o cartão usa
+   --bg-card = --paper-raise (quase branco); a regra anterior pintava o
+   título e o texto com as cores do registo escuro, dando 1,2:1 e 1,5:1 de
+   contraste — ilegível. Os tokens do registo papel (--ink / --ink-2 /
+   --accent-ink) dão >= 6,5:1 sobre --paper-raise. */
+.surface-paper .discipline-card .card-title,.surface-paper .discipline-card .card-title a{color:var(--ink)}
+.surface-paper .discipline-card .card-text{color:var(--ink-2)}
+.surface-paper .discipline-card:hover .card-title{color:var(--accent-ink)}
 /* Os cartões inclinam-se ligeiramente em 3D ao passar o rato e o kanji sobe. */
 .discipline-card{transition:transform .55s cubic-bezier(.22,.61,.36,1),box-shadow .55s,border-color .3s;transform-style:preserve-3d}
 .discipline-card:hover{transform:perspective(900px) rotateY(-3deg) rotateX(2.5deg) translateY(-6px);box-shadow:0 24px 50px rgba(0,0,0,.35)}

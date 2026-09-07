@@ -12,8 +12,9 @@
    <link rel="stylesheet" href="/assets/css/pages.css">
 </head>
 <body data-page="dojo">
+   <a class="skip-link" href="#conteudo">Saltar para o conteúdo</a>
    <div id="site-header"></div>
-   <main>
+   <main id="conteudo" tabindex="-1">
       <section class="page-hero">
          <div class="container">
             <nav class="breadcrumb" aria-label="Caminho"><a href="/dojos">Dojos</a><span>/</span><span id="ph-crumb" aria-current="page"></span></nav>
@@ -39,6 +40,13 @@
             <div class="session-filters fade-in" id="dojo-filters"></div>
             <div class="session-grid fade-in fade-in-delay-1" id="dojo-sessions"></div>
             <div class="dojo-switch fade-in" id="dojo-switch"></div>
+         </div>
+      </section>
+      <section class="page-section" id="faq" aria-label="Perguntas frequentes">
+         <div class="container">
+            <span class="section-label fade-in">Perguntas frequentes</span>
+            <h2 class="section-title fade-in fade-in-delay-1">Antes de marcares</h2>
+            <div id="faq-list" class="faq-list"></div>
          </div>
       </section>
       <section class="page-cta" aria-label="Marcar aula experimental">
