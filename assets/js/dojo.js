@@ -106,8 +106,10 @@
   }
   function writeScene() {
     const zc = cam.z - (U.F - cam.persp);  // compensação da perspectiva: a distância ao observador mantém-se
+    // a vénia: ao cruzar a soleira a câmara baixa um pouco e volta a subir, o rei antes de pisar o tatami
+    const bow = flying ? 0 : Math.exp(-Math.pow((cam.z - BLOOM_AT) / 80, 2));
     // ordem de câmara: primeiro guinada (eixo vertical), depois inclinação em torno do eixo horizontal do observador; o horizonte fica nivelado
-    const t = 'rotateX(' + cam.pitch.toFixed(3) + 'deg) rotateY(' + cam.yaw.toFixed(3) + 'deg) translateZ(calc(' + zc.toFixed(2) + ' * var(--u)))';
+    const t = 'rotateX(' + (cam.pitch - bow * 3.2).toFixed(3) + 'deg) rotateY(' + cam.yaw.toFixed(3) + 'deg) translateY(calc(' + (-bow * 6).toFixed(2) + ' * var(--u))) translateZ(calc(' + zc.toFixed(2) + ' * var(--u)))';
     if (t !== lastTransform) { lastTransform = t; room.style.transform = t; }
     if (Math.abs(cam.persp - perspShown) > 0.5) { perspShown = cam.persp; scene.style.setProperty('--persp', cam.persp.toFixed(1)); }
     const po = 1 - smoothstep(scrollP, 0.02, 0.13);                 // a fotografia entrega à sala 3D
@@ -125,7 +127,7 @@
   function tick(now) {
     const dt = Math.min(100, now - (lastTick || now));
     lastTick = now;
-    const a = 1 - Math.pow(1 - (flying ? 0.07 : 0.16), dt / 16.667);
+    const a = 1 - Math.pow(1 - (flying ? 0.07 : 0.24), dt / 16.667);
     if (!flying) scrollTargets();
     cam.z += (target.z - cam.z) * a;
     cam.yaw += (target.yaw - cam.yaw) * a;
@@ -179,21 +181,66 @@
     setTimeout(() => flash.classList.add('on'), 950);
     setTimeout(() => { if (done) done(); }, 1350);
   }
+  // Se ainda estamos à porta, primeiro entra-se (scroll suave até ao fim do hero) e só depois se voa até à porta.
+  function heroEndY() { return hero.getBoundingClientRect().top + scrollY + hero.offsetHeight - innerHeight; }
+  function approachAndFly(door, href) {
+    const go = () => flyTo(door, () => { try { sessionStorage.setItem('asbki-door', href); } catch (e) {} location.href = href; });
+    if (scrollP > 0.8) return go();
+    window.scrollTo({ top: heroEndY(), behavior: 'smooth' });
+    const t0 = performance.now();
+    (function waitSettle() {
+      onScroll();
+      if (scrollP > 0.98 || performance.now() - t0 > 1800) setTimeout(go, 150);
+      else requestAnimationFrame(waitSettle);
+    })();
+  }
+  const modified = e => e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0;
   doors.forEach(door => door.addEventListener('click', e => {
-    if (!scrubOn || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    if (!scrubOn || modified(e)) return;
     e.preventDefault();
-    const href = door.getAttribute('href');
-    flyTo(door, () => { location.href = href; });
+    approachAndFly(door, door.getAttribute('href'));
   }));
   // O botão da banda final voa pela porta vermelha.
-  stage.querAll = null;
   stage.querySelectorAll('[data-fly]').forEach(a => a.addEventListener('click', e => {
-    if (!scrubOn) return;
+    if (!scrubOn || modified(e)) return;
     const door = doors.find(d => d.getAttribute('href') === a.getAttribute('href'));
     if (!door) return;
     e.preventDefault();
-    flyTo(door, () => { location.href = a.getAttribute('href'); });
+    approachAndFly(door, a.getAttribute('href'));
   }));
+  // Menu e portas ligados: passar o rato num item do menu acende a porta; clicar no menu voa pela porta.
+  let navBound = false;
+  function bindNav() {
+    if (navBound) return; navBound = true;
+    document.querySelectorAll('#site-header a[href]').forEach(a => {
+      const door = doors.find(d => d.getAttribute('href') === a.getAttribute('href'));
+      if (!door) return;
+      a.addEventListener('mouseenter', () => door.classList.add('hot'));
+      a.addEventListener('mouseleave', () => door.classList.remove('hot'));
+      a.addEventListener('click', e => {
+        if (!scrubOn || !heroOnScreen || modified(e)) return;
+        e.preventDefault();
+        approachAndFly(door, a.getAttribute('href'));
+      });
+      door.addEventListener('pointerenter', () => a.classList.add('dj-hot'));
+      door.addEventListener('pointerleave', () => a.classList.remove('dj-hot'));
+    });
+  }
+  // Regressar ao dojo: quem volta de uma página começa lá dentro, com a porta por onde saiu a fechar-se.
+  function startInside(href) {
+    const door = doors.find(d => d.getAttribute('href') === href);
+    window.scrollTo({ top: heroEndY(), behavior: 'auto' });
+    scrollP = 1; scrollTargets();
+    cam.z = target.z; cam.persp = target.persp; cam.yaw = 0; cam.pitch = 0; loadK = 1;
+    if (door) {
+      door.classList.add('snap', 'open');
+      flash.classList.add('on');
+      requestAnimationFrame(() => { door.classList.remove('snap'); });
+      setTimeout(() => flash.classList.remove('on'), 120);
+      setTimeout(() => door.classList.remove('open'), 450);
+    }
+    wake();
+  }
   // Se o visitante voltar com o botão de retroceder, a página vem do cache com a porta aberta.
   addEventListener('pageshow', e => { if (e.persisted) { busy = false; flying = false; doors.forEach(d => d.classList.remove('open')); flash.classList.remove('on'); scrollTargets(); wake(); } });
 
@@ -212,8 +259,8 @@
   /* ── Pó a flutuar (nível de sussurro; descansa fora de ecrã e em separadores escondidos) ── */
   const dust = stage.querySelector('.dj-dust');
   let dustOn = false, dustRaf = null, motes = [];
-  function dustResize() { const dpr = Math.min(2, devicePixelRatio || 1); dust.width = Math.floor(dust.clientWidth * dpr); dust.height = Math.floor(dust.clientHeight * dpr); }
-  function dustInit() { dustResize(); const r = rng(7); motes = Array.from({ length: 34 }, () => ({ x: r(), y: r(), s: 0.6 + r() * 1.6, v: 0.00004 + r() * 0.00008, d: r() * 6.28, a: 0.25 + r() * 0.45 })); }
+  function dustResize() { const dpr = 1; dust.width = Math.floor(dust.clientWidth * dpr); dust.height = Math.floor(dust.clientHeight * dpr); }
+  function dustInit() { dustResize(); const r = rng(7); motes = Array.from({ length: 26 }, () => ({ x: r(), y: r(), s: 0.6 + r() * 1.6, v: 0.00004 + r() * 0.00008, d: r() * 6.28, a: 0.25 + r() * 0.45 })); }
   function dustTick(now) {
     if (!dustOn) { dustRaf = null; return; }
     const ctx = dust.getContext('2d'), W = dust.width, H = dust.height;
@@ -244,6 +291,9 @@
     lastTransform = ''; photoOp = -1; frameOp = -1; bloomOp = -1;
     onScroll();
     if (heroOnScreen) dustStart();
+    let back = null;
+    try { back = sessionStorage.getItem('asbki-door'); if (back) sessionStorage.removeItem('asbki-door'); } catch (e) {}
+    if (back) startInside(back);
   }
   function disableScrub() {
     if (!scrubOn) return; scrubOn = false;
@@ -261,5 +311,5 @@
 
   applyHeroMode();
 
-  window.__dojo = { get scrubOn() { return scrubOn; }, cam, target, bands, doors, heroProgress, flyTo, applyNav };
+  window.__dojo = { get scrubOn() { return scrubOn; }, cam, target, bands, doors, heroProgress, flyTo, applyNav, bindNav, approachAndFly };
 })();

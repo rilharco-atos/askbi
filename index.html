@@ -42,6 +42,7 @@
                      <a class="dj-door red" href="/inscricao" data-face="right" style="--dx:200"><span class="dj-plate">Aula grátis<small>入門</small></span><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
                   </div>
                   <div class="dj-face back">
+                     <span class="dj-emblem" aria-hidden="true"><img src="/assets/dojo/emblema-640.png" alt="" width="640" height="640" loading="lazy"></span>
                      <a class="dj-door" href="/noticias" data-face="back" style="--dx:75"><span class="dj-plate">Notícias<small>報</small></span><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
                      <a class="dj-door" href="/contacto" data-face="back" style="--dx:298"><span class="dj-plate">Contactos<small>連絡</small></span><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
                   </div>
@@ -119,7 +120,7 @@
    <script>
       ASBKI.boot(function (c) {
          ASBKI.setMeta(c.site.name + ' — ' + c.site.tagline);
-         if (window.__dojo) window.__dojo.applyNav(c.nav);
+         if (window.__dojo) { window.__dojo.applyNav(c.nav); window.__dojo.bindNav(); }
       });
    </script>
 </body>

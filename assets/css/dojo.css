@@ -24,13 +24,13 @@
   perspective:calc(var(--persp) * var(--u));perspective-origin:calc(693 * var(--u)) calc(198 * var(--u));
 }
 .dj-room{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:calc(693 * var(--u)) calc(198 * var(--u)) calc(var(--persp) * var(--u));will-change:transform}
-.dj-face{position:absolute;background-size:100% 100%;background-repeat:no-repeat;transform-style:preserve-3d}
+.dj-face{position:absolute;background-size:100% 100%;background-repeat:no-repeat;transform-style:preserve-3d;will-change:transform;backface-visibility:hidden}
 .dj-face.back{left:calc(455 * var(--u));top:calc(150 * var(--u));width:calc(465 * var(--u));height:calc(318 * var(--u));background-image:url(/assets/dojo/back.jpg)}
 .dj-face.floor{left:calc(455 * var(--u));top:calc(468 * var(--u));width:calc(465 * var(--u));height:calc(705 * var(--u));transform-origin:top;transform:rotateX(90deg);background-image:url(/assets/dojo/floor.jpg)}
 .dj-face.ceiling{left:calc(455 * var(--u));top:calc(-555 * var(--u));width:calc(465 * var(--u));height:calc(705 * var(--u));transform-origin:bottom;transform:rotateX(-90deg);background-image:url(/assets/dojo/ceiling.jpg)}
 .dj-face.left{left:calc(-250 * var(--u));top:calc(150 * var(--u));width:calc(705 * var(--u));height:calc(318 * var(--u));transform-origin:right;transform:rotateY(90deg);background-image:url(/assets/dojo/left.jpg)}
 .dj-face.right{left:calc(920 * var(--u));top:calc(150 * var(--u));width:calc(705 * var(--u));height:calc(318 * var(--u));transform-origin:left;transform:rotateY(-90deg);background-image:url(/assets/dojo/right.jpg)}
-.dj-frame{position:absolute;left:calc(323 * var(--u));top:calc(-8.5 * var(--u));width:calc(740 * var(--u));height:calc(413 * var(--u));transform:translateZ(calc(619 * var(--u)));background:url(/assets/dojo/frame.png) 0 0/100% 100% no-repeat;pointer-events:none}
+.dj-frame{position:absolute;left:calc(323 * var(--u));top:calc(-8.5 * var(--u));width:calc(740 * var(--u));height:calc(413 * var(--u));transform:translateZ(calc(619 * var(--u)));background:url(/assets/dojo/frame.png) 0 0/100% 100% no-repeat;pointer-events:none;will-change:transform,opacity}
 
 /* ── Portas shoji ──────────────────────────────────────────────────────── */
 .dj-door{
@@ -70,9 +70,26 @@
 .dj-room.lit .dj-door:nth-child(3) .dj-light{animation-delay:-3.4s}
 @keyframes dj-breathe{0%,100%{filter:brightness(1)}50%{filter:brightness(1.18)}}
 
+
+/* ── O emblema pendurado na faixa vermelha (kamiza) ────────────────────── */
+.dj-emblem{position:absolute;left:calc(184 * var(--u));top:calc(123 * var(--u));width:calc(96 * var(--u));height:calc(96 * var(--u));pointer-events:none;transform-origin:50% -30%;animation:dj-sway 9s var(--dj-ease-io) -2s infinite}
+.dj-emblem img{display:block;width:100%;height:100%;border-radius:50%;box-shadow:0 calc(3 * var(--u)) calc(10 * var(--u)) rgba(0,0,0,.5);transition:filter 1s var(--dj-ease)}
+.dj-room.lit .dj-emblem img{filter:drop-shadow(0 0 calc(10 * var(--u)) rgba(255,210,160,.6))}
+@keyframes dj-sway{0%,100%{transform:rotate(-.6deg)}50%{transform:rotate(.6deg)}}
+
+/* ── Menu e portas ligados ─────────────────────────────────────────────── */
+.dj-door.hot,.dj-room.lit .dj-door.hot,.dj-room.lit .dj-door.red.hot{--lit:1}
+.dj-door.hot .dj-plate{color:var(--dj-bone);border-color:var(--dj-straw)}
+#site-header .nav-links a.dj-hot{color:var(--accent-text,#ff6a5e)}
+#site-header .nav-cta.dj-hot{filter:brightness(1.15)}
+.dj-door.snap .dj-leaf{transition:none}
+
 /* ── Camadas 2D sobre a sala ───────────────────────────────────────────── */
 .dj-photo{position:absolute;inset:0;background:var(--dj-ink) center/cover no-repeat;pointer-events:none;will-change:opacity}
-.dj-bloom{position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(ellipse 70% 80% at 62% 40%,rgba(243,232,214,.92),rgba(243,232,214,.25) 40%,rgba(243,232,214,0) 70%);mix-blend-mode:screen}
+.dj-bands{will-change:transform}
+/* Na página inicial a barra de navegação não desfoca o fundo: o desfoque sobre uma cena em movimento custa um passo de GPU por frame. */
+body[data-page="home"] .navbar,body[data-page="home"] .navbar.scrolled{backdrop-filter:none;-webkit-backdrop-filter:none}
+.dj-bloom{position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(ellipse 70% 80% at 62% 40%,rgba(255,244,224,.85),rgba(255,240,215,.28) 40%,rgba(255,240,215,0) 70%);will-change:opacity}
 .dj-dust{position:absolute;inset:0;pointer-events:none;opacity:.7}
 .dj-scrim{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 120% 90% at 50% 45%,rgba(10,10,18,0) 40%,rgba(10,10,18,.55) 100%)}
 .dj-flash{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,rgba(255,236,200,1),rgba(255,220,170,.85) 40%,rgba(255,200,140,.4) 75%);opacity:0;transition:opacity .35s ease-in}
@@ -114,7 +131,7 @@
 .dj-cue svg{width:18px;height:18px;animation:dj-bob 2.4s var(--dj-ease-io) -1.2s infinite}
 .dj-stage.past .dj-cue{opacity:0}
 @keyframes dj-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-.dj-hint{position:absolute;right:var(--dj-gutter);top:calc(var(--nav-h,72px) + 22px);font-family:var(--font-mono,monospace);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dj-straw);background:rgba(8,8,15,.5);border:1px solid rgba(213,193,174,.25);border-radius:999px;padding:8px 14px;backdrop-filter:blur(8px);opacity:0;transform:translateY(-6px);transition:opacity .7s var(--dj-ease),transform .7s var(--dj-ease);pointer-events:none}
+.dj-hint{position:absolute;right:var(--dj-gutter);top:calc(var(--nav-h,72px) + 22px);font-family:var(--font-mono,monospace);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dj-straw);background:rgba(8,8,15,.72);border:1px solid rgba(213,193,174,.25);border-radius:999px;padding:8px 14px;opacity:0;transform:translateY(-6px);transition:opacity .7s var(--dj-ease),transform .7s var(--dj-ease);pointer-events:none}
 .dj-stage.inside .dj-hint{opacity:1;transform:none}
 
 /* ── Hero estático (telemóveis, movimento reduzido) ────────────────────── */
