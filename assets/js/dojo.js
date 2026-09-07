@@ -111,16 +111,18 @@
     // com o cursor numa porta a câmara pára de olhar e de derivar: a porta fica onde está até ao clique
     if (overDoor) return;
     // olhar com o rato: amplo durante a caminhada, discreto lá dentro para as portas não fugirem do cursor
-    const amp = 1 - 0.6 * smoothstep(p, 0.6, 0.9);
+    const amp = 1 - 0.7 * smoothstep(p, 0.6, 0.9);
     target.yaw = mouseX * 3.6 * amp;
     target.pitch = -mouseY * 1.8 * amp;
-    // câmara viva: micro-movimento de câmara à mão sempre, e uma deriva em arco lenta quando se está dentro
-    const t = performance.now() / 1000, inside = smoothstep(p, 0.8, 0.96);
-    // (lá dentro a deriva é curta: as portas laterais são estreitas e têm de ficar debaixo do cursor)
-    target.yaw += 0.10 * Math.sin(t * 1.7) + 0.05 * Math.sin(t * 2.9 + 1) + inside * 0.8 * Math.sin(t * 0.62);
-    target.pitch += 0.06 * Math.sin(t * 1.3 + 2) + inside * 0.3 * Math.sin(t * 0.47 + 1);
-    target.z += inside * 5 * Math.sin(t * 0.55);
-    target.x = inside * 5 * Math.sin(t * 0.41 + 2);
+    // câmara viva: micro-movimento de câmara à mão sempre, e uma deriva em arco lenta quando se está dentro.
+    // Enquanto o visitante aponta (rato mexeu há menos de 1,5 s) a deriva esmorece devagar, para as portas ficarem onde estão
+    const now = performance.now(), t = now / 1000, inside = smoothstep(p, 0.8, 0.96);
+    driftK += ((now - lastMove < 1500 ? 0 : 1) - driftK) * 0.04;
+    const drift = inside * driftK;
+    target.yaw += 0.10 * Math.sin(t * 1.7) + 0.05 * Math.sin(t * 2.9 + 1) + drift * 0.8 * Math.sin(t * 0.62);
+    target.pitch += 0.06 * Math.sin(t * 1.3 + 2) + drift * 0.3 * Math.sin(t * 0.47 + 1);
+    target.z += drift * 5 * Math.sin(t * 0.55);
+    target.x = drift * 5 * Math.sin(t * 0.41 + 2);
     target.y = 0;
   }
   function writeScene() {
@@ -196,6 +198,7 @@
   function wake() { if (rafId === null && (heroOnScreen || flying)) rafId = requestAnimationFrame(tick); }
   function onScroll() { scrollP = heroProgress(); wake(); }
   let overDoor = false;                                  // com o cursor sobre uma porta, a sala pára de girar
+  let lastMove = -1e9, driftK = 1;                        // último movimento do rato; peso actual da deriva orbital (0..1)
   doors.forEach(d => { d.addEventListener('pointerenter', () => { overDoor = true; speculate(d.getAttribute('href')); }); d.addEventListener('pointerleave', () => { overDoor = false; }); });
   // Ao passar numa porta, o browser pré-carrega (ou pré-renderiza, no Chrome) a página do outro lado: quando a porta abre, a página já lá está.
   const speculated = new Set();
@@ -212,6 +215,7 @@
     } catch (e) {}
   }
   function onMouse(e) {
+    lastMove = performance.now();
     if (flying || overDoor) return;
     mouseX = clamp((e.clientX / innerWidth) * 2 - 1, -1, 1);
     mouseY = clamp((e.clientY / innerHeight) * 2 - 1, -1, 1);

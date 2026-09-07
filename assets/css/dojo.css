@@ -40,7 +40,8 @@
 .dj-gate-sill{position:absolute;left:0;right:0;bottom:calc(-3 * var(--u));height:calc(5 * var(--u));background:#1d140d}
 .dj-gate-leaf{position:absolute;top:0;bottom:0;width:50%;pointer-events:auto;cursor:pointer;will-change:transform,opacity;
   opacity:calc(min(1, max(0, (0.95 - var(--gate)) / 0.4)));  /* as folhas somem na sombra das paredes ao deslizar; nunca saltam */
-  background:linear-gradient(rgba(243,232,214,.86),rgba(226,211,186,.8));border:calc(3 * var(--u)) solid #3b2b1e;box-shadow:inset 0 0 calc(40 * var(--u)) rgba(80,50,20,.18)}
+  /* com as portas fechadas o papel está na penumbra (a sala escura vê-se por trás); acende ao abrir. Isto também dá ao título de chegada fundo escuro suficiente */
+  background:linear-gradient(rgba(243,232,214,calc(.5 + .36 * var(--gate))),rgba(226,211,186,calc(.46 + .34 * var(--gate))));border:calc(3 * var(--u)) solid #3b2b1e;box-shadow:inset 0 0 calc(40 * var(--u)) rgba(80,50,20,.18)}
 .dj-gate-leaf::before{content:"";position:absolute;inset:0;
   background:
     repeating-linear-gradient(90deg,transparent 0 calc(27 * var(--u)),rgba(59,43,30,.85) calc(27 * var(--u)) calc(29 * var(--u))),
@@ -150,8 +151,11 @@ body[data-page="home"] .navbar,body[data-page="home"] .navbar.scrolled{backdrop-
 /* ── Bandas de texto (ritmadas em distância de scroll) ─────────────────── */
 .dj-bands{position:absolute;inset:0;pointer-events:none}
 .dj-band{--k:0;position:absolute;left:var(--dj-gutter);top:clamp(96px,17vh,180px);width:min(560px,80vw);opacity:0;text-shadow:var(--dj-tshadow);pointer-events:none;color:var(--dj-bone)}
-.dj-band::before{content:"";position:absolute;inset:-14% -18%;border-radius:40%;pointer-events:none;opacity:calc(.25 + .75 * var(--k,1));
-  background:radial-gradient(ellipse 74% 62% at 50% 50%,rgba(5,5,10,.62) 0%,rgba(5,5,10,.4) 46%,rgba(5,5,10,0) 76%)}
+/* véu por banda, afinado contra o pior fotograma de cada uma (auditoria: pior pixel debaixo do texto >= 3,5:1 sem a sombra do texto).
+   As bandas do meio e do fim ficam sobre o tatami claro e sobre a luz que floresce na soleira, por isso o véu é fundo e largo */
+.dj-band::before{content:"";position:absolute;inset:-45% -55%;pointer-events:none;opacity:calc(.25 + .75 * var(--k,1));
+  /* elipse inscrita na caixa (raios de 50%): chega a zero na borda, por isso nunca se vê um rectângulo */
+  background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(5,5,10,.86) 0%,rgba(5,5,10,.74) 34%,rgba(5,5,10,.5) 58%,rgba(5,5,10,.18) 82%,rgba(5,5,10,0) 100%)}
 .dj-band>*{position:relative;margin:0}
 .dj-kicker{font-family:var(--font-mono,monospace);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dj-straw);display:flex;align-items:center;gap:12px}
 .dj-kicker::before{content:"";width:22px;height:1px;background:var(--dj-straw);flex:none}
@@ -161,12 +165,17 @@ body[data-page="home"] .navbar,body[data-page="home"] .navbar.scrolled{backdrop-
 .dj-band.settle{top:auto;bottom:clamp(24px,4vh,48px);left:50%;transform:translateX(-50%);width:min(680px,88vw);text-align:center}
 .dj-band.settle .dj-kicker{justify-content:center}.dj-band.settle .dj-kicker::before{display:none}
 .dj-band.settle .dj-line{font-size:clamp(30px,3.6vw,52px);margin-top:10px}
-.dj-band.settle .dj-sub{margin:12px auto 0;font-size:clamp(15px,1.2vw,18px);color:var(--dj-straw)}
+.dj-band.settle .dj-sub{margin:12px auto 0;font-size:clamp(15px,1.2vw,18px);color:var(--dj-bone)}
+.dj-band.settle .dj-kicker{display:inline-flex;padding:6px 14px 5px;border-radius:999px;background:rgba(8,8,15,.66);border:1px solid rgba(213,193,174,.22)}
 .dj-band.settle .dj-cta{display:flex;justify-content:center;gap:12px;margin-top:22px;pointer-events:auto}
 .dj-band.settle .dj-cta .btn{text-shadow:none}
-.dj-band.settle::before{inset:-30% -10%;background:radial-gradient(ellipse 70% 70% at 50% 60%,rgba(5,5,10,.72) 0%,rgba(5,5,10,.45) 46%,rgba(5,5,10,0) 78%)}
+.dj-band.settle::before{inset:-70% -40%;background:radial-gradient(ellipse 50% 50% at 50% 54%,rgba(5,5,10,.9) 0%,rgba(5,5,10,.78) 34%,rgba(5,5,10,.52) 58%,rgba(5,5,10,.2) 82%,rgba(5,5,10,0) 100%)}
 
 .dj-band[data-entrance="approach"] .dj-line,.dj-band[data-entrance="approach"] .dj-kicker{opacity:var(--k,0);transform:scale(calc(.84 + .16 * var(--k,0)));transform-origin:left center}
+/* a banda de chegada fica sobre o papel da entrada, o fundo mais claro de todo o hero: véu mais fundo e o kicker numa cápsula
+   (auditoria do pior pixel: título >= 3,5:1 sem contar com a sombra do texto) */
+.dj-band[data-entrance="approach"]::before{inset:-50% -60%;background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(5,5,10,.88) 0%,rgba(5,5,10,.76) 34%,rgba(5,5,10,.52) 58%,rgba(5,5,10,.2) 82%,rgba(5,5,10,0) 100%)}
+.dj-band[data-entrance="approach"] .dj-kicker{display:inline-flex;padding:7px 14px 6px;border-radius:999px;background:rgba(8,8,15,.66);border:1px solid rgba(213,193,174,.22)}
 .dj-blurpair{display:grid}.dj-blurpair>*{grid-area:1/1}
 .dj-blurpair .soft{filter:blur(10px);opacity:calc(1 - var(--k,0))}.dj-blurpair .sharp{opacity:var(--k,0)}
 .dj-band[data-entrance="blur"] .dj-sub{opacity:clamp(0,calc((var(--k,0) - .45) * 2.4),1)}
