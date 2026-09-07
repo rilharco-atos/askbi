@@ -137,19 +137,20 @@
     if (gate && (Math.abs(g - gateShown) > 0.004 || (g === 1 && gateShown !== 1) || (g === 0 && gateShown !== 0))) {
       gateShown = g; room.style.setProperty('--gate', g.toFixed(3)); gate.classList.toggle('gone', g >= 1);
     }
+    const env = 1 - smoothstep(cam.z, 545, 590);                       // lá dentro, em repouso, flare e bloom apagam-se de todo
     if (flare) {                                                       // flare nas janelas ao cruzar a soleira
       const fx = (cam.z - (BLOOM_AT + 30)) / 110;
-      const fo = flying ? 0 : Math.exp(-fx * fx) * 0.9;
+      const fo = flying ? 0 : Math.exp(-fx * fx) * 0.9 * env;
       if (Math.abs(fo - flareOp) > 0.01 || (fo === 0 && flareOp !== 0)) { flareOp = fo; flare.style.opacity = fo.toFixed(3); flare.style.transform = 'translate(-50%,-50%) scale(' + (0.7 + 0.6 * fo).toFixed(3) + ')'; }
     }
     const fo = 1 - smoothstep(cam.z, FRAME_FADE[0], FRAME_FADE[1]);   // a moldura desvanece antes de passar pela câmara
     if (Math.abs(fo - frameOp) > 0.01 || (fo === 0 && frameOp !== 0)) { frameOp = fo; frame.style.opacity = fo.toFixed(3); }
     const x = (cam.z - BLOOM_AT) / 90;                                 // a luz floresce ao cruzar a soleira
-    const bo = Math.exp(-x * x) * 0.6;
+    const bo = Math.exp(-x * x) * 0.6 * env;
     if (Math.abs(bo - bloomOp) > 0.01 || (bo === 0 && bloomOp !== 0)) { bloomOp = bo; bloom.style.opacity = bo.toFixed(3); }
     const lit = scrollP > 0.82;
     if (lit !== litState) { litState = lit; room.classList.toggle('lit', lit); stage.classList.toggle('inside', lit); if (lit) loadPreviews(); }
-    if (lit || flying) positionLabels();
+    if (lit || flying) positionLabels(bow);
     const past = scrollP > 0.05;
     if (past !== pastState) { pastState = past; stage.classList.toggle('past', past); }
   }
@@ -179,7 +180,7 @@
         passage.style.setProperty('--veil', (0.85 * smoothstep(u, 0.82, 1)).toFixed(3));
       }
     } else {
-      const a = 1 - Math.pow(1 - 0.24, dt / 16.667);
+      const a = 1 - Math.pow(1 - 0.14, dt / 16.667);         // seguimento suave: a câmara demora ~10 fotogramas a fechar 80% do caminho
       scrollTargets();
       cam.x += (target.x - cam.x) * a;
       cam.y += (target.y - cam.y) * a;
@@ -196,7 +197,7 @@
     rafId = requestAnimationFrame(tick);
   }
   function wake() { if (rafId === null && (heroOnScreen || flying)) rafId = requestAnimationFrame(tick); }
-  function onScroll() { scrollP = heroProgress(); wake(); }
+  function onScroll() { scrollP = heroProgress(); measureScene(); wake(); }
   let overDoor = false;                                  // com o cursor sobre uma porta, a sala pára de girar
   let lastMove = -1e9, driftK = 1;                        // último movimento do rato; peso actual da deriva orbital (0..1)
   doors.forEach(d => { d.addEventListener('pointerenter', () => { overDoor = true; speculate(d.getAttribute('href')); }); d.addEventListener('pointerleave', () => { overDoor = false; }); });
@@ -248,8 +249,8 @@
     // olhar a porta põe-na no ponto de fuga; este ângulo extra baixa-a até ao centro do ecrã
     const sr = scene.getBoundingClientRect(), upx = sr.width / 1376;
     const vpOff = (innerHeight / 2 - (sr.top + U.VPY * upx)) / upx;    // unidades entre o ponto de fuga e o centro do ecrã
-    const dur = side ? 1900 : 1600;
-    flying = true; stage.classList.add('flying');
+    const dur = Math.round((side ? 1900 : 1600) * (seen ? 0.7 : 1));   // quem já viu o voo não espera tanto
+    flying = true; stage.classList.add('flying'); document.body.classList.add('dj-flying');
     fly = { t0: performance.now(), dur, P0, P1, P2, C, vpOff, dir: Math.sign(P2.x - P0.x) || 1, from: { yaw: cam.yaw, pitch: cam.pitch, persp: cam.persp },
             href: door.getAttribute('href'), cut: side ? 0.6 : 0.62, cutDone: false };
     wake();
@@ -259,16 +260,35 @@
   // Se ainda estamos à porta, primeiro entra-se (scroll suave até ao fim do hero) e só depois se voa até à porta.
   function heroEndY() { return hero.getBoundingClientRect().top + scrollY + hero.offsetHeight - innerHeight; }
   function approachAndFly(door, href) {
-    const go = () => flyTo(door, () => { try { sessionStorage.setItem('asbki-door', href); sessionStorage.setItem('asbki-arrive', 'door'); } catch (e) {} location.href = href; });
+    track('door_click', { href });
+    const go = () => flyTo(door, () => { try { sessionStorage.setItem('asbki-door', href); sessionStorage.setItem('asbki-arrive', 'door'); sessionStorage.setItem('asbki-seen', '1'); } catch (e) {} location.href = href; });
     if (scrollP > 0.8) return go();
-    window.scrollTo({ top: heroEndY(), behavior: 'smooth' });
-    const t0 = performance.now();
-    (function waitSettle() {
-      onScroll();
-      if (scrollP > 0.98 || performance.now() - t0 > 1800) setTimeout(go, 150);
-      else requestAnimationFrame(waitSettle);
-    })();
+    tweenScrollTo(heroEndY(), 2200, () => setTimeout(go, 220));
   }
+  // Scroll com curva própria (o "smooth" do browser tem ritmo diferente em cada browser e não se controla):
+  // easeInOutCubic, cancelável ao primeiro gesto do visitante.
+  let scrollTween = null;
+  function tweenScrollTo(targetY, dur, done) {
+    cancelScrollTween();
+    const startY = scrollY, dist = targetY - startY;
+    if (Math.abs(dist) < 2) { if (done) done(); return; }
+    const t0 = performance.now(), tw = { raf: 0, done };
+    scrollTween = tw;
+    (function step(now) {
+      if (scrollTween !== tw) return;
+      const u = clamp((now - t0) / dur, 0, 1);
+      // 'instant': o CSS do site tem scroll-behavior smooth, e um scrollTo normal arrancaria uma animação do browser em cada fotograma
+      window.scrollTo({ top: Math.round(startY + dist * easeInOutCubic(u)), behavior: 'instant' });
+      if (u < 1) tw.raf = requestAnimationFrame(step);
+      else { scrollTween = null; if (tw.done) tw.done(); }
+    })(t0);
+  }
+  function cancelScrollTween() { if (scrollTween) { cancelAnimationFrame(scrollTween.raf); scrollTween = null; } }
+  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev => addEventListener(ev, e => { if (ev === 'pointerdown' && e.target && e.target.closest && e.target.closest('.dj-door, .dj-label, .dj-cue, .dj-gate, [data-fly]')) return; cancelScrollTween(); }, { passive: true }));
+  // Eventos de analytics (Plausible) só quando existir; nunca falha
+  function track(ev, props) { try { if (window.plausible) window.plausible(ev, props ? { props } : undefined); } catch (e) {} }
+  let seen = false;
+  try { seen = sessionStorage.getItem('asbki-seen') === '1'; } catch (e) {}
   const modified = e => e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0;
   doors.forEach(door => door.addEventListener('click', e => {
     if (!scrubOn || modified(e)) return;
@@ -284,7 +304,7 @@
     approachAndFly(door, a.getAttribute('href'));
   }));
   // Entrar: o botão da entrada e as próprias portas de entrada fazem o scroll até lá dentro (as portas abrem no caminho).
-  function enter() { window.scrollTo({ top: heroEndY(), behavior: 'smooth' }); }
+  function enter() { track('gate_enter'); tweenScrollTo(heroEndY(), 2400); }
   if (gate) gate.addEventListener('click', () => { if (scrubOn && scrollP < 0.5) enter(); });
   const cue = stage.querySelector('.dj-cue');
   if (cue) cue.addEventListener('click', () => { if (scrubOn) enter(); });
@@ -309,7 +329,7 @@
   // Regressar ao dojo: quem volta de uma página começa lá dentro, com a porta por onde saiu a fechar-se.
   function startInside(href) {
     const door = doors.find(d => d.getAttribute('href') === href);
-    window.scrollTo({ top: heroEndY(), behavior: 'auto' });
+    window.scrollTo({ top: heroEndY(), behavior: 'instant' });   // 'auto' herdaria o scroll-behavior smooth do CSS e chegaria tarde
     scrollP = 1; scrollTargets();
     cam.x = 0; cam.y = 0; cam.z = target.z; cam.persp = target.persp; cam.yaw = 0; cam.pitch = 0; loadK = 1;
     if (door) {
@@ -320,9 +340,12 @@
       setTimeout(() => door.classList.remove('open'), 450);
     }
     wake();
+    // o véu que cobriu a chegada (index.html, inline) levanta-se depois do primeiro fotograma pintado
+    requestAnimationFrame(() => requestAnimationFrame(() => { html.classList.add('dj-return-open'); setTimeout(clearReturnVeil, 1000); }));
   }
+  function clearReturnVeil() { html.classList.remove('dj-return', 'dj-return-open'); }
   // Se o visitante voltar com o botão de retroceder, a página vem do cache com a porta aberta.
-  addEventListener('pageshow', e => { if (e.persisted) { busy = false; flying = false; fly = null; roll = 0; stage.classList.remove('flying'); passage.classList.remove('on'); passage.style.transform = ''; passage.style.setProperty('--veil', '0'); doors.forEach(d => d.classList.remove('open')); flash.classList.remove('on'); scrollTargets(); wake(); } });
+  addEventListener('pageshow', e => { if (e.persisted) { busy = false; flying = false; fly = null; roll = 0; stage.classList.remove('flying'); document.body.classList.remove('dj-flying'); passage.classList.remove('on'); passage.style.transform = ''; passage.style.setProperty('--veil', '0'); doors.forEach(d => d.classList.remove('open')); flash.classList.remove('on'); scrollTargets(); wake(); } });
 
   /* ── Arquitectura e legendas das portas ─────────────────────────────────
      Cada porta ganha uma travessa de madeira; o kanji fica marcado no papel (via data-kanji na
@@ -352,7 +375,7 @@
     const a = document.createElement('a');
     a.className = 'dj-label' + (d.classList.contains('red') ? ' red' : '');
     a.href = d.getAttribute('href'); a.tabIndex = -1;
-    const k = document.createElement('i'); k.textContent = d.dataset.kanji || '';
+    const k = document.createElement('i'); k.textContent = d.dataset.kanji || ''; k.lang = 'ja';
     const n = document.createElement('span'); n.textContent = d.dataset.label || '';
     a.appendChild(k); a.appendChild(n);
     a.addEventListener('mouseenter', () => { d.classList.add('hot'); overDoor = true; speculate(d.getAttribute('href')); });
@@ -365,14 +388,35 @@
       approachAndFly(d, d.getAttribute('href'));
     });
     labelsLayer.appendChild(a);
-    return { a, d, x: -1, y: -1 };
+    return { a, d, w: doorWorld(d), x: -1, y: -1 };
   });
-  function positionLabels() {
-    const sr = stage.getBoundingClientRect();
+  // As legendas são projectadas com a mesma câmara, em matemática, do mundo para o ecrã: zero leituras de layout por fotograma
+  // (ler getBoundingClientRect depois de escrever o transform obrigava o browser a recalcular o layout em cada frame).
+  let sceneRect = null, stageRect = null;
+  function measureScene() { sceneRect = scene.getBoundingClientRect(); stageRect = stage.getBoundingClientRect(); }
+  addEventListener('resize', measureScene, { passive: true });
+  function project(X, Y, Z, bow) {
+    if (!sceneRect) measureScene();
+    const upx = sceneRect.width / 1376, d = cam.persp;
+    const zc = cam.z - (U.F - d);
+    // ponto relativo ao olho (o transform-origin da sala), já com a translação da câmara
+    const x0 = X - cam.x - U.VPX, y0 = Y - cam.y - bow * 6 - U.VPY, z0 = Z + zc - d;
+    const ry = cam.yaw * Math.PI / 180, cy = Math.cos(ry), sy = Math.sin(ry);
+    const x1 = x0 * cy + z0 * sy, z1 = -x0 * sy + z0 * cy;                          // rotateY(yaw)
+    const rx = (cam.pitch - bow * 3.2) * Math.PI / 180, cx = Math.cos(rx), sx = Math.sin(rx);
+    const y2 = y0 * cx - z1 * sx, z2 = y0 * sx + z1 * cx;                            // rotateX(pitch)
+    const rz = roll * Math.PI / 180, cz = Math.cos(rz), sz = Math.sin(rz);
+    const x3 = x1 * cz - y2 * sz, y3 = x1 * sz + y2 * cz;                            // rotateZ(roll)
+    if (z2 > -1) return null;                                                        // atrás do olho
+    const s = d / -z2;
+    return { x: sceneRect.left + (U.VPX + x3 * s) * upx, y: sceneRect.top + (U.VPY + y3 * s) * upx };
+  }
+  function positionLabels(bow) {
+    if (!stageRect) measureScene();
     for (const L of labels) {
-      const r = L.d.getBoundingClientRect();
-      if (!r.width) continue;
-      const x = Math.round(r.left + r.width / 2 - sr.left), y = Math.round(r.top - sr.top - 14);
+      const p = project(L.w.X, L.w.Y - U.DH / 2, L.w.Z, bow || 0);
+      if (!p) continue;
+      const x = Math.round(p.x - stageRect.left), y = Math.round(p.y - stageRect.top - 14);
       if (Math.abs(x - L.x) > 0.5 || Math.abs(y - L.y) > 0.5) { L.x = x; L.y = y; L.a.style.transform = 'translate(' + x + 'px,' + y + 'px) translate(-50%,-100%)'; }
     }
   }
@@ -388,15 +432,17 @@
 
   /* ── Pó a flutuar (nível de sussurro; descansa fora de ecrã e em separadores escondidos) ── */
   const dust = stage.querySelector('.dj-dust');
-  let dustOn = false, dustRaf = null, motes = [];
+  let dustOn = false, dustRaf = null, motes = [], dustLast = 0;
   function dustResize() { const dpr = 1; dust.width = Math.floor(dust.clientWidth * dpr); dust.height = Math.floor(dust.clientHeight * dpr); }
   function dustInit() { dustResize(); const r = rng(7); motes = Array.from({ length: 26 }, () => ({ x: r(), y: r(), s: 0.6 + r() * 1.6, v: 0.00004 + r() * 0.00008, d: r() * 6.28, a: 0.25 + r() * 0.45 })); }
   function dustTick(now) {
     if (!dustOn) { dustRaf = null; return; }
+    if (now - dustLast < 30) { dustRaf = requestAnimationFrame(dustTick); return; }   // 30 fps bastam para pó
+    const dtm = Math.min(60, now - (dustLast || now)); dustLast = now;
     const ctx = dust.getContext('2d'), W = dust.width, H = dust.height;
     ctx.clearRect(0, 0, W, H);
     for (const m of motes) {
-      m.y -= m.v * 16; m.x += Math.sin(now / 4000 + m.d) * 0.00006;
+      m.y -= m.v * dtm; m.x += Math.sin(now / 4000 + m.d) * 0.00006 * (dtm / 16);
       if (m.y < -0.02) { m.y = 1.02; m.x = Math.random(); }
       ctx.beginPath(); ctx.fillStyle = 'rgba(232,214,186,' + (m.a * (0.6 + 0.4 * Math.sin(now / 1500 + m.d))).toFixed(3) + ')';
       ctx.arc(m.x * W, m.y * H, m.s * (W / 1400), 0, 6.283); ctx.fill();
@@ -411,7 +457,24 @@
 
   /* ── O gate vivo ────────────────────────────────────────────────────────── */
   let inited = false;
-  function initOnce() { if (inited) return; inited = true; loadStart = performance.now(); }
+  function initOnce() { if (inited) return; inited = true; loadStart = performance.now(); revealRoom(); }
+  // Chegada orquestrada: a entrada (CSS puro) pinta de imediato; as paredes só aparecem, num fade, quando as seis
+  // texturas estão descodificadas (ou ao fim de 1,8 s), em vez de irem chegando aos bocados.
+  function revealRoom() {
+    room.classList.add('loading');
+    const urls = ['back', 'left', 'right', 'floor', 'ceiling', 'frame'].map(n => '/assets/dojo/' + n + '.webp');
+    const decoded = urls.map(u => new Promise(res => { const im = new Image(); im.onload = () => { (im.decode ? im.decode().catch(() => {}) : Promise.resolve()).then(res); }; im.onerror = res; im.src = u; }));
+    Promise.race([Promise.all(decoded), new Promise(r => setTimeout(r, 1800))]).then(() => { room.classList.add('reveal'); room.classList.remove('loading'); setTimeout(() => room.classList.remove('reveal'), 900); });
+  }
+  const motionBtn = stage.querySelector('.dj-motion');
+  let motionOff = false;
+  try { motionOff = localStorage.getItem('asbki-motion') === 'off'; } catch (e) {}
+  function applyMotion() {
+    html.classList.toggle('motion-off', motionOff);
+    if (motionBtn) { motionBtn.setAttribute('aria-pressed', String(!motionOff)); motionBtn.title = motionOff ? 'Ligar o movimento da sala' : 'Parar o movimento da sala'; }
+    applyHeroMode();
+  }
+  if (motionBtn) motionBtn.addEventListener('click', () => { motionOff = !motionOff; try { localStorage.setItem('asbki-motion', motionOff ? 'off' : 'on'); } catch (e) {} applyMotion(); });
   function enableScrub() {
     if (scrubOn) return; scrubOn = true;
     initOnce();
@@ -424,7 +487,7 @@
     if (heroOnScreen) dustStart();
     let back = null;
     try { back = sessionStorage.getItem('asbki-door'); if (back) sessionStorage.removeItem('asbki-door'); } catch (e) {}
-    if (back) startInside(back);
+    if (back) startInside(back); else clearReturnVeil();
   }
   function disableScrub() {
     if (!scrubOn) return; scrubOn = false;
@@ -433,15 +496,18 @@
     photo.style.opacity = '';
     if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
     dustStop();
+    cancelScrollTween();
+    clearReturnVeil();
   }
-  const reduceActive = () => false; // decisão do cliente: o movimento está sempre activo no desktop
+  // Decisão do cliente: o movimento está sempre activo no desktop por defeito; o interruptor visível na sala
+  // (WCAG 2.2.2) deixa cada visitante desligá-lo, e a preferência fica guardada neste browser.
   function applyHeroMode() {
-    if (DEVICE_GATES.some(q => matchMedia(q).matches) || reduceActive()) disableScrub(); else enableScrub();
+    if (DEVICE_GATES.some(q => matchMedia(q).matches) || motionOff) disableScrub(); else enableScrub();
   }
   const MQLS = DEVICE_GATES.map(q => matchMedia(q));
   MQLS.forEach(m => m.addEventListener('change', applyHeroMode));
 
-  applyHeroMode();
+  applyMotion();
 
   window.__dojo = { get scrubOn() { return scrubOn; }, cam, target, bands, doors, heroProgress, flyTo, applyNav, bindNav, approachAndFly, enter };
 })();
