@@ -20,7 +20,8 @@
     '(max-width: 720px)',
     '(orientation: portrait) and (max-width: 1024px)',
     '(orientation: portrait) and (pointer: coarse)',
-    '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)'
+    '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)',
+    '(hover: none) and (pointer: coarse)'   // tablets em paisagem e ecrãs só de toque: a sala é pensada para rato
   ];
   const REDUCE = '(prefers-reduced-motion: reduce)';
   const html = document.documentElement;

@@ -229,7 +229,8 @@ body[data-page="home"] .navbar,body[data-page="home"] .navbar.scrolled{backdrop-
 @media (max-width: 720px),
        (orientation: portrait) and (max-width: 1024px),
        (orientation: portrait) and (pointer: coarse),
-       (orientation: landscape) and (pointer: coarse) and (max-height: 560px){
+       (orientation: landscape) and (pointer: coarse) and (max-height: 560px),
+       (hover: none) and (pointer: coarse){
   .dojo{height:auto}
   .dj-stage{position:relative;height:100vh;height:100svh;min-height:560px}
   .dj-scene,.dj-bands,.dj-cue,.dj-dust,.dj-bloom,.dj-hint{display:none}
