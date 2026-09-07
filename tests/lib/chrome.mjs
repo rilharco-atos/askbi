@@ -143,7 +143,7 @@ export async function launchChrome(opts = {}) {
 
   async function setViewport({ width: w, height: h, mobile = false, deviceScaleFactor = mobile ? 2 : 1 }) {
     await send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor, mobile });
-    if (mobile) await send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
+    await send('Emulation.setTouchEmulationEnabled', { enabled: !!mobile, maxTouchPoints: 5 });   // desligar explicitamente ao voltar ao desktop: o gate (hover:none) and (pointer:coarse) reage ao toque emulado
   }
 
   async function setNetworkConditions({ offline = false, latencyMs, downloadThroughputBps, uploadThroughputBps }) {

@@ -124,8 +124,8 @@ async function main() {
       .filter(u => /\/assets\/dojo\//.test(u))
       .map(u => u.split('/').pop());
     const uniqueDojoAssets = [...new Set(dojoAssetUrls)];
-    const onlyHeroPoster = uniqueDojoAssets.length > 0 && uniqueDojoAssets.every(f => f === 'hero-poster-1280.jpg');
-    record('telemóvel só pede hero-poster-1280.jpg de assets/dojo', onlyHeroPoster,
+    const onlyHeroPoster = uniqueDojoAssets.length > 0 && uniqueDojoAssets.every(f => /^hero-poster-1280\.(jpg|webp)(\?.*)?$/.test(f));   // WebP com fallback JPEG, com versão na query
+    record('telemóvel só pede o poster 1280 de assets/dojo', onlyHeroPoster,
       `pedidos: ${uniqueDojoAssets.join(', ') || '(nenhum)'}`);
 
     /* ─── 5. Zero erros de consola em todas as rotas (desktop + telemóvel) ── */

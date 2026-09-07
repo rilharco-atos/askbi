@@ -11,7 +11,7 @@
   // Unidades: 1 unidade = 1 pixel da fotografia (1376x768) à profundidade da parede do fundo.
   const U = { F: 1340, VPX: 693, VPY: 198, BX0: 455, BX1: 920, BY0: 150, BY1: 468, DEPTH: 705, FRAME_Z: 619, DW: 92, DH: 214 };
   const CAM_MAX = 600;                     // quanto a câmara avança (unidades): pára já dentro da porta
-  const PERSP_IN = 1000;                   // a lente alarga ao entrar (grande angular) para as paredes laterais caberem no ecrã;
+  const PERSP_IN = 940;                    // a lente alarga ao entrar (grande angular) para as paredes laterais e as três portas do corredor caberem no ecrã;
                                            // a sala recua a mesma distância que a perspectiva encurta, por isso o observador não se move
   const FRAME_FADE = [430, 540];           // a moldura desvanece antes de passar pela câmara
   const BLOOM_AT = 470;                    // a luz floresce ao cruzar a soleira
@@ -228,7 +228,8 @@
   /* ── Portas: posição no mundo e voo até elas ────────────────────────────── */
   function doorWorld(door) {
     const dx = parseFloat(door.style.getPropertyValue('--dx')) || 0;
-    const cx = dx + U.DW / 2, cy = (U.BY1 - U.BY0 - U.DH) + U.DH / 2;
+    const dw = parseFloat(door.style.getPropertyValue('--dw')) || U.DW;      // a porta do jardim (aula grátis) é mais larga
+    const cx = dx + dw / 2, cy = (U.BY1 - U.BY0 - U.DH) + U.DH / 2;
     switch (door.dataset.face) {
       case 'back': return { X: U.BX0 + cx, Y: U.BY0 + cy, Z: 0, nx: 0, nz: 1 };
       case 'left': return { X: U.BX0, Y: U.BY0 + cy, Z: U.DEPTH - cx, nx: 1, nz: 0 };
