@@ -275,7 +275,9 @@ test('GET /termos responde 200', { todo: true }, async (t) => {
 test('nenhuma página serve "000 000" ou "a confirmar" no HTML estático', async () => {
   const bad = [];
   for (const route of PAGE_ROUTES) {
-    const html = await (await fetch(base + route)).text();
+    // o bloco #asbki-content é o content.json em bruto (dados, não texto visível): o gate dos placeholders é
+    // aplicado pelos renderers no cliente e o ficheiro em si tem o seu próprio teste abaixo
+    const html = (await (await fetch(base + route)).text()).replace(/<script id="asbki-content"[\s\S]*?<\/script>/, '');
     if (/000\s*000/.test(html) || /a confirmar/i.test(html)) bad.push(route);
   }
   assert.deepEqual(bad, [], `placeholders encontrados no HTML servido de: ${bad.join(', ')}`);
