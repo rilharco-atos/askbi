@@ -3,14 +3,20 @@
   "version": "1.0.0",
   "description": "ASBKI Covilhã — Website com CMS",
   "main": "server.js",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "test": "node --test tests/",
+    "leads:prune": "node scripts/leads-prune.mjs",
+    "icons:generate": "python scripts/generate_icons.py"
   },
   "dependencies": {
     "@vercel/blob": "^2.8.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^2.3.0"
   }
 }
