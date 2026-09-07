@@ -1,6 +1,12 @@
 /* ─── ASBKI Covilhã — layout multi-página ─────────────────────────────── */
 /* Carregado depois de style.css em todas as páginas. */
 
+/* Elementos com o atributo hidden têm de desaparecer mesmo quando uma classe
+   sua (ex.: .dojo-photo com display:flex) tem a mesma especificidade que a
+   regra [hidden] da folha de estilos do browser — sem isto, a caixa fica
+   visível mas vazia (ex.: #discipline-image em Kihon/Kata/Kumite sem foto). */
+[hidden] { display: none !important; }
+
 /* ─── Navbar: dropdowns ───────────────────────────────────────────────── */
 .nav-item { position: relative; display: flex; align-items: center; gap: 2px; }
 .nav-caret {
