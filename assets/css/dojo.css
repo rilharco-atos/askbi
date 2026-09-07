@@ -1,0 +1,163 @@
+/* ASBKI · dojo.css · A página inicial é o próprio dojo.
+   Sala 3D em CSS construída a partir das faces desdobradas da fotografia; o scroll entra,
+   o rato olha em volta, cada porta shoji leva a uma página do site. Tudo com prefixo dj-. */
+
+.dojo{
+  --dj-straw:#d5c1ae;
+  --dj-bone:#f3ece2;
+  --dj-ink:#0f0d10;
+  --dj-ease:cubic-bezier(.22,.61,.36,1);
+  --dj-ease-io:cubic-bezier(.65,0,.35,1);
+  --dj-tshadow:0 1px 2px rgba(5,5,10,.95),0 3px 12px rgba(5,5,10,.78),0 10px 44px rgba(5,5,10,.8);
+  --dj-gutter:clamp(20px,5vw,64px);
+  position:relative;height:420vh;margin:0;background:var(--dj-ink);
+}
+.dojo *,.dojo *::before,.dojo *::after{box-sizing:border-box}
+.dj-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:var(--dj-ink)}
+
+/* ── A sala 3D ─────────────────────────────────────────────────────────── */
+.dj-scene{
+  --u:calc(max(100vw, 100svh * 1.7917) / 1376);
+  position:absolute;left:50%;top:50%;width:calc(1376 * var(--u));height:calc(768 * var(--u));
+  transform:translate(-50%,-50%);
+  --persp:1340;
+  perspective:calc(var(--persp) * var(--u));perspective-origin:calc(693 * var(--u)) calc(198 * var(--u));
+}
+.dj-room{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:calc(693 * var(--u)) calc(198 * var(--u)) calc(var(--persp) * var(--u));will-change:transform}
+.dj-face{position:absolute;background-size:100% 100%;background-repeat:no-repeat;transform-style:preserve-3d}
+.dj-face.back{left:calc(455 * var(--u));top:calc(150 * var(--u));width:calc(465 * var(--u));height:calc(318 * var(--u));background-image:url(/assets/dojo/back.jpg)}
+.dj-face.floor{left:calc(455 * var(--u));top:calc(468 * var(--u));width:calc(465 * var(--u));height:calc(705 * var(--u));transform-origin:top;transform:rotateX(90deg);background-image:url(/assets/dojo/floor.jpg)}
+.dj-face.ceiling{left:calc(455 * var(--u));top:calc(-555 * var(--u));width:calc(465 * var(--u));height:calc(705 * var(--u));transform-origin:bottom;transform:rotateX(-90deg);background-image:url(/assets/dojo/ceiling.jpg)}
+.dj-face.left{left:calc(-250 * var(--u));top:calc(150 * var(--u));width:calc(705 * var(--u));height:calc(318 * var(--u));transform-origin:right;transform:rotateY(90deg);background-image:url(/assets/dojo/left.jpg)}
+.dj-face.right{left:calc(920 * var(--u));top:calc(150 * var(--u));width:calc(705 * var(--u));height:calc(318 * var(--u));transform-origin:left;transform:rotateY(-90deg);background-image:url(/assets/dojo/right.jpg)}
+.dj-frame{position:absolute;left:calc(323 * var(--u));top:calc(-8.5 * var(--u));width:calc(740 * var(--u));height:calc(413 * var(--u));transform:translateZ(calc(619 * var(--u)));background:url(/assets/dojo/frame.png) 0 0/100% 100% no-repeat;pointer-events:none}
+
+/* ── Portas shoji ──────────────────────────────────────────────────────── */
+.dj-door{
+  --lit:0;
+  position:absolute;left:calc(var(--dx) * var(--u));top:calc(104 * var(--u));width:calc(92 * var(--u));height:calc(214 * var(--u));
+  display:block;text-decoration:none;color:inherit;cursor:pointer;transform-style:preserve-3d;
+  /* sem filter aqui: um filtro recortaria a tabuleta (fora da caixa) e achataria o 3D dos filhos */
+}
+.dj-door .dj-jamb{position:absolute;inset:0;border:calc(5 * var(--u)) solid #2a1d14;border-bottom-width:calc(4 * var(--u));background:#0e0a08;box-shadow:inset 0 0 calc(30 * var(--u)) rgba(0,0,0,.85),0 calc(6 * var(--u)) calc(16 * var(--u)) rgba(0,0,0,.55)}
+.dj-door .dj-light{position:absolute;inset:calc(5 * var(--u));background:radial-gradient(ellipse at 50% 62%,rgba(255,218,160,.98),rgba(255,170,100,.6) 45%,rgba(120,50,20,.25) 82%);opacity:calc(.10 + .9 * var(--lit));transition:opacity .6s var(--dj-ease)}
+.dj-door.red .dj-light{background:radial-gradient(ellipse at 50% 62%,rgba(255,200,170,.98),rgba(227,60,40,.7) 45%,rgba(120,10,10,.3) 82%)}
+.dj-door .dj-leaves{position:absolute;inset:calc(5 * var(--u)) calc(5 * var(--u)) calc(4 * var(--u));overflow:hidden}
+.dj-door .dj-leaf{position:absolute;top:0;bottom:0;width:50%;background:linear-gradient(rgba(243,232,214,.72),rgba(228,214,190,.66));border:calc(2.5 * var(--u)) solid #3b2b1e;transition:transform 1.1s var(--dj-ease-io)}
+.dj-door .dj-leaf::before{content:"";position:absolute;inset:0;
+  background:
+    repeating-linear-gradient(90deg,transparent 0 calc(13 * var(--u)),rgba(59,43,30,.9) calc(13 * var(--u)) calc(14.4 * var(--u))),
+    repeating-linear-gradient(0deg,transparent 0 calc(20 * var(--u)),rgba(59,43,30,.9) calc(20 * var(--u)) calc(21.4 * var(--u)))}
+.dj-door .dj-leaf.l{left:0}.dj-door .dj-leaf.r{right:0}
+.dj-door.open .dj-leaf.l{transform:translateX(-97%)}.dj-door.open .dj-leaf.r{transform:translateX(97%)}
+.dj-door .dj-plate{position:absolute;left:50%;top:calc(-36 * var(--u));transform:translateX(-50%);padding:calc(3 * var(--u)) calc(9 * var(--u)) calc(4 * var(--u));
+  background:linear-gradient(#3a2a1c,#241a12);border:calc(1 * var(--u)) solid #5b4430;color:var(--dj-straw);
+  font-family:var(--font-h,'Archivo',sans-serif);font-weight:800;font-size:calc(11 * var(--u));letter-spacing:.06em;white-space:nowrap;text-align:center;line-height:1.1;
+  box-shadow:0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(0,0,0,.5);transition:color .4s,border-color .4s}
+/* Nas paredes laterais a tabuleta sai da parede, perpendicular, virada para quem entra (senão fica de perfil e ilegível).
+   Na parede direita o eixo local x aponta para a entrada; na esquerda aponta para o fundo, por isso a rotação inverte. */
+.dj-face.right .dj-plate{left:auto;right:50%;transform-origin:100% 50%;transform:rotateY(90deg)}
+.dj-face.left .dj-plate{left:50%;right:auto;transform-origin:0 50%;transform:rotateY(-90deg)}
+.dj-door .dj-plate small{display:block;font-family:"Yu Gothic","Hiragino Sans","Noto Sans CJK JP","Noto Sans JP",sans-serif;font-size:calc(9 * var(--u));color:#c9a77a;letter-spacing:.3em;font-weight:400;margin-top:calc(1 * var(--u))}
+.dj-door:hover,.dj-door:focus-visible{--lit:1}
+.dj-door:hover .dj-plate,.dj-door:focus-visible .dj-plate{color:var(--dj-bone);border-color:var(--dj-straw)}
+.dj-door:focus-visible{outline:calc(3 * var(--u)) solid var(--focus-ring,#ff6a5e);outline-offset:calc(4 * var(--u))}
+.dj-room.lit .dj-door{--lit:.42}
+.dj-room.lit .dj-door.red{--lit:.7}
+.dj-room.lit .dj-door:hover,.dj-room.lit .dj-door:focus-visible,.dj-room.lit .dj-door.red:hover,.dj-room.lit .dj-door.red:focus-visible,.dj-door.open{--lit:1}
+.dj-room.lit .dj-door .dj-light{animation:dj-breathe 5s var(--dj-ease-io) infinite}
+.dj-room.lit .dj-door:nth-child(2) .dj-light{animation-delay:-1.7s}
+.dj-room.lit .dj-door:nth-child(3) .dj-light{animation-delay:-3.4s}
+@keyframes dj-breathe{0%,100%{filter:brightness(1)}50%{filter:brightness(1.18)}}
+
+/* ── Camadas 2D sobre a sala ───────────────────────────────────────────── */
+.dj-photo{position:absolute;inset:0;background:var(--dj-ink) center/cover no-repeat;pointer-events:none;will-change:opacity}
+.dj-bloom{position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(ellipse 70% 80% at 62% 40%,rgba(243,232,214,.92),rgba(243,232,214,.25) 40%,rgba(243,232,214,0) 70%);mix-blend-mode:screen}
+.dj-dust{position:absolute;inset:0;pointer-events:none;opacity:.7}
+.dj-scrim{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 120% 90% at 50% 45%,rgba(10,10,18,0) 40%,rgba(10,10,18,.55) 100%)}
+.dj-flash{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,rgba(255,236,200,1),rgba(255,220,170,.85) 40%,rgba(255,200,140,.4) 75%);opacity:0;transition:opacity .35s ease-in}
+.dj-flash.on{opacity:1;transition:opacity .55s ease-out}
+
+/* ── Bandas de texto (ritmadas em distância de scroll) ─────────────────── */
+.dj-bands{position:absolute;inset:0;pointer-events:none}
+.dj-band{--k:0;position:absolute;left:var(--dj-gutter);top:clamp(96px,17vh,180px);width:min(560px,80vw);opacity:0;text-shadow:var(--dj-tshadow);pointer-events:none;color:var(--dj-bone)}
+.dj-band::before{content:"";position:absolute;inset:-14% -18%;border-radius:40%;pointer-events:none;opacity:calc(.25 + .75 * var(--k,1));
+  background:radial-gradient(ellipse 74% 62% at 50% 50%,rgba(5,5,10,.62) 0%,rgba(5,5,10,.4) 46%,rgba(5,5,10,0) 76%)}
+.dj-band>*{position:relative;margin:0}
+.dj-kicker{font-family:var(--font-mono,monospace);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dj-straw);display:flex;align-items:center;gap:12px}
+.dj-kicker::before{content:"";width:22px;height:1px;background:var(--dj-straw);flex:none}
+.dj-band .dj-line{font-family:var(--font-h,'Archivo',sans-serif);font-weight:800;font-size:clamp(44px,6.4vw,100px);line-height:.92;letter-spacing:-.01em;margin-top:16px;text-wrap:balance}
+.dj-band .dj-sub{font-family:var(--font-b,sans-serif);font-size:clamp(17px,1.5vw,22px);margin-top:18px;max-width:38ch}
+.dj-band.low{top:auto;bottom:clamp(60px,12vh,140px)}
+.dj-band.settle{top:auto;bottom:clamp(24px,4vh,48px);left:50%;transform:translateX(-50%);width:min(680px,88vw);text-align:center}
+.dj-band.settle .dj-kicker{justify-content:center}.dj-band.settle .dj-kicker::before{display:none}
+.dj-band.settle .dj-line{font-size:clamp(30px,3.6vw,52px);margin-top:10px}
+.dj-band.settle .dj-sub{margin:12px auto 0;font-size:clamp(15px,1.2vw,18px);color:var(--dj-straw)}
+.dj-band.settle .dj-cta{display:flex;justify-content:center;gap:12px;margin-top:22px;pointer-events:auto}
+.dj-band.settle .dj-cta .btn{text-shadow:none}
+.dj-band.settle::before{inset:-30% -10%;background:radial-gradient(ellipse 70% 70% at 50% 60%,rgba(5,5,10,.72) 0%,rgba(5,5,10,.45) 46%,rgba(5,5,10,0) 78%)}
+
+.dj-band[data-entrance="approach"] .dj-line,.dj-band[data-entrance="approach"] .dj-kicker{opacity:var(--k,0);transform:scale(calc(.84 + .16 * var(--k,0)));transform-origin:left center}
+.dj-blurpair{display:grid}.dj-blurpair>*{grid-area:1/1}
+.dj-blurpair .soft{filter:blur(10px);opacity:calc(1 - var(--k,0))}.dj-blurpair .sharp{opacity:var(--k,0)}
+.dj-band[data-entrance="blur"] .dj-sub{opacity:clamp(0,calc((var(--k,0) - .45) * 2.4),1)}
+.dj-band[data-entrance="grid"] .c{--kc:clamp(0,calc((var(--k,0) - var(--th,0)) * 2.6),1);display:inline-block;opacity:var(--kc);transform:translateX(calc((1 - var(--kc)) * var(--jx,0px)))}
+.dj-band[data-entrance="grid"] .dj-sub{opacity:clamp(0,calc((var(--k,0) - .5) * 2.6),1)}
+.dj-band[data-entrance="rise"] .w{--kc:clamp(0,calc((var(--k,0) - var(--th,0)) * 2.8),1);display:inline-block;opacity:var(--kc);transform:translateY(calc((1 - var(--kc)) * 24px))}
+.dj-band[data-entrance="rise"] .dj-kicker{opacity:clamp(0,calc(var(--k,0) * 3),1)}
+.dj-band[data-entrance="rise"] .dj-sub{--ks:clamp(0,calc((var(--k,0) - .55) * 3.2),1);opacity:var(--ks);transform:translateY(calc((1 - var(--ks)) * 14px))}
+.dj-band[data-entrance="rise"] .dj-cta{--kb:clamp(0,calc((var(--k,0) - .7) * 4),1);opacity:var(--kb);transform:translateY(calc((1 - var(--kb)) * 14px))}
+.dj-band .w,.dj-band .c{white-space:pre}
+.dj-sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+.dj-cue{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--dj-straw);font-family:var(--font-mono,monospace);font-size:11px;letter-spacing:.2em;text-transform:uppercase;text-shadow:var(--dj-tshadow);opacity:.85;transition:opacity .8s var(--dj-ease);pointer-events:none}
+.dj-cue svg{width:18px;height:18px;animation:dj-bob 2.4s var(--dj-ease-io) -1.2s infinite}
+.dj-stage.past .dj-cue{opacity:0}
+@keyframes dj-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+.dj-hint{position:absolute;right:var(--dj-gutter);top:calc(var(--nav-h,72px) + 22px);font-family:var(--font-mono,monospace);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dj-straw);background:rgba(8,8,15,.5);border:1px solid rgba(213,193,174,.25);border-radius:999px;padding:8px 14px;backdrop-filter:blur(8px);opacity:0;transform:translateY(-6px);transition:opacity .7s var(--dj-ease),transform .7s var(--dj-ease);pointer-events:none}
+.dj-stage.inside .dj-hint{opacity:1;transform:none}
+
+/* ── Hero estático (telemóveis, movimento reduzido) ────────────────────── */
+.dj-static{display:none;position:absolute;inset:0;flex-direction:column;justify-content:flex-end;padding:0 var(--dj-gutter) clamp(48px,9vh,96px);text-shadow:var(--dj-tshadow);color:var(--dj-bone);
+  background:linear-gradient(180deg,rgba(10,9,12,.35) 0%,rgba(10,9,12,.15) 40%,rgba(10,9,12,.85) 100%)}
+.dj-static h1{font-family:var(--font-h,'Archivo',sans-serif);font-weight:800;font-size:clamp(48px,13vw,92px);line-height:.92;margin:14px 0 0;letter-spacing:-.01em}
+.dj-static p{margin:16px 0 0;max-width:40ch;font-size:17px;font-family:var(--font-b,sans-serif)}
+.dj-static .dj-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.dj-static .dj-cta .btn{text-shadow:none}
+
+/* Gates de dispositivo: têm de ser idênticos aos de dojo.js. */
+@media (max-width: 720px),
+       (orientation: portrait) and (max-width: 1024px),
+       (orientation: portrait) and (pointer: coarse),
+       (orientation: landscape) and (pointer: coarse) and (max-height: 560px){
+  .dojo{height:auto}
+  .dj-stage{position:relative;height:100vh;height:100svh;min-height:560px}
+  .dj-scene,.dj-bands,.dj-cue,.dj-dust,.dj-bloom,.dj-hint{display:none}
+  .dj-photo{background-image:url(/assets/dojo/hero-poster-1280.jpg);opacity:1!important}
+  .dj-static{display:flex}
+}
+/* O movimento está sempre activo no desktop, por decisão do cliente (a definição de movimento reduzido não desliga o 3D). */
+@media (max-height:560px){.dj-cue,.dj-hint{display:none}}
+
+/* ── As portas, em lista (mapa e navegação acessível) ──────────────────── */
+.dj-portas{position:relative;padding:clamp(72px,9vw,128px) 0;background:var(--bg,#0d0d0d)}
+.dj-portas .dj-kicker{color:var(--accent-text,#ff6a5e)}.dj-portas .dj-kicker::before{background:var(--accent-text,#ff6a5e)}
+.dj-portas h2{font-family:var(--font-h,'Archivo',sans-serif);font-weight:800;font-size:clamp(38px,5.4vw,76px);line-height:.95;letter-spacing:-.01em;margin:16px 0 0;color:var(--text,#ece8e1)}
+.dj-portas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:48px}
+.dj-porta{position:relative;display:grid;grid-template-rows:auto 1fr auto;gap:10px;min-height:220px;padding:22px 22px 20px;text-decoration:none;color:var(--text,#ece8e1);
+  background:linear-gradient(180deg,#1b1610,#120e0b);border:1px solid #3a2b1e;border-top:6px solid #4a3625;border-radius:4px;overflow:hidden;
+  transition:transform .5s var(--dj-ease),border-color .4s,box-shadow .5s}
+.dj-porta::before{content:"";position:absolute;inset:6px 8px 8px;border:1px solid rgba(213,193,174,.14);pointer-events:none;
+  background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(213,193,174,.06) 22px 23px),repeating-linear-gradient(0deg,transparent 0 30px,rgba(213,193,174,.06) 30px 31px)}
+.dj-porta::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 70%,rgba(255,200,140,.22),transparent 65%);opacity:0;transition:opacity .5s}
+.dj-porta:hover,.dj-porta:focus-visible{transform:translateY(-4px);border-color:#6b4a2b;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.dj-porta:hover::after,.dj-porta:focus-visible::after{opacity:1}
+.dj-porta .dj-kanji{position:relative;font-family:"Yu Gothic","Hiragino Sans","Noto Sans CJK JP","Noto Sans JP",sans-serif;font-size:44px;line-height:1;color:var(--dj-straw);opacity:.85}
+.dj-porta b{position:relative;font-family:var(--font-h,'Archivo',sans-serif);font-weight:800;font-size:30px;line-height:1;align-self:end}
+.dj-porta span:last-child{position:relative;font-family:var(--font-b,sans-serif);font-size:15px;color:var(--text-2,#c4bfb7)}
+.dj-porta.red{border-top-color:var(--accent,#e31e24)}
+.dj-porta.red::after{background:radial-gradient(ellipse at 50% 70%,rgba(227,30,36,.28),transparent 65%);opacity:.6}
+.dj-porta.red b{color:var(--dj-bone)}
+@media (max-width:900px){.dj-portas-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.dj-portas-grid{grid-template-columns:1fr}}
+@media (pointer:coarse){.dj-porta{min-height:44px}}

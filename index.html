@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt">
-
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta name="description"
-      content="ASBKI Covilhã — Karate Shotokan desde 1998. Dois dojos, turmas dos 5 aos 70 anos. Primeira aula gratuita.">
+   <meta name="description" content="ASBKI Covilhã — Karate Shotokan desde 1998. Dois dojos, turmas dos 5 aos 70 anos. Primeira aula gratuita.">
    <title>ASBKI Covilhã — Karate Shotokan</title>
+   <meta name="theme-color" content="#0d0d0d">
+   <meta property="og:type" content="website">
+   <meta property="og:title" content="ASBKI Covilhã — Dá o primeiro passo">
+   <meta property="og:description" content="Karate Shotokan na Covilhã e no Tortosendo desde 1998. Dos 5 aos 70 anos. A primeira aula é gratuita.">
+   <meta property="og:image" content="/assets/dojo/hero-poster.jpg">
    <link rel="preconnect" href="https://fonts.googleapis.com">
    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link
-      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
-      rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
    <link rel="stylesheet" href="/assets/css/style.css">
    <link rel="stylesheet" href="/assets/css/pages.css">
+   <link rel="stylesheet" href="/assets/css/dojo.css">
+   <link rel="preload" as="image" href="/assets/dojo/hero-poster.jpg" media="(min-width: 1025px)">
 </head>
 
 <body data-page="home">
@@ -22,132 +25,87 @@
 
    <main>
 
-      <!-- ═══ HERO ═══════════════════════════════════════════════════════════ -->
-      <section class="hero" id="inicio">
-         <div class="hero-bg">
-            <div class="hero-bg-img" id="hero-bg-img"></div>
-            <div class="hero-bg-overlay"></div>
-         </div>
-         <div class="hero-grid" aria-hidden="true"></div>
-         <div class="hero-image" id="hero-image"></div>
-         <div class="container">
-            <div class="hero-inner">
-               <span class="hero-badge" id="hero-badge"></span>
-               <h1 class="hero-headline">
-                  <span id="hero-line1"></span><br>
-                  <span id="hero-line2"></span>
-               </h1>
-               <p class="hero-sub" id="hero-sub"></p>
-               <div class="hero-actions" id="hero-actions"></div>
-            </div>
-         </div>
-      </section>
+      <!-- ═══ O DOJO: a página inicial é a própria sala ═══════════════════ -->
+      <section class="dojo" id="inicio" aria-label="Entrar no dojo">
+         <div class="dj-stage" id="dj-stage">
 
-      <!-- ═══ TREINAR (horários + eventos) ═════════════════════════════════ -->
-      <section class="treinar" id="treinar">
-         <div class="section-watermark" aria-hidden="true" data-text="02"></div>
-         <div class="container">
-            <div class="treinar-head fade-in">
-               <h2 class="treinar-title" id="schedule-title">Treinos esta semana</h2>
-               <a href="/inscricao#horarios" class="link-arrow" id="schedule-view-all">Horário completo →</a>
-            </div>
-            <div class="session-filters fade-in fade-in-delay-1" id="session-filters"></div>
-            <div class="session-grid fade-in fade-in-delay-1" id="session-grid"></div>
-
-            <div class="treinar-bottom fade-in fade-in-delay-2">
-               <div class="events-panel">
-                  <h3 class="panel-title" id="events-home-title">Próximas provas</h3>
-                  <div class="events-list" id="events-list"></div>
-                  <a href="/noticias" class="link-arrow" style="display:inline-block;margin-top:18px">Ver notícias do clube →</a>
-               </div>
-               <div class="socio-panel">
-                  <h3 class="panel-title">Já és sócio?</h3>
-                  <p class="panel-text">Consulta quotas, presenças e o teu percurso de graduações na área reservada.</p>
-                  <a href="/contacto" class="btn btn-outline-ghost">Entrar na área de sócio</a>
-               </div>
-            </div>
-         </div>
-      </section>
-
-      <!-- ═══ BENEFITS ═════════════════════════════════════════════════════ -->
-      <section class="benefits surface-paper" id="beneficios">
-         <div class="container">
-            <div class="benefits-grid" id="benefits-grid"></div>
-         </div>
-      </section>
-
-      <!-- ═══ CLASSES ══════════════════════════════════════════════════════ -->
-      <section class="classes" id="modalidades">
-         <div class="section-watermark" aria-hidden="true" data-text="03"></div>
-         <div class="container">
-            <div class="classes-header fade-in">
-               <span class="section-label" id="classes-subtitle"></span>
-               <h2 class="section-title" id="classes-title"></h2>
-            </div>
-            <div class="classes-grid fade-in fade-in-delay-1" id="classes-grid"></div>
-            <div class="classes-footer fade-in fade-in-delay-2">
-               <a href="/karate" class="btn btn-accent" id="classes-cta"></a>
-            </div>
-         </div>
-      </section>
-
-      <!-- ═══ ABOUT ════════════════════════════════════════════════════════ -->
-      <section class="about surface-paper" id="sobre">
-         <div class="section-watermark" aria-hidden="true" data-text="04"></div>
-         <div class="container">
-            <div class="about-3col">
-               <div class="about-text fade-in">
-                  <span class="section-label" id="about-subtitle"></span>
-                  <h2 class="section-title dark" id="about-title"></h2>
-                  <p class="about-para" id="about-text"></p>
-                  <ul class="about-features" id="about-features"></ul>
-                  <a href="/associacao" class="btn btn-accent" id="about-cta"></a>
-               </div>
-               <div class="about-center fade-in fade-in-delay-1">
-                  <div class="about-splash"></div>
-                  <div class="about-center-img" id="about-img">
-                     <div class="about-img-placeholder" id="about-img-placeholder">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                           <circle cx="12" cy="8" r="4" />
-                           <path d="M6 20v-2a6 6 0 0 1 12 0v2" />
-                        </svg>
-                        <span>Imagem do Dojo</span>
-                     </div>
+            <div class="dj-scene">
+               <div class="dj-room" id="dj-room">
+                  <div class="dj-face ceiling"></div>
+                  <div class="dj-face floor"></div>
+                  <div class="dj-face left">
+                     <a class="dj-door" href="/associacao" data-face="left" style="--dx:600"><span class="dj-plate">Quem Somos<small>会</small></span><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
+                     <a class="dj-door" href="/karate" data-face="left" style="--dx:470"><span class="dj-plate">Karate<small>空手</small></span><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
+                     <a class="dj-door" href="/dojos" data-face="left" style="--dx:340"><span class="dj-plate">Dojos<small>道場</small></span><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
                   </div>
+                  <div class="dj-face right">
+                     <a class="dj-door red" href="/inscricao" data-face="right" style="--dx:200"><span class="dj-plate">Aula grátis<small>入門</small></span><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
+                  </div>
+                  <div class="dj-face back">
+                     <a class="dj-door" href="/noticias" data-face="back" style="--dx:75"><span class="dj-plate">Notícias<small>報</small></span><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
+                     <a class="dj-door" href="/contacto" data-face="back" style="--dx:298"><span class="dj-plate">Contactos<small>連絡</small></span><span class="dj-jamb"></span><span class="dj-light"></span><span class="dj-leaves"><span class="dj-leaf l"></span><span class="dj-leaf r"></span></span></a>
+                  </div>
+                  <div class="dj-frame" aria-hidden="true"></div>
                </div>
-               <div class="about-stats-col fade-in fade-in-delay-2">
-                  <span class="section-label" id="stats-subtitle"></span>
-                  <h3 class="section-title dark about-stats-title" id="stats-title"></h3>
-                  <div class="stats-grid-2col" id="stats-grid"></div>
+            </div>
+
+            <div class="dj-photo" aria-hidden="true"></div>
+            <div class="dj-bloom" aria-hidden="true"></div>
+            <canvas class="dj-dust" aria-hidden="true"></canvas>
+            <div class="dj-scrim" aria-hidden="true"></div>
+            <div class="dj-flash" aria-hidden="true"></div>
+
+            <div class="dj-bands">
+               <div class="dj-band" data-a="0" data-b="0.16" data-entrance="approach">
+                  <p class="dj-kicker">Associação Shotokan Karatedo · Beira Interior</p>
+                  <h1 class="dj-line">O caminho começa à porta.</h1>
+               </div>
+               <div class="dj-band" data-a="0.22" data-b="0.46" data-entrance="blur">
+                  <div class="dj-blurpair">
+                     <p class="dj-line soft" aria-hidden="true">Não precisas de estar em forma.</p>
+                     <p class="dj-line sharp">Não precisas de estar em forma.</p>
+                  </div>
+                  <p class="dj-sub">Nem de equipamento. Só de aparecer.</p>
+               </div>
+               <div class="dj-band low" data-a="0.52" data-b="0.76" data-entrance="grid" data-spread="0.55">
+                  <p class="dj-line">Dos 5 aos 70 anos.</p>
+                  <p class="dj-sub">Dois dojos. Treinos todas as semanas.</p>
+               </div>
+               <div class="dj-band settle" data-a="0.84" data-b="1" data-entrance="rise" data-ramp="0.05" data-spread="0.45">
+                  <p class="dj-kicker">Estás dentro.</p>
+                  <p class="dj-line">Escolhe uma porta.</p>
+                  <p class="dj-sub">Cada porta é uma página. Passa por cima para a acender.</p>
+                  <div class="dj-cta"><a class="btn btn-accent" href="/inscricao" data-fly>Marcar aula experimental</a></div>
+               </div>
+            </div>
+
+            <div class="dj-hint" aria-hidden="true">Seis portas · seis páginas</div>
+            <div class="dj-cue" aria-hidden="true"><span>Entrar</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16m0 0 6-6m-6 6-6-6"/></svg></div>
+
+            <div class="dj-static">
+               <p class="dj-kicker">Karate Shotokan · Covilhã e Tortosendo · desde 1998</p>
+               <h1>Dá o primeiro passo.</h1>
+               <p>Karate Shotokan dos 5 aos 70 anos. Dois dojos, treinos todas as semanas. A primeira aula é gratuita e não precisas de equipamento.</p>
+               <div class="dj-cta">
+                  <a class="btn btn-accent" href="/inscricao">Marcar aula experimental</a>
+                  <a class="btn btn-outline-ghost" href="#portas">Ver as portas</a>
                </div>
             </div>
          </div>
       </section>
 
-      <!-- ═══ NOTÍCIAS RECENTES ════════════════════════════════════════════ -->
-      <section class="home-news" id="noticias">
-         <div class="section-watermark" aria-hidden="true" data-text="05"></div>
+      <!-- ═══ AS PORTAS, EM LISTA ═════════════════════════════════════════ -->
+      <section class="dj-portas" id="portas" aria-label="As portas do dojo">
          <div class="container">
-            <div class="section-head fade-in">
-               <div>
-                  <span class="section-label" id="news-subtitle"></span>
-                  <h2 class="section-title" id="news-home-title"></h2>
-               </div>
-               <a href="/noticias" class="link-arrow" id="news-view-all"></a>
-            </div>
-            <div class="card-grid fade-in fade-in-delay-1" id="news-grid"></div>
-         </div>
-      </section>
-
-      <!-- ═══ CTA ══════════════════════════════════════════════════════════ -->
-      <section class="trial" id="experimentar">
-         <div class="inscription-kanji" aria-hidden="true">入門</div>
-         <div class="container">
-            <div class="trial-inner fade-in">
-               <span class="section-label">Primeira aula gratuita</span>
-               <h2 class="section-title" id="trial-title"></h2>
-               <p class="trial-sub" id="trial-sub"></p>
-               <a href="/inscricao" class="btn btn-accent" id="trial-cta"></a>
+            <p class="dj-kicker fade-in">As portas do dojo</p>
+            <h2 class="fade-in fade-in-delay-1">Seis portas. Uma primeira aula grátis.</h2>
+            <div class="dj-portas-grid">
+               <a class="dj-porta fade-in" href="/associacao"><span class="dj-kanji" aria-hidden="true">会</span><b>Quem Somos</b><span>História, instrutores e Dojo Kun.</span></a>
+               <a class="dj-porta fade-in fade-in-delay-1" href="/karate"><span class="dj-kanji" aria-hidden="true">空手</span><b>Karate</b><span>Kihon, kata e kumite.</span></a>
+               <a class="dj-porta fade-in fade-in-delay-2" href="/dojos"><span class="dj-kanji" aria-hidden="true">道場</span><b>Dojos</b><span>Covilhã e Tortosendo, com horários.</span></a>
+               <a class="dj-porta fade-in" href="/noticias"><span class="dj-kanji" aria-hidden="true">報</span><b>Notícias</b><span>Resultados, exames e artigos.</span></a>
+               <a class="dj-porta fade-in fade-in-delay-1" href="/contacto"><span class="dj-kanji" aria-hidden="true">連絡</span><b>Contactos</b><span>Fala connosco.</span></a>
+               <a class="dj-porta red fade-in fade-in-delay-2" href="/inscricao"><span class="dj-kanji" aria-hidden="true">入門</span><b>Aula grátis</b><span>A primeira aula é gratuita.</span></a>
             </div>
          </div>
       </section>
@@ -157,7 +115,13 @@
    <div id="site-footer"></div>
 
    <script src="/assets/js/site.js"></script>
-   <script src="/assets/js/home.js"></script>
+   <script src="/assets/js/dojo.js"></script>
+   <script>
+      ASBKI.boot(function (c) {
+         ASBKI.setMeta(c.site.name + ' — ' + c.site.tagline);
+         if (window.__dojo) window.__dojo.applyNav(c.nav);
+      });
+   </script>
 </body>
 
 </html>
