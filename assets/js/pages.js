@@ -44,6 +44,13 @@
 
   const sortedNews = c => [...c.news.items].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
+  /* Enquanto não há fotografias dos dojos, o cartão mostra um mapa. A pesquisa usa a morada,
+     sem os apontamentos entre parênteses ("morada a confirmar"), ou o nome da localidade. */
+  const mapQuery = dj => {
+    const addr = (dj.address || '').replace(/\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
+    return addr || `${dj.short || dj.name} Covilhã`;
+  };
+
   /* ─── Dojos ─────────────────────────────────────────────────────────── */
   function dojos(c) {
     const d = c.dojos;
@@ -53,7 +60,9 @@
       const sessions = c.schedule.sessions.filter(s => s.location === dj.name);
       return `
         <article class="card dojo-card fade-in">
-          <a href="/dojos/${esc(dj.slug)}" class="card-img" tabindex="-1" aria-hidden="true">${imgOrPlaceholder(dj.image, dj.name, ICONS.pin, dj.short || dj.name)}</a>
+          ${dj.image
+            ? `<a href="/dojos/${esc(dj.slug)}" class="card-img" tabindex="-1" aria-hidden="true">${imgOrPlaceholder(dj.image, dj.name)}</a>`
+            : `<div class="card-img card-map"><iframe class="dojo-map" src="https://maps.google.com/maps?q=${encodeURIComponent(mapQuery(dj))}&amp;z=14&amp;hl=pt-PT&amp;output=embed" loading="lazy" title="Mapa: ${esc(dj.name)}" referrerpolicy="no-referrer-when-downgrade"></iframe></div>`}
           <div class="card-body">
             <h3 class="card-title"><a href="/dojos/${esc(dj.slug)}">${esc(dj.name)}</a></h3>
             ${dj.notes ? `<p class="card-text" style="flex:0">${esc(dj.notes)}</p>` : ''}

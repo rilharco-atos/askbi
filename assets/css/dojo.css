@@ -23,7 +23,7 @@
   --persp:1340;
   perspective:calc(var(--persp) * var(--u));perspective-origin:calc(693 * var(--u)) calc(198 * var(--u));
 }
-.dj-room{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:calc(693 * var(--u)) calc(198 * var(--u)) calc(var(--persp) * var(--u));will-change:transform}
+.dj-room{--gate:0;position:absolute;inset:0;transform-style:preserve-3d;transform-origin:calc(693 * var(--u)) calc(198 * var(--u)) calc(var(--persp) * var(--u));will-change:transform}
 .dj-face{position:absolute;background-size:100% 100%;background-repeat:no-repeat;transform-style:preserve-3d;will-change:transform;backface-visibility:hidden}
 .dj-face.back{left:calc(455 * var(--u));top:calc(150 * var(--u));width:calc(465 * var(--u));height:calc(318 * var(--u));background-image:url(/assets/dojo/back.jpg)}
 .dj-face.floor{left:calc(455 * var(--u));top:calc(468 * var(--u));width:calc(465 * var(--u));height:calc(705 * var(--u));transform-origin:top;transform:rotateX(90deg);background-image:url(/assets/dojo/floor.jpg)}
@@ -32,6 +32,23 @@
 .dj-face.right{left:calc(920 * var(--u));top:calc(150 * var(--u));width:calc(705 * var(--u));height:calc(318 * var(--u));transform-origin:left;transform:rotateY(-90deg);background-image:url(/assets/dojo/right.jpg)}
 .dj-frame{position:absolute;left:calc(323 * var(--u));top:calc(-8.5 * var(--u));width:calc(740 * var(--u));height:calc(413 * var(--u));transform:translateZ(calc(619 * var(--u)));background:url(/assets/dojo/frame.png) 0 0/100% 100% no-repeat;pointer-events:none;will-change:transform,opacity}
 
+/* ── A entrada: duas folhas shoji fechadas à chegada, que deslizam para dentro das paredes com o primeiro scroll ── */
+.dj-gate{position:absolute;left:calc(455 * var(--u));top:calc(150 * var(--u));width:calc(465 * var(--u));height:calc(318 * var(--u));transform:translateZ(calc(600 * var(--u)));transform-style:preserve-3d;pointer-events:none}
+.dj-gate.gone{visibility:hidden}
+.dj-gate-glow{position:absolute;inset:0;pointer-events:none;opacity:calc(.9 - .9 * var(--gate));background:radial-gradient(ellipse 60% 70% at 50% 58%,rgba(255,214,168,.30),rgba(255,214,168,0) 70%)}
+.dj-gate-lintel{position:absolute;left:calc(-14 * var(--u));right:calc(-14 * var(--u));top:calc(-16 * var(--u));height:calc(16 * var(--u));background:linear-gradient(#3d2c1d,#1d140d);box-shadow:0 calc(3 * var(--u)) calc(10 * var(--u)) rgba(0,0,0,.6)}
+.dj-gate-sill{position:absolute;left:0;right:0;bottom:calc(-3 * var(--u));height:calc(5 * var(--u));background:#1d140d}
+.dj-gate-leaf{position:absolute;top:0;bottom:0;width:50%;pointer-events:auto;cursor:pointer;will-change:transform,opacity;
+  opacity:calc(min(1, max(0, (0.95 - var(--gate)) / 0.4)));  /* as folhas somem na sombra das paredes ao deslizar; nunca saltam */
+  background:linear-gradient(rgba(243,232,214,.86),rgba(226,211,186,.8));border:calc(3 * var(--u)) solid #3b2b1e;box-shadow:inset 0 0 calc(40 * var(--u)) rgba(80,50,20,.18)}
+.dj-gate-leaf::before{content:"";position:absolute;inset:0;
+  background:
+    repeating-linear-gradient(90deg,transparent 0 calc(27 * var(--u)),rgba(59,43,30,.85) calc(27 * var(--u)) calc(29 * var(--u))),
+    repeating-linear-gradient(0deg,transparent 0 calc(42 * var(--u)),rgba(59,43,30,.85) calc(42 * var(--u)) calc(44 * var(--u)))}
+.dj-gate-leaf i{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-style:normal;font-family:"Yu Gothic","Hiragino Sans","Noto Sans CJK JP","Noto Sans JP",sans-serif;font-size:calc(150 * var(--u));line-height:1;color:rgba(70,45,25,.42)}
+.dj-gate-leaf.l{left:0;border-right-width:calc(4 * var(--u));transform:translateX(calc(-96% * var(--gate)))}
+.dj-gate-leaf.r{right:0;border-left-width:calc(4 * var(--u));transform:translateX(calc(96% * var(--gate)))}
+
 /* ── Portas shoji ──────────────────────────────────────────────────────── */
 .dj-door{
   --lit:0;
@@ -39,9 +56,15 @@
   display:block;text-decoration:none;color:inherit;cursor:pointer;transform-style:preserve-3d;
   /* sem filter aqui: um filtro recortaria a tabuleta (fora da caixa) e achataria o 3D dos filhos */
 }
+/* zona de clique generosa à volta da porta (invisível): as portas laterais ficam estreitas em perspectiva.
+   Lateralmente no máximo 15 unidades: as portas da parede esquerda estão a 38 unidades umas das outras e as zonas não se podem sobrepor */
+.dj-door::after{content:"";position:absolute;inset:calc(-14 * var(--u)) calc(-15 * var(--u))}
 .dj-door .dj-jamb{position:absolute;inset:0;border:calc(5 * var(--u)) solid #2a1d14;border-bottom-width:calc(4 * var(--u));background:#0e0a08;box-shadow:inset 0 0 calc(30 * var(--u)) rgba(0,0,0,.85),0 calc(6 * var(--u)) calc(16 * var(--u)) rgba(0,0,0,.55)}
 .dj-door .dj-light{position:absolute;inset:calc(5 * var(--u));background:radial-gradient(ellipse at 50% 62%,rgba(255,218,160,.98),rgba(255,170,100,.6) 45%,rgba(120,50,20,.25) 82%);opacity:calc(.10 + .9 * var(--lit));transition:opacity .6s var(--dj-ease)}
 .dj-door.red .dj-light{background:radial-gradient(ellipse at 50% 62%,rgba(255,200,170,.98),rgba(227,60,40,.7) 45%,rgba(120,10,10,.3) 82%)}
+/* porta aberta: a luz do outro lado é clara, para que a passagem pela ombreira acabe em branco e não em castanho */
+.dj-door.open .dj-light{background:radial-gradient(ellipse at 50% 55%,rgba(255,247,230,1),rgba(255,226,186,.97) 45%,rgba(222,160,100,.75) 85%)}
+.dj-door.open .dj-light::after{color:rgba(110,70,35,.3)}
 .dj-door .dj-leaves{position:absolute;inset:calc(5 * var(--u)) calc(5 * var(--u)) calc(4 * var(--u));overflow:hidden}
 .dj-door .dj-leaf{position:absolute;top:0;bottom:0;width:50%;background:linear-gradient(rgba(243,232,214,.72),rgba(228,214,190,.66));border:calc(2.5 * var(--u)) solid #3b2b1e;transition:transform 1.1s var(--dj-ease-io)}
 .dj-door .dj-leaf::before{content:"";position:absolute;inset:0;
@@ -61,11 +84,11 @@
 @keyframes dj-breathe{0%,100%{filter:brightness(1)}50%{filter:brightness(1.18)}}
 
 
-/* ── O emblema pendurado na faixa vermelha (kamiza) ────────────────────── */
-.dj-emblem{position:absolute;left:calc(184 * var(--u));top:calc(123 * var(--u));width:calc(96 * var(--u));height:calc(96 * var(--u));pointer-events:none;transform-origin:50% -30%;animation:dj-sway 9s var(--dj-ease-io) -2s infinite}
-.dj-emblem img{display:block;width:100%;height:100%;border-radius:50%;box-shadow:0 calc(3 * var(--u)) calc(10 * var(--u)) rgba(0,0,0,.5);transition:filter 1s var(--dj-ease)}
-.dj-room.lit .dj-emblem img{filter:drop-shadow(0 0 calc(10 * var(--u)) rgba(255,210,160,.6))}
-@keyframes dj-sway{0%,100%{transform:rotate(-.6deg)}50%{transform:rotate(.6deg)}}
+/* ── O emblema está impresso no tecido (textura); aqui só um brilho suave quando se está dentro ── */
+.dj-emblem-glow{position:absolute;left:calc(154 * var(--u));top:calc(92 * var(--u));width:calc(156 * var(--u));height:calc(156 * var(--u));border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,214,168,.34),rgba(255,214,168,.10) 45%,rgba(255,214,168,0) 70%);opacity:0;transition:opacity 1.4s var(--dj-ease)}
+.dj-room.lit .dj-emblem-glow{opacity:1;animation:dj-glow 7s var(--dj-ease-io) -2s infinite}
+@keyframes dj-glow{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 
 /* ── Menu e portas ligados ─────────────────────────────────────────────── */
 .dj-door.hot,.dj-room.lit .dj-door.hot,.dj-room.lit .dj-door.red.hot{--lit:1}
@@ -80,7 +103,7 @@
 .dj-door.red .dj-light::after{color:rgba(120,20,15,.55)}
 
 /* ── Legendas em ecrã: nítidas, discretas, só quando já se está dentro ─── */
-.dj-labels{position:absolute;inset:0;pointer-events:none;z-index:3}
+.dj-labels{position:absolute;inset:0;pointer-events:none;z-index:3;transition:opacity .35s var(--dj-ease)}
 .dj-label{position:absolute;left:0;top:0;display:flex;flex-direction:column;align-items:center;gap:7px;text-decoration:none;color:var(--dj-straw);
   font-family:var(--font-mono,monospace);font-size:11px;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap;text-shadow:var(--dj-tshadow);
   opacity:0;pointer-events:none;transition:opacity .7s var(--dj-ease),color .3s;will-change:transform}
@@ -92,8 +115,20 @@
 .dj-label:focus-visible{outline:2px solid var(--focus-ring,#ff6a5e);outline-offset:4px;border-radius:2px}
 
 /* ── Camadas 2D sobre a sala ───────────────────────────────────────────── */
-.dj-photo{position:absolute;inset:0;background:var(--dj-ink) center/cover no-repeat;pointer-events:none;will-change:opacity}
-.dj-bands{will-change:transform}
+.dj-photo{position:absolute;inset:0;background:var(--dj-ink) center/cover no-repeat;pointer-events:none;will-change:opacity,transform;transform-origin:50.36% 25.8%}
+.dj-flare{position:absolute;left:74%;top:36%;width:42vw;height:42vw;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.7);will-change:opacity,transform;
+  background:radial-gradient(circle,rgba(255,242,220,.55),rgba(255,224,186,.16) 26%,rgba(255,224,186,0) 60%)}
+.dj-flare::before{content:"";position:absolute;left:-30%;right:-30%;top:50%;height:2px;transform:translateY(-50%);background:linear-gradient(90deg,rgba(255,236,210,0),rgba(255,236,210,.7) 50%,rgba(255,236,210,0))}
+.dj-flare::after{content:"";position:absolute;left:50%;top:50%;width:18%;height:18%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,250,240,.9),rgba(255,240,220,0) 70%)}
+/* luz da manhã a deslizar devagar pelo tatami */
+.dj-face.floor{overflow:hidden}
+.dj-face.floor::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:220%;pointer-events:none;
+  background:linear-gradient(100deg,rgba(255,236,210,0) 36%,rgba(255,236,210,.08) 46%,rgba(255,236,210,.14) 50%,rgba(255,236,210,.08) 54%,rgba(255,236,210,0) 64%);
+  animation:dj-floorlight 52s linear -20s infinite alternate;will-change:transform}
+@keyframes dj-floorlight{from{transform:translateX(-12%)}to{transform:translateX(14%)}}
+.dj-bands{will-change:transform;transition:opacity .35s var(--dj-ease)}
+/* durante o voo pela porta só fica a sala */
+.dj-stage.flying .dj-labels,.dj-stage.flying .dj-hint,.dj-stage.flying .dj-bands,.dj-stage.flying .dj-cue{opacity:0;pointer-events:none}
 /* Na página inicial a barra de navegação não desfoca o fundo: o desfoque sobre uma cena em movimento custa um passo de GPU por frame. */
 body[data-page="home"] .navbar,body[data-page="home"] .navbar.scrolled{backdrop-filter:none;-webkit-backdrop-filter:none}
 .dj-bloom{position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(ellipse 70% 80% at 62% 40%,rgba(255,244,224,.85),rgba(255,240,215,.28) 40%,rgba(255,240,215,0) 70%);will-change:opacity}
@@ -134,9 +169,9 @@ body[data-page="home"] .navbar,body[data-page="home"] .navbar.scrolled{backdrop-
 .dj-band .w,.dj-band .c{white-space:pre}
 .dj-sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-.dj-cue{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--dj-straw);font-family:var(--font-mono,monospace);font-size:11px;letter-spacing:.2em;text-transform:uppercase;text-shadow:var(--dj-tshadow);opacity:.85;transition:opacity .8s var(--dj-ease);pointer-events:none}
+.dj-cue{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--dj-straw);font-family:var(--font-mono,monospace);font-size:11px;letter-spacing:.2em;text-transform:uppercase;text-shadow:var(--dj-tshadow);opacity:.85;transition:opacity .8s var(--dj-ease);pointer-events:auto;cursor:pointer;appearance:none;background:none;border:0;padding:0}
 .dj-cue svg{width:18px;height:18px;animation:dj-bob 2.4s var(--dj-ease-io) -1.2s infinite}
-.dj-stage.past .dj-cue{opacity:0}
+.dj-stage.past .dj-cue{opacity:0;pointer-events:none}
 @keyframes dj-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 .dj-hint{position:absolute;right:var(--dj-gutter);top:calc(var(--nav-h,72px) + 22px);font-family:var(--font-mono,monospace);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dj-straw);background:rgba(8,8,15,.72);border:1px solid rgba(213,193,174,.25);border-radius:999px;padding:8px 14px;opacity:0;transform:translateY(-6px);transition:opacity .7s var(--dj-ease),transform .7s var(--dj-ease);pointer-events:none}
 .dj-stage.inside .dj-hint{opacity:1;transform:none}

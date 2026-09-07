@@ -43,6 +43,70 @@
 @keyframes ph-shaft{from{transform:translateX(-30vw) skewX(-18deg)}to{transform:translateX(130vw) skewX(-18deg)}}
 @media (max-width:720px){.ph-kanji{font-size:44vw;right:-4vw;opacity:.8}}
 
+/* ── História: o cinto que se desenha ao longo da linha do tempo ─────────── */
+.timeline{--belt:#f3ece2}
+.tl-belt{position:absolute;left:8px;top:8px;bottom:8px;width:8px;border-radius:4px;overflow:hidden;background:rgba(127,116,106,.18)}
+.tl-belt-fill{position:absolute;inset:0;transform-origin:top;transform:scaleY(0);will-change:transform;transition:transform .12s linear;
+  background:linear-gradient(180deg,#f3ece2 0%,#f3ece2 11%,#e6c04a 15%,#e6c04a 27%,#e07b2a 31%,#e07b2a 43%,#3f8f5a 47%,#3f8f5a 59%,#2f6db5 63%,#2f6db5 75%,#6b4a2b 79%,#6b4a2b 90%,#0d0b0a 94%);
+  box-shadow:0 0 14px rgba(255,255,255,.12)}
+.tl-item::before{transition:background-color .5s,border-color .5s,box-shadow .5s}
+.tl-item.tl-passed::before{background:var(--belt)!important;border-color:var(--belt)!important;box-shadow:0 0 0 5px rgba(227,30,36,.10)}
+.tl-item .tl-year{transition:color .5s}
+.tl-item.tl-passed .tl-year{color:var(--accent-text,#ff6a5e)}
+.surface-paper .tl-item.tl-passed .tl-year{color:var(--accent-ink,#b81118)}
+
+/* ── Dojos: mapa no lugar do ícone, tatami a deslizar, horários a entrar ── */
+.dojo-card{position:relative;overflow:hidden}
+.dojo-card .card-map{position:relative;display:block;overflow:hidden;aspect-ratio:16/10;background:#1a1a1e}
+.dojo-map{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;filter:grayscale(.45) sepia(.18) contrast(1.04) brightness(.9);transition:filter .7s ease}
+.dojo-card:hover .dojo-map{filter:grayscale(.1) sepia(.06) contrast(1.02) brightness(.98)}
+.dojo-card::after{content:"";position:absolute;left:0;right:0;top:0;height:6px;pointer-events:none;opacity:.55;
+  background:repeating-linear-gradient(90deg,rgba(213,193,174,.55) 0 14px,transparent 14px 28px);background-size:200% 100%;transition:background-position 1.4s cubic-bezier(.22,.61,.36,1)}
+.dojo-card:hover::after{background-position:-84px 0}
+.dojo-card .dojo-session{opacity:0;transform:translateX(-10px);transition:opacity .55s ease,transform .55s cubic-bezier(.22,.61,.36,1)}
+.dojo-card.visible .dojo-session{opacity:1;transform:none}
+.dojo-card.visible .dojo-session:nth-child(3){transition-delay:.12s}
+.dojo-card.visible .dojo-session:nth-child(4){transition-delay:.24s}
+.dojo-card.visible .dojo-session:nth-child(5){transition-delay:.36s}
+
+/* ── Notícias: movimento lento na imagem em destaque, cascata, indicador deslizante ── */
+.news-featured .card-img{overflow:hidden}
+.news-featured .card-img img{transform-origin:50% 40%;animation:kb-drift 26s ease-in-out -6s infinite alternate;will-change:transform}
+.news-featured .card-img-placeholder{animation:kb-drift 26s ease-in-out -6s infinite alternate;will-change:transform}
+@keyframes kb-drift{from{transform:scale(1) translate(0,0)}to{transform:scale(1.09) translate(-1.5%,1%)}}
+.card-grid .card.fade-in:nth-child(2){transition-delay:.08s}
+.card-grid .card.fade-in:nth-child(3){transition-delay:.16s}
+.card-grid .card.fade-in:nth-child(4){transition-delay:.24s}
+.card-grid .card.fade-in:nth-child(5){transition-delay:.32s}
+.card-grid .card.fade-in:nth-child(6){transition-delay:.40s}
+.has-ink{position:relative}
+.has-ink .filter-pill{position:relative;z-index:1;transition:color .3s,border-color .3s,background-color .3s}
+.has-ink .filter-pill.active{background:transparent!important;border-color:transparent!important;color:#fff!important}
+.pill-ink{position:absolute;left:0;top:0;width:0;height:0;border-radius:var(--r,5px);background:var(--accent,#e31e24);z-index:0;pointer-events:none;box-shadow:0 6px 18px rgba(227,30,36,.28);
+  transition:transform .5s cubic-bezier(.22,.61,.36,1),width .5s cubic-bezier(.22,.61,.36,1),height .5s cubic-bezier(.22,.61,.36,1)}
+
+/* ── Inscrição: as turmas acendem como shoji; o carimbo "Oss" na confirmação ── */
+.session-card{transition:box-shadow .5s ease,border-color .3s,transform .4s cubic-bezier(.22,.61,.36,1)}
+.session-card:hover{box-shadow:inset 0 0 0 1px rgba(255,214,168,.25),inset 0 -40px 80px -40px rgba(255,190,120,.16),0 12px 30px rgba(0,0,0,.28);transform:translateY(-3px)}
+.wizard-panel{position:relative}
+.hanko{position:absolute;right:clamp(12px,6%,64px);top:14px;width:92px;height:92px;display:grid;place-items:center;pointer-events:none;
+  color:#c8181f;border:5px solid #c8181f;border-radius:12px;box-shadow:inset 0 0 0 2px rgba(200,24,31,.22);
+  font-family:"Yu Gothic","Hiragino Sans","Noto Sans CJK JP","Noto Sans JP",sans-serif;font-weight:700;font-size:38px;line-height:1;letter-spacing:.06em;writing-mode:vertical-rl;
+  transform:rotate(-12deg);opacity:.92;animation:hanko-slam .6s cubic-bezier(.2,.9,.3,1.25) .25s both}
+.hanko::after{content:"OSS";position:absolute;left:50%;bottom:-26px;transform:translateX(-50%) rotate(0);writing-mode:horizontal-tb;font-family:var(--font-mono,monospace);font-size:10px;letter-spacing:.32em;color:#c8181f;opacity:.8}
+@keyframes hanko-slam{0%{transform:rotate(-12deg) scale(2.3);opacity:0}55%{transform:rotate(-12deg) scale(.94);opacity:1}100%{transform:rotate(-12deg) scale(1);opacity:.92}}
+@media (max-width:720px){.hanko{width:72px;height:72px;font-size:30px;top:8px;right:8px}}
+
+/* ── Contacto: sublinhado em pincelada ao focar; o pin a pulsar ─────────── */
+.form-group{position:relative}
+.form-group::after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:9px;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 9' preserveAspectRatio='none'%3E%3Cpath d='M2 5.5c60-4.5 120 2.5 180-1s130-3.5 216 .5' fill='none' stroke='%23e31e24' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left center/0% 100%;
+  transition:background-size .6s cubic-bezier(.22,.61,.36,1)}
+.form-group:focus-within::after{background-size:100% 100%}
+.contact-detail-icon{position:relative}
+.contact-detail:first-child .contact-detail-icon::after{content:"";position:absolute;inset:-5px;border-radius:inherit;border:1px solid rgba(227,30,36,.55);animation:pin-pulse 3.2s ease-out -1s infinite;pointer-events:none}
+@keyframes pin-pulse{0%{transform:scale(.85);opacity:.9}70%{transform:scale(1.35);opacity:0}100%{transform:scale(1.35);opacity:0}}
+
 /* ── Karate: os três cartões ─────────────────────────────────────────────
    Correcção: dentro do registo "papel" o token --text passa a tinta escura, e os cartões
    continuam escuros, por isso os títulos Kihon, Kata e Kumite ficavam invisíveis. */

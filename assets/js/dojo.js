@@ -1,6 +1,8 @@
 /* ASBKI · dojo.js · A página inicial é o próprio dojo.
-   Sala 3D em CSS a partir das faces desdobradas da fotografia. O scroll entra, o rato olha em volta,
-   cada porta shoji é uma página do site: abre-se, a câmara voa até ela, a luz inunda, e navega-se.
+   Sala 3D em CSS a partir das faces desdobradas da fotografia. Chega-se à entrada com as portas
+   fechadas; o primeiro scroll abre-as e entra-se. Lá dentro o rato olha em volta e cada porta shoji
+   é uma página do site: a câmara desce e curva até ficar de frente para ela, a porta abre-se, passa-se
+   pela ombreira, a luz inunda, e navega-se.
    Motor: lerp normalizado por dt que descansa, escritas no DOM só quando muda, bandas ritmadas em
    distância de scroll, gates do hero estático vivos (o de movimento reduzido pode ser levantado). */
 (function () {
@@ -13,6 +15,7 @@
                                            // a sala recua a mesma distância que a perspectiva encurta, por isso o observador não se move
   const FRAME_FADE = [430, 540];           // a moldura desvanece antes de passar pela câmara
   const BLOOM_AT = 470;                    // a luz floresce ao cruzar a soleira
+  const GATE_OPEN = [0.02, 0.24];          // as portas de entrada abrem neste troço do scroll, antes da câmara andar
   const DEVICE_GATES = [
     '(max-width: 720px)',
     '(orientation: portrait) and (max-width: 1024px)',
@@ -32,6 +35,7 @@
   const flash = stage.querySelector('.dj-flash');
   const bandEls = [...stage.querySelectorAll('.dj-band')];
   const doors = [...room.querySelectorAll('.dj-door')];
+  const gate = room.querySelector('.dj-gate');
 
   const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
   const smoothstep = (p, e0, e1) => { const t = clamp((p - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t); };
@@ -84,11 +88,16 @@
 
   /* ── Câmara ─────────────────────────────────────────────────────────────── */
   const scene = stage.querySelector('.dj-scene');
-  const cam = { z: 0, yaw: 0, pitch: 0, persp: U.F };
-  const target = { z: 0, yaw: 0, pitch: 0, persp: U.F };
+  const cam = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, persp: U.F };      // x,y: deslocamento lateral/vertical do observador (unidades)
+  const target = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, persp: U.F };
   let scrollP = 0, mouseX = 0, mouseY = 0;
   let flying = false, rafId = null, lastTick = 0, heroOnScreen = true, scrubOn = false;
-  let lastTransform = '', photoOp = -1, frameOp = -1, bloomOp = -1, perspShown = -1, litState = false, pastState = false;
+  let lastTransform = '', gateShown = -1, frameOp = -1, bloomOp = -1, flareOp = -1, perspShown = -1, litState = false, pastState = false;
+  let roll = 0, fly = null;                 // rolo durante o voo; tween do voo (por tempo, não por lerp)
+  const flare = stage.querySelector('.dj-flare');
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const bez = (a, b, c, t) => { const s = 1 - t; return { x: s * s * a.x + 2 * s * t * b.x + t * t * c.x, y: s * s * a.y + 2 * s * t * b.y + t * t * c.y, z: s * s * a.z + 2 * s * t * b.z + t * t * c.z }; };
+  const easeInOutCubic = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
   function heroProgress() {
     const range = hero.offsetHeight - innerHeight;
@@ -99,21 +108,38 @@
     const p = scrollP;
     target.z = easeInOut(p) * CAM_MAX;
     target.persp = U.F - (U.F - PERSP_IN) * smoothstep(p, 0.28, 0.86);
+    // com o cursor numa porta a câmara pára de olhar e de derivar: a porta fica onde está até ao clique
+    if (overDoor) return;
     // olhar com o rato: amplo durante a caminhada, discreto lá dentro para as portas não fugirem do cursor
     const amp = 1 - 0.6 * smoothstep(p, 0.6, 0.9);
     target.yaw = mouseX * 3.6 * amp;
     target.pitch = -mouseY * 1.8 * amp;
+    // câmara viva: micro-movimento de câmara à mão sempre, e uma deriva em arco lenta quando se está dentro
+    const t = performance.now() / 1000, inside = smoothstep(p, 0.8, 0.96);
+    // (lá dentro a deriva é curta: as portas laterais são estreitas e têm de ficar debaixo do cursor)
+    target.yaw += 0.10 * Math.sin(t * 1.7) + 0.05 * Math.sin(t * 2.9 + 1) + inside * 0.8 * Math.sin(t * 0.62);
+    target.pitch += 0.06 * Math.sin(t * 1.3 + 2) + inside * 0.3 * Math.sin(t * 0.47 + 1);
+    target.z += inside * 5 * Math.sin(t * 0.55);
+    target.x = inside * 5 * Math.sin(t * 0.41 + 2);
+    target.y = 0;
   }
   function writeScene() {
     const zc = cam.z - (U.F - cam.persp);  // compensação da perspectiva: a distância ao observador mantém-se
     // a vénia: ao cruzar a soleira a câmara baixa um pouco e volta a subir, o rei antes de pisar o tatami
     const bow = flying ? 0 : Math.exp(-Math.pow((cam.z - BLOOM_AT) / 80, 2));
     // ordem de câmara: primeiro guinada (eixo vertical), depois inclinação em torno do eixo horizontal do observador; o horizonte fica nivelado
-    const t = 'rotateX(' + (cam.pitch - bow * 3.2).toFixed(3) + 'deg) rotateY(' + cam.yaw.toFixed(3) + 'deg) translateY(calc(' + (-bow * 6).toFixed(2) + ' * var(--u))) translateZ(calc(' + zc.toFixed(2) + ' * var(--u)))';
+    const t = 'rotateZ(' + roll.toFixed(3) + 'deg) rotateX(' + (cam.pitch - bow * 3.2).toFixed(3) + 'deg) rotateY(' + cam.yaw.toFixed(3) + 'deg) translate3d(calc(' + (-cam.x).toFixed(2) + ' * var(--u)), calc(' + (-cam.y - bow * 6).toFixed(2) + ' * var(--u)), calc(' + zc.toFixed(2) + ' * var(--u)))';
     if (t !== lastTransform) { lastTransform = t; room.style.transform = t; }
     if (Math.abs(cam.persp - perspShown) > 0.5) { perspShown = cam.persp; scene.style.setProperty('--persp', cam.persp.toFixed(1)); }
-    const po = 1 - smoothstep(scrollP, 0.02, 0.13);                 // a fotografia entrega à sala 3D
-    if (Math.abs(po - photoOp) > 0.01 || (po === 0 && photoOp !== 0)) { photoOp = po; photo.style.opacity = po.toFixed(3); }
+    const g = smoothstep(scrollP, GATE_OPEN[0], GATE_OPEN[1]);        // as portas de entrada deslizam para dentro das paredes
+    if (gate && (Math.abs(g - gateShown) > 0.004 || (g === 1 && gateShown !== 1) || (g === 0 && gateShown !== 0))) {
+      gateShown = g; room.style.setProperty('--gate', g.toFixed(3)); gate.classList.toggle('gone', g >= 1);
+    }
+    if (flare) {                                                       // flare nas janelas ao cruzar a soleira
+      const fx = (cam.z - (BLOOM_AT + 30)) / 110;
+      const fo = flying ? 0 : Math.exp(-fx * fx) * 0.9;
+      if (Math.abs(fo - flareOp) > 0.01 || (fo === 0 && flareOp !== 0)) { flareOp = fo; flare.style.opacity = fo.toFixed(3); flare.style.transform = 'translate(-50%,-50%) scale(' + (0.7 + 0.6 * fo).toFixed(3) + ')'; }
+    }
     const fo = 1 - smoothstep(cam.z, FRAME_FADE[0], FRAME_FADE[1]);   // a moldura desvanece antes de passar pela câmara
     if (Math.abs(fo - frameOp) > 0.01 || (fo === 0 && frameOp !== 0)) { frameOp = fo; frame.style.opacity = fo.toFixed(3); }
     const x = (cam.z - BLOOM_AT) / 90;                                 // a luz floresce ao cruzar a soleira
@@ -128,16 +154,35 @@
   function tick(now) {
     const dt = Math.min(100, now - (lastTick || now));
     lastTick = now;
-    const a = 1 - Math.pow(1 - (flying ? 0.07 : 0.24), dt / 16.667);
-    if (!flying) scrollTargets();
-    cam.z += (target.z - cam.z) * a;
-    cam.yaw += (target.yaw - cam.yaw) * a;
-    cam.pitch += (target.pitch - cam.pitch) * a;
-    cam.persp += (target.persp - cam.persp) * a;
-    const settled = Math.abs(target.z - cam.z) < 0.05 && Math.abs(target.yaw - cam.yaw) < 0.002 && Math.abs(target.pitch - cam.pitch) < 0.002 && Math.abs(target.persp - cam.persp) < 0.2 && !(loadStart && loadK < 1);
+    if (flying && fly) {
+      // voo de cinema: a câmara desce e desliza numa curva até ficar de frente para a porta, sem a perder de vista;
+      // rola um pouco na viragem e no fim a lente fecha (crash zoom) enquanto se passa pela ombreira
+      const u = clamp((now - fly.t0) / fly.dur, 0, 1), e = easeInOutCubic(u);
+      const P = bez(fly.P0, fly.P1, fly.P2, e);
+      cam.x = P.x - U.VPX; cam.y = P.y - U.VPY; cam.z = U.F - P.z;
+      const dx = fly.C.X - P.x, dy = fly.C.Y - P.y, dz = P.z - fly.C.Z;
+      const lookYaw = Math.atan2(dx, dz) * 180 / Math.PI;
+      const lookPitch = (Math.atan2(-dy, Math.hypot(dx, dz)) + Math.atan2(fly.vpOff, cam.persp)) * 180 / Math.PI;
+      const k = smoothstep(u, 0, 0.45);
+      cam.yaw = lerp(fly.from.yaw, lookYaw, k);
+      cam.pitch = lerp(fly.from.pitch, lookPitch, k);
+      cam.persp = lerp(fly.from.persp, fly.from.persp + 240, smoothstep(u, 0.5, 1));
+      roll = Math.sin(u * Math.PI) * 1.4 * fly.dir;
+    } else {
+      const a = 1 - Math.pow(1 - 0.24, dt / 16.667);
+      scrollTargets();
+      cam.x += (target.x - cam.x) * a;
+      cam.y += (target.y - cam.y) * a;
+      cam.z += (target.z - cam.z) * a;
+      cam.yaw += (target.yaw - cam.yaw) * a;
+      cam.pitch += (target.pitch - cam.pitch) * a;
+      cam.persp += (target.persp - cam.persp) * a;
+      roll += (0 - roll) * a;
+    }
     writeScene();
     updateCaptions(scrollP, now);
-    if (settled) { cam.z = target.z; cam.yaw = target.yaw; cam.pitch = target.pitch; cam.persp = target.persp; rafId = null; lastTick = 0; return; }
+    // a câmara nunca está parada enquanto o dojo está no ecrã; descansa fora dele e em separadores escondidos
+    if (!heroOnScreen || document.hidden) { rafId = null; lastTick = 0; return; }
     rafId = requestAnimationFrame(tick);
   }
   function wake() { if (rafId === null && (heroOnScreen || flying)) rafId = requestAnimationFrame(tick); }
@@ -157,30 +202,33 @@
     const dx = parseFloat(door.style.getPropertyValue('--dx')) || 0;
     const cx = dx + U.DW / 2, cy = (U.BY1 - U.BY0 - U.DH) + U.DH / 2;
     switch (door.dataset.face) {
-      case 'back': return { X: U.BX0 + cx, Y: U.BY0 + cy, Z: 0 };
-      case 'left': return { X: U.BX0, Y: U.BY0 + cy, Z: U.DEPTH - cx };
-      case 'right': return { X: U.BX1, Y: U.BY0 + cy, Z: cx };
+      case 'back': return { X: U.BX0 + cx, Y: U.BY0 + cy, Z: 0, nx: 0, nz: 1 };
+      case 'left': return { X: U.BX0, Y: U.BY0 + cy, Z: U.DEPTH - cx, nx: 1, nz: 0 };
+      case 'right': return { X: U.BX1, Y: U.BY0 + cy, Z: cx, nx: -1, nz: 0 };
     }
-    return { X: U.VPX, Y: U.VPY, Z: 0 };
+    return { X: U.VPX, Y: U.VPY, Z: 0, nx: 0, nz: 1 };
   }
   let busy = false;
   function flyTo(door, done) {
     if (busy) return; busy = true;
-    const w = doorWorld(door);
-    const dx = w.X - U.VPX, dy = w.Y - U.VPY;
-    const dz = U.F - (w.Z + cam.z);                // distância à frente (a compensação da perspectiva não altera distâncias)
-    const stop = 300;
-    const yaw = Math.atan2(dx, dz) * 180 / Math.PI;
-    const pitch = Math.atan2(-dy, Math.hypot(dx, dz)) * 180 / Math.PI;
-    const ahead = Math.sqrt(Math.max(stop * stop - dx * dx - dy * dy, 900));
-    flying = true;
-    target.z = cam.z + Math.max(0, dz - ahead);
-    target.yaw = yaw;
-    target.pitch = pitch * 0.6;
+    const C = doorWorld(door);
+    const P0 = { x: U.VPX + cam.x, y: U.VPY + cam.y, z: U.F - cam.z };   // a câmara no mundo (Z medido da parede do fundo para a frente)
+    const END = 34;                                                        // último fotograma: a ombreira já envolve a câmara
+    const P2 = { x: C.X + C.nx * END, y: C.Y - 8, z: C.Z + C.nz * END };
+    const side = C.nz === 0;
+    // ponto de controlo da curva: nas portas laterais avança-se primeiro e vira-se depois (arco);
+    // nas do fundo anda-se em frente e desliza-se para a porta no último terço
+    const P1 = side ? { x: P0.x, y: P0.y, z: P2.z } : { x: P0.x, y: P0.y, z: P2.z + (P0.z - P2.z) * 0.35 };
+    // olhar a porta põe-na no ponto de fuga; este ângulo extra baixa-a até ao centro do ecrã
+    const sr = scene.getBoundingClientRect(), upx = sr.width / 1376;
+    const vpOff = (innerHeight / 2 - (sr.top + U.VPY * upx)) / upx;    // unidades entre o ponto de fuga e o centro do ecrã
+    const dur = side ? 1900 : 1600;
+    flying = true; stage.classList.add('flying');
+    fly = { t0: performance.now(), dur, P0, P1, P2, C, vpOff, dir: Math.sign(P2.x - P0.x) || 1, from: { yaw: cam.yaw, pitch: cam.pitch, persp: cam.persp } };
     wake();
-    door.classList.add('open');
-    setTimeout(() => flash.classList.add('on'), 950);
-    setTimeout(() => { if (done) done(); }, 1350);
+    setTimeout(() => door.classList.add('open'), dur * 0.28);
+    setTimeout(() => flash.classList.add('on'), dur * 0.78);
+    setTimeout(() => { if (done) done(); }, dur);
   }
   // Se ainda estamos à porta, primeiro entra-se (scroll suave até ao fim do hero) e só depois se voa até à porta.
   function heroEndY() { return hero.getBoundingClientRect().top + scrollY + hero.offsetHeight - innerHeight; }
@@ -209,6 +257,11 @@
     e.preventDefault();
     approachAndFly(door, a.getAttribute('href'));
   }));
+  // Entrar: o botão da entrada e as próprias portas de entrada fazem o scroll até lá dentro (as portas abrem no caminho).
+  function enter() { window.scrollTo({ top: heroEndY(), behavior: 'smooth' }); }
+  if (gate) gate.addEventListener('click', () => { if (scrubOn && scrollP < 0.5) enter(); });
+  const cue = stage.querySelector('.dj-cue');
+  if (cue) cue.addEventListener('click', () => { if (scrubOn) enter(); });
   // Menu e portas ligados: passar o rato num item do menu acende a porta; clicar no menu voa pela porta.
   let navBound = false;
   function bindNav() {
@@ -232,7 +285,7 @@
     const door = doors.find(d => d.getAttribute('href') === href);
     window.scrollTo({ top: heroEndY(), behavior: 'auto' });
     scrollP = 1; scrollTargets();
-    cam.z = target.z; cam.persp = target.persp; cam.yaw = 0; cam.pitch = 0; loadK = 1;
+    cam.x = 0; cam.y = 0; cam.z = target.z; cam.persp = target.persp; cam.yaw = 0; cam.pitch = 0; loadK = 1;
     if (door) {
       door.classList.add('snap', 'open');
       flash.classList.add('on');
@@ -243,7 +296,7 @@
     wake();
   }
   // Se o visitante voltar com o botão de retroceder, a página vem do cache com a porta aberta.
-  addEventListener('pageshow', e => { if (e.persisted) { busy = false; flying = false; doors.forEach(d => d.classList.remove('open')); flash.classList.remove('on'); scrollTargets(); wake(); } });
+  addEventListener('pageshow', e => { if (e.persisted) { busy = false; flying = false; fly = null; roll = 0; stage.classList.remove('flying'); doors.forEach(d => d.classList.remove('open')); flash.classList.remove('on'); scrollTargets(); wake(); } });
 
   /* ── Arquitectura e legendas das portas ─────────────────────────────────
      Cada porta ganha uma travessa de madeira; o kanji fica marcado no papel (via data-kanji na
@@ -313,19 +366,20 @@
   function dustStart() { if (!dust || dustOn) return; dustOn = true; if (!motes.length) dustInit(); if (dustRaf === null) dustRaf = requestAnimationFrame(dustTick); }
   function dustStop() { dustOn = false; }
   if (dust) new IntersectionObserver(e => { if (scrubOn) (e[0].isIntersecting && !document.hidden ? dustStart() : dustStop()); }).observe(stage);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) dustStop(); else if (scrubOn && heroOnScreen) dustStart(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) dustStop(); else if (scrubOn && heroOnScreen) { dustStart(); wake(); } });
   addEventListener('resize', () => { if (dustOn) dustResize(); }, { passive: true });
 
   /* ── O gate vivo ────────────────────────────────────────────────────────── */
   let inited = false;
-  function initOnce() { if (inited) return; inited = true; photo.style.backgroundImage = "url('/assets/dojo/hero-poster.jpg')"; loadStart = performance.now(); }
+  function initOnce() { if (inited) return; inited = true; loadStart = performance.now(); }
   function enableScrub() {
     if (scrubOn) return; scrubOn = true;
     initOnce();
+    photo.style.opacity = '0';                              // a fotografia fica para o hero estático; aqui a primeira imagem é a sala com a entrada fechada
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('pointermove', onMouse, { passive: true });
     bands.forEach(b => { b.op = -1; b.k = -1; });
-    lastTransform = ''; photoOp = -1; frameOp = -1; bloomOp = -1;
+    lastTransform = ''; gateShown = -1; frameOp = -1; bloomOp = -1;
     onScroll();
     if (heroOnScreen) dustStart();
     let back = null;
@@ -336,6 +390,7 @@
     if (!scrubOn) return; scrubOn = false;
     removeEventListener('scroll', onScroll);
     removeEventListener('pointermove', onMouse);
+    photo.style.opacity = '';
     if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
     dustStop();
   }
@@ -348,5 +403,5 @@
 
   applyHeroMode();
 
-  window.__dojo = { get scrubOn() { return scrubOn; }, cam, target, bands, doors, heroProgress, flyTo, applyNav, bindNav, approachAndFly };
+  window.__dojo = { get scrubOn() { return scrubOn; }, cam, target, bands, doors, heroProgress, flyTo, applyNav, bindNav, approachAndFly, enter };
 })();

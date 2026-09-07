@@ -92,6 +92,83 @@ window.ASBKIShoji = (function () {
   return { open, decorateHero, closeTo, doorFor };
 })();
 
+/* ─── Efeitos das páginas interiores ────────────────────────────────────
+   História: o cinto desenha-se ao longo da linha do tempo com o scroll.
+   Filtros (notícias, horários): um indicador vermelho desliza para a opção activa.
+   Inscrição: um carimbo "Oss" cai quando a marcação fica confirmada. */
+window.ASBKIFx = (function () {
+  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+  const BELTS = ['#f3ece2', '#e6c04a', '#e07b2a', '#3f8f5a', '#2f6db5', '#6b4a2b', '#0d0b0a'];
+
+  function beltTimeline() {
+    const tl = document.getElementById('timeline');
+    if (!tl || tl.querySelector('.tl-belt')) return;
+    const items = [...tl.querySelectorAll('.tl-item')];
+    if (!items.length) return;
+    const belt = document.createElement('div'); belt.className = 'tl-belt'; belt.setAttribute('aria-hidden', 'true');
+    const fill = document.createElement('div'); fill.className = 'tl-belt-fill';
+    belt.appendChild(fill); tl.appendChild(belt);
+    let last = -1;
+    function update() {
+      const r = tl.getBoundingClientRect(), line = innerHeight * 0.68;
+      const p = clamp((line - r.top) / r.height, 0, 1);
+      if (Math.abs(p - last) < 0.004 && p !== 0 && p !== 1) return;
+      last = p;
+      fill.style.transform = 'scaleY(' + p.toFixed(3) + ')';
+      items.forEach(it => {
+        const ir = it.getBoundingClientRect();
+        const passed = ir.top + 14 < line;
+        if (passed !== it.classList.contains('tl-passed')) {
+          const idx = Math.min(BELTS.length - 1, Math.floor(((ir.top + 14 - r.top) / r.height) * BELTS.length));
+          it.style.setProperty('--belt', BELTS[idx]);
+          it.classList.toggle('tl-passed', passed);
+        }
+      });
+    }
+    addEventListener('scroll', update, { passive: true });
+    addEventListener('resize', update);
+    update();
+  }
+
+  function filterInk() {
+    document.querySelectorAll('.session-filters, #news-filters, .filter-pills').forEach(box => {
+      if (!box.querySelector('.filter-pill') || box.querySelector('.pill-ink')) return;
+      box.classList.add('has-ink');
+      const ink = document.createElement('span'); ink.className = 'pill-ink'; ink.setAttribute('aria-hidden', 'true');
+      box.appendChild(ink);
+      let first = true;
+      const move = () => {
+        const a = box.querySelector('.filter-pill.active');
+        if (!a) return;
+        const br = box.getBoundingClientRect(), ar = a.getBoundingClientRect();
+        if (first) { ink.style.transition = 'none'; }
+        ink.style.transform = 'translate(' + (ar.left - br.left) + 'px,' + (ar.top - br.top) + 'px)';
+        ink.style.width = ar.width + 'px'; ink.style.height = ar.height + 'px';
+        if (first) { first = false; requestAnimationFrame(() => { ink.style.transition = ''; }); }
+      };
+      box.addEventListener('click', () => requestAnimationFrame(move));
+      addEventListener('resize', move);
+      move();
+    });
+  }
+
+  function hanko() {
+    const p3 = document.getElementById('wizard-panel-3');
+    if (!p3) return;
+    const stamp = () => {
+      if (!p3.classList.contains('active') || p3.querySelector('.hanko')) return;
+      const h = document.createElement('div'); h.className = 'hanko'; h.setAttribute('aria-hidden', 'true');
+      h.textContent = '押忍';
+      p3.appendChild(h);
+    };
+    new MutationObserver(stamp).observe(p3, { attributes: true, attributeFilter: ['class'] });
+    stamp();
+  }
+
+  function init() { beltTimeline(); filterInk(); hanko(); }
+  return { init, beltTimeline, filterInk, hanko };
+})();
+
 window.ASBKI = (function () {
 
   const ICONS = {
@@ -548,6 +625,7 @@ window.ASBKI = (function () {
       console.error('Erro ao renderizar a página', err);
     }
     if (window.ASBKIShoji) { ASBKIShoji.decorateHero(); ASBKIShoji.open(); }
+    if (window.ASBKIFx) ASBKIFx.init();
     initObserver();
     initCounters();
     /* Âncora na URL (ex.: /inscricao#horarios) depois do render */
