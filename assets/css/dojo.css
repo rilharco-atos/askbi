@@ -50,17 +50,7 @@
     repeating-linear-gradient(0deg,transparent 0 calc(20 * var(--u)),rgba(59,43,30,.9) calc(20 * var(--u)) calc(21.4 * var(--u)))}
 .dj-door .dj-leaf.l{left:0}.dj-door .dj-leaf.r{right:0}
 .dj-door.open .dj-leaf.l{transform:translateX(-97%)}.dj-door.open .dj-leaf.r{transform:translateX(97%)}
-.dj-door .dj-plate{position:absolute;left:50%;top:calc(-36 * var(--u));transform:translateX(-50%);padding:calc(3 * var(--u)) calc(9 * var(--u)) calc(4 * var(--u));
-  background:linear-gradient(#3a2a1c,#241a12);border:calc(1 * var(--u)) solid #5b4430;color:var(--dj-straw);
-  font-family:var(--font-h,'Archivo',sans-serif);font-weight:800;font-size:calc(11 * var(--u));letter-spacing:.06em;white-space:nowrap;text-align:center;line-height:1.1;
-  box-shadow:0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(0,0,0,.5);transition:color .4s,border-color .4s}
-/* Nas paredes laterais a tabuleta sai da parede, perpendicular, virada para quem entra (senão fica de perfil e ilegível).
-   Na parede direita o eixo local x aponta para a entrada; na esquerda aponta para o fundo, por isso a rotação inverte. */
-.dj-face.right .dj-plate{left:auto;right:50%;transform-origin:100% 50%;transform:rotateY(90deg)}
-.dj-face.left .dj-plate{left:50%;right:auto;transform-origin:0 50%;transform:rotateY(-90deg)}
-.dj-door .dj-plate small{display:block;font-family:"Yu Gothic","Hiragino Sans","Noto Sans CJK JP","Noto Sans JP",sans-serif;font-size:calc(9 * var(--u));color:#c9a77a;letter-spacing:.3em;font-weight:400;margin-top:calc(1 * var(--u))}
 .dj-door:hover,.dj-door:focus-visible{--lit:1}
-.dj-door:hover .dj-plate,.dj-door:focus-visible .dj-plate{color:var(--dj-bone);border-color:var(--dj-straw)}
 .dj-door:focus-visible{outline:calc(3 * var(--u)) solid var(--focus-ring,#ff6a5e);outline-offset:calc(4 * var(--u))}
 .dj-room.lit .dj-door{--lit:.42}
 .dj-room.lit .dj-door.red{--lit:.7}
@@ -79,10 +69,27 @@
 
 /* ── Menu e portas ligados ─────────────────────────────────────────────── */
 .dj-door.hot,.dj-room.lit .dj-door.hot,.dj-room.lit .dj-door.red.hot{--lit:1}
-.dj-door.hot .dj-plate{color:var(--dj-bone);border-color:var(--dj-straw)}
 #site-header .nav-links a.dj-hot{color:var(--accent-text,#ff6a5e)}
 #site-header .nav-cta.dj-hot{filter:brightness(1.15)}
 .dj-door.snap .dj-leaf{transition:none}
+
+
+/* ── Arquitectura da porta: travessa de madeira em cima, kanji marcado a tinta no papel ─ */
+.dj-lintel{position:absolute;left:calc(-7 * var(--u));right:calc(-7 * var(--u));top:calc(-9 * var(--u));height:calc(8 * var(--u));background:linear-gradient(#3d2c1d,#221810);box-shadow:0 calc(2 * var(--u)) calc(5 * var(--u)) rgba(0,0,0,.55)}
+.dj-light::after{content:attr(data-kanji);position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);font-family:"Yu Gothic","Hiragino Sans","Noto Sans CJK JP","Noto Sans JP",sans-serif;font-size:calc(30 * var(--u));line-height:1;letter-spacing:.06em;white-space:nowrap;color:rgba(70,45,25,.5)}
+.dj-door.red .dj-light::after{color:rgba(120,20,15,.55)}
+
+/* ── Legendas em ecrã: nítidas, discretas, só quando já se está dentro ─── */
+.dj-labels{position:absolute;inset:0;pointer-events:none;z-index:3}
+.dj-label{position:absolute;left:0;top:0;display:flex;flex-direction:column;align-items:center;gap:7px;text-decoration:none;color:var(--dj-straw);
+  font-family:var(--font-mono,monospace);font-size:11px;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap;text-shadow:var(--dj-tshadow);
+  opacity:0;pointer-events:none;transition:opacity .7s var(--dj-ease),color .3s;will-change:transform}
+.dj-label i{font-style:normal;font-family:"Yu Gothic","Hiragino Sans","Noto Sans CJK JP","Noto Sans JP",sans-serif;font-size:14px;letter-spacing:.24em;color:rgba(213,193,174,.72)}
+.dj-label::after{content:"";width:1px;height:16px;background:linear-gradient(rgba(213,193,174,.75),rgba(213,193,174,0))}
+.dj-stage.inside .dj-label{opacity:.82;pointer-events:auto}
+.dj-label:hover,.dj-label.hot,.dj-stage.inside .dj-label.hot{color:var(--dj-bone);opacity:1}
+.dj-label.red{color:#ff8f80}
+.dj-label:focus-visible{outline:2px solid var(--focus-ring,#ff6a5e);outline-offset:4px;border-radius:2px}
 
 /* ── Camadas 2D sobre a sala ───────────────────────────────────────────── */
 .dj-photo{position:absolute;inset:0;background:var(--dj-ink) center/cover no-repeat;pointer-events:none;will-change:opacity}

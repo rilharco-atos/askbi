@@ -1,0 +1,56 @@
+/* ASBKI · shoji.css · A linguagem do dojo nas páginas interiores.
+   1) Transição entre páginas: duas folhas de shoji fecham-se ao sair e abrem-se ao chegar,
+      com o kanji da porta correspondente no papel.
+   2) Tokonoma: o kanji da porta desenha-se em grande, ténue, atrás do título de cada página,
+      e um raio de luz da manhã atravessa devagar o cabeçalho. */
+
+/* ── A transição ─────────────────────────────────────────────────────────── */
+.shoji{position:fixed;inset:0;z-index:3000;pointer-events:none;display:grid;place-items:center;overflow:hidden;contain:strict}
+.shoji.closed,.shoji.closing{pointer-events:auto}
+.shoji-leaf{position:absolute;top:-2px;bottom:-2px;width:50.6%;
+  background:linear-gradient(180deg,rgba(243,232,214,.985),rgba(228,214,190,.985));
+  box-shadow:0 0 60px rgba(0,0,0,.55);will-change:transform;transform:translateX(0);
+  transition:transform .95s cubic-bezier(.65,0,.35,1)}
+.shoji-leaf::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(90deg,transparent 0 calc(12.5% - 4px),rgba(59,43,30,.88) calc(12.5% - 4px) 12.5%),
+    repeating-linear-gradient(0deg,transparent 0 calc(16.6% - 4px),rgba(59,43,30,.88) calc(16.6% - 4px) 16.6%)}
+.shoji-leaf.l{left:0;border-right:14px solid #2a1d14}
+.shoji-leaf.r{right:0;border-left:14px solid #2a1d14}
+.shoji.open .shoji-leaf.l{transform:translateX(-103%)}
+.shoji.open .shoji-leaf.r{transform:translateX(103%)}
+.shoji.closing .shoji-leaf{transition-duration:.72s;transition-timing-function:cubic-bezier(.4,0,.2,1)}
+.shoji-kanji{position:relative;z-index:1;text-align:center;color:#2a1d14;
+  font-family:"Yu Gothic","Hiragino Sans","Noto Sans CJK JP","Noto Sans JP",sans-serif;font-size:clamp(88px,15vw,210px);line-height:1;
+  text-shadow:0 2px 0 rgba(255,255,255,.45),0 12px 40px rgba(0,0,0,.18);
+  opacity:1;transform:scale(1);transition:opacity .45s ease,transform .9s cubic-bezier(.22,.61,.36,1)}
+.shoji-kanji small{display:block;font-family:var(--font-mono,monospace);font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:#6b4a2b;margin-top:20px;text-shadow:none}
+.shoji.open .shoji-kanji{opacity:0;transform:scale(1.06)}
+.shoji.closing .shoji-kanji{animation:shoji-kanji-in .6s cubic-bezier(.22,.61,.36,1) both}
+@keyframes shoji-kanji-in{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+
+/* ── O tokonoma do cabeçalho ─────────────────────────────────────────────── */
+.page-hero.ph-tokonoma{position:relative;overflow:hidden}
+.page-hero.ph-tokonoma .container{position:relative;z-index:2}
+.ph-kanji{position:absolute;right:clamp(16px,6vw,120px);top:50%;transform:translateY(-50%);z-index:1;pointer-events:none;user-select:none;
+  font-family:"Yu Gothic","Hiragino Sans","Noto Sans CJK JP","Noto Sans JP",sans-serif;font-weight:700;line-height:1;letter-spacing:-.04em;
+  font-size:clamp(150px,26vw,380px);color:rgba(227,30,36,.11);-webkit-text-stroke:1px rgba(255,255,255,.05);
+  clip-path:inset(-10% 100% -10% 0);animation:ph-ink 1.5s cubic-bezier(.65,0,.35,1) .35s forwards}
+@keyframes ph-ink{to{clip-path:inset(-10% -2% -10% 0)}}
+.ph-shaft{position:absolute;top:-40%;bottom:-40%;left:0;width:22vw;z-index:1;pointer-events:none;
+  background:linear-gradient(90deg,rgba(255,236,210,0),rgba(255,236,210,.05) 40%,rgba(255,236,210,.085) 50%,rgba(255,236,210,.05) 60%,rgba(255,236,210,0));
+  transform:translateX(-30vw) skewX(-18deg);will-change:transform;animation:ph-shaft 48s linear -12s infinite}
+@keyframes ph-shaft{from{transform:translateX(-30vw) skewX(-18deg)}to{transform:translateX(130vw) skewX(-18deg)}}
+@media (max-width:720px){.ph-kanji{font-size:44vw;right:-4vw;opacity:.8}}
+
+/* ── Karate: os três cartões ─────────────────────────────────────────────
+   Correcção: dentro do registo "papel" o token --text passa a tinta escura, e os cartões
+   continuam escuros, por isso os títulos Kihon, Kata e Kumite ficavam invisíveis. */
+.surface-paper .discipline-card .card-title,.surface-paper .discipline-card .card-title a{color:#ece8e1}
+.surface-paper .discipline-card .card-text{color:#c4bfb7}
+.surface-paper .discipline-card:hover .card-title{color:#ff6a5e}
+/* Os cartões inclinam-se ligeiramente em 3D ao passar o rato e o kanji sobe. */
+.discipline-card{transition:transform .55s cubic-bezier(.22,.61,.36,1),box-shadow .55s,border-color .3s;transform-style:preserve-3d}
+.discipline-card:hover{transform:perspective(900px) rotateY(-3deg) rotateX(2.5deg) translateY(-6px);box-shadow:0 24px 50px rgba(0,0,0,.35)}
+.discipline-card .discipline-jp{transition:transform .8s cubic-bezier(.22,.61,.36,1),opacity .6s}
+.discipline-card:hover .discipline-jp{transform:translateY(-10px);opacity:.9}

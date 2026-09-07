@@ -121,6 +121,7 @@
     if (Math.abs(bo - bloomOp) > 0.01 || (bo === 0 && bloomOp !== 0)) { bloomOp = bo; bloom.style.opacity = bo.toFixed(3); }
     const lit = scrollP > 0.82;
     if (lit !== litState) { litState = lit; room.classList.toggle('lit', lit); stage.classList.toggle('inside', lit); }
+    if (lit || flying) positionLabels();
     const past = scrollP > 0.05;
     if (past !== pastState) { pastState = past; stage.classList.toggle('past', past); }
   }
@@ -244,15 +245,51 @@
   // Se o visitante voltar com o botão de retroceder, a página vem do cache com a porta aberta.
   addEventListener('pageshow', e => { if (e.persisted) { busy = false; flying = false; doors.forEach(d => d.classList.remove('open')); flash.classList.remove('on'); scrollTargets(); wake(); } });
 
-  /* ── Rótulos das portas a partir do content.json (opcional) ────────────── */
+  /* ── Arquitectura e legendas das portas ─────────────────────────────────
+     Cada porta ganha uma travessa de madeira; o kanji fica marcado no papel (via data-kanji na
+     luz, atrás das folhas); o nome em português é uma legenda 2D em ecrã, posicionada por cima
+     da porta projectada, visível só quando já se está dentro do dojo. */
+  const labelsLayer = document.createElement('div');
+  labelsLayer.className = 'dj-labels'; labelsLayer.setAttribute('aria-hidden', 'true');
+  stage.appendChild(labelsLayer);
+  const labels = doors.map(d => {
+    const light = d.querySelector('.dj-light');
+    if (light) light.dataset.kanji = d.dataset.kanji || '';
+    const lintel = document.createElement('span'); lintel.className = 'dj-lintel'; d.appendChild(lintel);
+    const a = document.createElement('a');
+    a.className = 'dj-label' + (d.classList.contains('red') ? ' red' : '');
+    a.href = d.getAttribute('href'); a.tabIndex = -1;
+    const k = document.createElement('i'); k.textContent = d.dataset.kanji || '';
+    const n = document.createElement('span'); n.textContent = d.dataset.label || '';
+    a.appendChild(k); a.appendChild(n);
+    a.addEventListener('mouseenter', () => { d.classList.add('hot'); overDoor = true; });
+    a.addEventListener('mouseleave', () => { d.classList.remove('hot'); overDoor = false; });
+    d.addEventListener('pointerenter', () => a.classList.add('hot'));
+    d.addEventListener('pointerleave', () => a.classList.remove('hot'));
+    a.addEventListener('click', e => {
+      if (!scrubOn || modified(e)) return;
+      e.preventDefault();
+      approachAndFly(d, d.getAttribute('href'));
+    });
+    labelsLayer.appendChild(a);
+    return { a, d, x: -1, y: -1 };
+  });
+  function positionLabels() {
+    const sr = stage.getBoundingClientRect();
+    for (const L of labels) {
+      const r = L.d.getBoundingClientRect();
+      if (!r.width) continue;
+      const x = Math.round(r.left + r.width / 2 - sr.left), y = Math.round(r.top - sr.top - 14);
+      if (Math.abs(x - L.x) > 0.5 || Math.abs(y - L.y) > 0.5) { L.x = x; L.y = y; L.a.style.transform = 'translate(' + x + 'px,' + y + 'px) translate(-50%,-100%)'; }
+    }
+  }
   function applyNav(nav) {
     if (!nav) return;
     const all = [...(nav.links || [])];
     if (nav.ctaHref) all.push({ href: nav.ctaHref, label: nav.ctaLabel });
-    doors.forEach(d => {
-      const link = all.find(l => l.href === d.getAttribute('href'));
-      const plate = d.querySelector('.dj-plate');
-      if (link && plate && plate.firstChild && plate.firstChild.nodeType === 3) plate.firstChild.textContent = link.label;
+    labels.forEach(L => {
+      const link = all.find(l => l.href === L.d.getAttribute('href'));
+      if (link) L.a.querySelector('span').textContent = link.label;
     });
   }
 

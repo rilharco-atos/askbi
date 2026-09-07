@@ -1,6 +1,97 @@
 /* ─── ASBKI Covilhã — layout partilhado + utilitários ─────────────────── */
 /* Carregado em todas as páginas. Cada página chama ASBKI.boot(renderFn). */
 
+/* ─── Shoji: a linguagem do dojo nas páginas interiores ─────────────────
+   Ao chegar, duas folhas de shoji abrem-se sobre a página com o kanji da porta;
+   ao sair para outra página, fecham-se antes de navegar. Ao voltar ao início, o
+   dojo começa por dentro com essa porta a fechar-se (sessionStorage asbki-door).
+   O cabeçalho de cada página ganha o kanji em grande (tokonoma) e um raio de luz. */
+window.ASBKIShoji = (function () {
+  const DOORS = [
+    { test: /^\/associacao/, href: '/associacao', kanji: '会', label: 'Quem Somos' },
+    { test: /^\/karate/,     href: '/karate',     kanji: '空手', label: 'Karate' },
+    { test: /^\/dojos/,      href: '/dojos',      kanji: '道場', label: 'Dojos' },
+    { test: /^\/noticias/,   href: '/noticias',   kanji: '報',  label: 'Notícias' },
+    { test: /^\/contacto/,   href: '/contacto',   kanji: '連絡', label: 'Contactos' },
+    { test: /^\/inscricao/,  href: '/inscricao',  kanji: '入門', label: 'Aula grátis' }
+  ];
+  const DOJO = { href: '/', kanji: '道', label: 'Dojo' };
+  const doorFor = path => DOORS.find(d => d.test.test(path)) || DOJO;
+  const here = location.pathname.replace(/\/+$/, '') || '/';
+  const isHome = document.body.dataset.page === 'home' || here === '/';
+  const current = doorFor(here);
+  let overlay = null, opened = false, t0 = performance.now();
+
+  // A folha de estilos completa vem do ficheiro; o essencial para pintar as folhas
+  // fechadas antes de esse ficheiro chegar segue inline.
+  if (!isHome) {
+    const st = document.createElement('style');
+    st.textContent = '.shoji{position:fixed;inset:0;z-index:3000;display:grid;place-items:center;overflow:hidden}.shoji-leaf{position:absolute;top:0;bottom:0;width:50.6%;background:#eee3cf}.shoji-leaf.l{left:0}.shoji-leaf.r{right:0}';
+    document.head.appendChild(st);
+    const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = '/assets/css/shoji.css';
+    document.head.appendChild(link);
+  }
+
+  function build(door, state) {
+    if (overlay) overlay.remove();
+    overlay = document.createElement('div');
+    overlay.className = 'shoji ' + state;
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.innerHTML = '<div class="shoji-leaf l"></div><div class="shoji-leaf r"></div><div class="shoji-kanji">' + door.kanji + '<small>' + door.label + '</small></div>';
+    document.body.appendChild(overlay);
+    return overlay;
+  }
+  function open() {
+    if (opened || !overlay) return; opened = true;
+    // deixa as folhas visíveis um instante, para se verem, e depois abre
+    const wait = Math.max(0, 420 - (performance.now() - t0));
+    setTimeout(() => {
+      overlay.classList.remove('closed'); overlay.classList.add('open');
+      setTimeout(() => { if (overlay) { overlay.remove(); overlay = null; } }, 1100);
+    }, wait);
+  }
+  let leaving = false;
+  function closeTo(href, door) {
+    if (leaving) return; leaving = true;
+    const o = build(door, 'open');
+    void o.offsetWidth;                       // força o estado inicial (folhas abertas) antes de fechar
+    o.classList.remove('open'); o.classList.add('closing');
+    setTimeout(() => { location.href = href; }, 760);
+  }
+  function internal(a) {
+    if (!a || a.hasAttribute('download') || a.target && a.target !== '_self' || a.dataset.noShoji !== undefined) return null;
+    let u; try { u = new URL(a.href, location.href); } catch (e) { return null; }
+    if (u.origin !== location.origin || !/^https?:$/.test(u.protocol)) return null;
+    const path = u.pathname.replace(/\/+$/, '') || '/';
+    if (path.startsWith('/admin') || path.startsWith('/api')) return null;
+    if (path === here) return null;           // âncoras e recargas da mesma página não fecham nada
+    return { href: u.pathname + u.search + u.hash, path };
+  }
+  if (!isHome) {
+    build(current, 'closed');
+    setTimeout(open, 2600);                   // se o conteúdo demorar, as folhas abrem na mesma
+    document.addEventListener('click', e => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = e.target.closest('a[href]');
+      const dest = internal(a);
+      if (!dest) return;
+      e.preventDefault();
+      if (dest.path === '/') { try { sessionStorage.setItem('asbki-door', current.href); } catch (err) {} }
+      closeTo(dest.href, dest.path === '/' ? current : doorFor(dest.path));
+    }, true);
+    addEventListener('pageshow', e => { if (e.persisted) { leaving = false; if (overlay) { overlay.remove(); overlay = null; } } });
+  }
+  function decorateHero() {
+    const hero = document.querySelector('.page-hero');
+    if (!hero || hero.classList.contains('ph-tokonoma') || isHome) return;
+    hero.classList.add('ph-tokonoma');
+    const k = document.createElement('span'); k.className = 'ph-kanji'; k.setAttribute('aria-hidden', 'true'); k.textContent = current.kanji;
+    const s = document.createElement('span'); s.className = 'ph-shaft'; s.setAttribute('aria-hidden', 'true');
+    hero.appendChild(s); hero.appendChild(k);
+  }
+  return { open, decorateHero, closeTo, doorFor };
+})();
+
 window.ASBKI = (function () {
 
   const ICONS = {
@@ -444,6 +535,7 @@ window.ASBKI = (function () {
     if (!c) {
       const main = document.querySelector('main');
       if (main) main.innerHTML = '<div class="container" style="padding:160px 0"><p>Não foi possível carregar o conteúdo. Tenta recarregar a página.</p></div>';
+      if (window.ASBKIShoji) ASBKIShoji.open();
       return;
     }
     renderHeader(c);
@@ -455,6 +547,7 @@ window.ASBKI = (function () {
     } catch (err) {
       console.error('Erro ao renderizar a página', err);
     }
+    if (window.ASBKIShoji) { ASBKIShoji.decorateHero(); ASBKIShoji.open(); }
     initObserver();
     initCounters();
     /* Âncora na URL (ex.: /inscricao#horarios) depois do render */
