@@ -1,0 +1,153 @@
+/* ─── ASBKI Covilhã — segundo acto da home + hero móvel ───────────────────
+   Carregado depois de dojo.css. Cobre: estatística real nos seis cartões das
+   portas, o corredor de portas 2.5D e a folha shoji do hero em telemóvel/
+   tablet retrato, e as secções "Esta semana", notícias e CTA final abaixo do
+   dojo (todos os tamanhos de ecrã). Anima só transform/opacity; respeita
+   prefers-reduced-motion. */
+
+/* ─── Texto que não parte mal ────────────────────────────────────────────── */
+.dj-porta b, .home-section h2, .home-final h2, .mdoor b { text-wrap: balance; }
+
+/* O corredor de portas e a faixa "Como chegar" só existem dentro dos gates
+   móveis (regra base; a media query lá em baixo é que os mostra) — têm de
+   vir antes dela na cascata para o desktop ficar com a grelha, não os dois. */
+.home-chegar, .mdoor-rail, .mdoor-hint { display: none; }
+
+/* ─── Estatística real nos seis cartões das portas (desktop) ─────────────── */
+.dj-porta-stat {
+  position: relative; display: block; margin-top: 2px;
+  font-family: var(--font-mono, monospace); font-size: 12px; letter-spacing: .05em;
+  color: var(--dj-straw, #d5c1ae); opacity: .85; font-style: normal;
+}
+.dj-porta.red .dj-porta-stat { color: var(--dj-bone, #f3ece2); }
+
+/* ─── Secções partilhadas: "Esta semana", notícias, CTA final ────────────── */
+.home-section { position: relative; padding: clamp(56px, 8vw, 96px) 0; background: var(--bg); }
+.home-section.alt { background: var(--bg-2); }
+.home-section .section-label { margin-bottom: 4px; }
+
+/* Esta semana: treinos por dojo em faixas horizontais + próximo evento à parte —
+   layout distinto da grelha de cartões usada nas notícias, logo abaixo. */
+.home-week-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 32px; align-items: start; }
+.home-dojo-block { display: flex; flex-direction: column; gap: 10px; }
+.home-dojo-name { font-family: var(--font-h); font-weight: 800; font-size: 1.1rem; color: var(--text); }
+.home-week-row {
+  display: flex; align-items: baseline; gap: 14px; padding: 12px 16px; border: 1px solid var(--border);
+  border-radius: var(--r); background: var(--bg-card);
+}
+.home-week-row .days { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .1em; color: var(--accent-text); text-transform: uppercase; flex-shrink: 0; }
+.home-week-row .what { flex: 1; font-size: 14.5px; color: var(--text-2); }
+.home-week-row .what b { color: var(--text); font-weight: 600; }
+.home-event-card {
+  border: 1px solid var(--border); border-radius: var(--r); background: var(--bg-card);
+  padding: 22px 24px; display: flex; flex-direction: column; gap: 8px; justify-content: center;
+}
+.home-event-date { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .12em; color: var(--accent-text); text-transform: uppercase; }
+.home-event-title { font-family: var(--font-h); font-weight: 800; font-size: 1.2rem; color: var(--text); }
+.home-event-loc { font-size: 14px; color: var(--text-2); }
+.home-empty { color: var(--text-muted); font-size: 15px; }
+
+/* Notícias da home: reutiliza .card / .card-grid já existentes (pages.css). */
+.home-news-grid { margin-top: 32px; }
+
+/* CTA final: faixa cheia, distinta das duas secções anteriores. */
+.home-final { padding: clamp(64px, 9vw, 120px) 0; text-align: center; background: linear-gradient(180deg, var(--bg-2), var(--bg)); }
+.home-final h2 { font-family: var(--font-h); font-weight: 800; font-size: clamp(28px, 4vw, 44px); color: var(--text); max-width: 20ch; margin: 0 auto; }
+.home-final p { margin: 14px auto 0; max-width: 52ch; color: var(--text-2); font-size: 17px; }
+.home-final .btn { margin-top: 26px; }
+
+@media (max-width: 860px) {
+  .home-week-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── Entrada com sussurro: transform/opacity via IntersectionObserver ───── */
+.home-reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1); }
+.home-reveal.visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .home-reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   HERO MÓVEL — só nos gates de dispositivo do dojo.js/dojo.css (idênticos).
+   ════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 720px),
+       (orientation: portrait) and (max-width: 1024px),
+       (orientation: portrait) and (pointer: coarse),
+       (orientation: landscape) and (pointer: coarse) and (max-height: 560px) {
+
+  /* Camada 1: folha shoji plana (2D, sem perspective) sobre o poster.
+     Cobre .dj-static por inteiro; o conteúdo por baixo só aparece depois de abrir. */
+  .mhero-shoji {
+    position: absolute; inset: 0; z-index: 2; display: flex; pointer-events: none;
+  }
+  .mhero-leaf {
+    flex: 1; position: relative; background: #eee3cf;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .9s cubic-bezier(.22,.61,.36,1);
+  }
+  .mhero-leaf.l { transform: translateX(0); border-right: 1px solid rgba(20,15,10,.14); }
+  .mhero-leaf.r { transform: translateX(0); border-left: 1px solid rgba(20,15,10,.14); }
+  .mhero-leaf i {
+    font-style: normal; font-family: "Yu Gothic","Hiragino Sans","Noto Sans CJK JP","Noto Sans JP",sans-serif;
+    font-size: clamp(40px, 13vw, 64px); color: #4a3625; opacity: .8;
+  }
+  .mhero-shoji.open .mhero-leaf.l { transform: translateX(-100%); }
+  .mhero-shoji.open .mhero-leaf.r { transform: translateX(100%); }
+  .mhero-shoji[hidden] { display: none; }
+
+  .mhero-content { opacity: 0; transform: translateY(14px); transition: opacity .6s ease .15s, transform .6s ease .15s; }
+  .mhero-shoji.open ~ .mhero-content, .mhero-content.revealed { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mhero-leaf { transition: none; }
+    .mhero-content { transition: none; opacity: 1; transform: none; }
+  }
+
+  /* Camada 2: corredor horizontal de seis portas em 2.5D, com scroll-snap.
+     Substitui a grelha empilhada (desktop) neste intervalo de larguras. */
+  .dj-portas-grid { display: none; }
+  .mdoor-rail {
+    display: flex; gap: 14px; margin-top: 32px; padding: 8px 20px 24px;
+    overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    perspective: 900px;
+  }
+  .mdoor-rail::-webkit-scrollbar { display: none; }
+  .mdoor {
+    scroll-snap-align: center; flex: 0 0 auto; width: min(64vw, 240px); min-height: 260px;
+    position: relative; display: grid; grid-template-rows: auto 1fr auto; gap: 8px;
+    padding: 20px 18px 18px; text-decoration: none; color: var(--text);
+    background: linear-gradient(180deg,#1b1610,#120e0b); border: 1px solid #3a2b1e; border-top: 6px solid #4a3625;
+    border-radius: 4px; overflow: hidden; transform: rotateY(6deg); transform-origin: left center;
+    transition: transform .3s ease;
+  }
+  .mdoor:nth-child(even) { transform: rotateY(-6deg); transform-origin: right center; }
+  .mdoor.red { border-top-color: var(--accent); }
+  .mdoor.red b { color: var(--dj-bone, #f3ece2); }
+  .mdoor .dj-kanji { font-family: "Yu Gothic","Hiragino Sans","Noto Sans CJK JP","Noto Sans JP",sans-serif; font-size: 40px; line-height: 1; color: var(--dj-straw, #d5c1ae); opacity: .85; }
+  .mdoor b { font-family: var(--font-h); font-weight: 800; font-size: 22px; line-height: 1.1; align-self: end; }
+  .mdoor span { font-size: 13.5px; color: var(--text-2); }
+  .mdoor .mdoor-leaves { position: absolute; inset: 0; display: flex; pointer-events: none; z-index: 1; }
+  .mdoor .mdoor-leaf { flex: 1; background: #eee3cf; transition: transform .3s ease; }
+  .mdoor .mdoor-leaf.l { border-right: 1px solid rgba(20,15,10,.14); }
+  .mdoor .mdoor-leaf.r { border-left: 1px solid rgba(20,15,10,.14); }
+  .mdoor.opening .mdoor-leaf.l { transform: translateX(-100%); }
+  .mdoor.opening .mdoor-leaf.r { transform: translateX(100%); }
+  @media (prefers-reduced-motion: reduce) {
+    .mdoor { transition: none; } .mdoor .mdoor-leaf { transition: none; }
+  }
+  .mdoor-hint { display: block; text-align: center; font-size: 13px; color: var(--text-muted); margin-top: -14px; }
+
+  /* Alvos de toque generosos (>=44px) nas duas camadas móveis. */
+  .mhero-content .btn, .mdoor { min-height: 44px; }
+
+  /* Faixa "Como chegar" (só nesta faixa de larguras). */
+  .home-chegar { display: block; padding: 40px 0; background: var(--bg-2); }
+  .home-chegar-actions { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+  .home-chegar-actions a { min-height: 48px; }
+}
+
+/* Em 768x1024 e 1024x1366 retrato (tablet), mostra 2 a 2,5 portas por ecrã
+   (largura fixa: 768/(345+14gap)≈2,1; 1024/(345+14)≈2,8). */
+@media (orientation: portrait) and (min-width: 721px) and (max-width: 1024px) {
+  .mdoor { width: 345px; }
+}

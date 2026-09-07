@@ -18,6 +18,7 @@
    <link rel="stylesheet" href="/assets/css/style.css">
    <link rel="stylesheet" href="/assets/css/pages.css">
    <link rel="stylesheet" href="/assets/css/dojo.css">
+   <link rel="stylesheet" href="/assets/css/home.css">
    <link rel="preload" as="image" href="/assets/dojo/hero-poster.jpg" media="(min-width: 1025px)">
 </head>
 
@@ -91,30 +92,79 @@
             <button type="button" class="dj-cue" aria-label="Entrar no dojo"><span>Entrar</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16m0 0 6-6m-6 6-6-6"/></svg></button>
 
             <div class="dj-static">
-               <p class="dj-kicker">Karate Shotokan · Covilhã e Tortosendo · desde 1998</p>
-               <h1>Dá o primeiro passo.</h1>
-               <p>Karate Shotokan dos 5 aos 70 anos. Dois dojos, treinos todas as semanas. A primeira aula é gratuita e não precisas de equipamento.</p>
-               <div class="dj-cta">
-                  <a class="btn btn-accent" href="/inscricao">Marcar aula experimental</a>
-                  <a class="btn btn-outline-ghost" href="#portas">Ver as portas</a>
+               <div class="mhero-shoji" id="mhero-shoji" aria-hidden="true">
+                  <span class="mhero-leaf l"><i>道</i></span>
+                  <span class="mhero-leaf r"><i>場</i></span>
+               </div>
+               <div class="mhero-content" id="mhero-content">
+                  <p class="dj-kicker">Karate Shotokan · Covilhã e Tortosendo · desde 1998</p>
+                  <h1>Dá o primeiro passo.</h1>
+                  <p>Karate Shotokan dos 5 aos 70 anos. Dois dojos, treinos todas as semanas. A primeira aula é gratuita e não precisas de equipamento.</p>
+                  <div class="dj-cta">
+                     <a class="btn btn-accent" href="/inscricao">Marcar aula experimental</a>
+                     <a class="btn btn-outline-ghost" href="#portas">Ver as portas</a>
+                  </div>
                </div>
             </div>
          </div>
       </section>
 
-      <!-- ═══ AS PORTAS, EM LISTA ═════════════════════════════════════════ -->
+      <!-- ═══ AS PORTAS: grelha (desktop) ou corredor 2.5D (telemóvel/tablet) ═══ -->
       <section class="dj-portas" id="portas" aria-label="As portas do dojo">
          <div class="container">
             <p class="dj-kicker fade-in">As portas do dojo</p>
             <h2 class="fade-in fade-in-delay-1">Seis portas. Uma primeira aula grátis.</h2>
             <div class="dj-portas-grid">
-               <a class="dj-porta fade-in" href="/associacao"><span class="dj-kanji" aria-hidden="true">会</span><b>Quem Somos</b><span>História, instrutores e Dojo Kun.</span></a>
-               <a class="dj-porta fade-in fade-in-delay-1" href="/karate"><span class="dj-kanji" aria-hidden="true">空手</span><b>Karate</b><span>Kihon, kata e kumite.</span></a>
-               <a class="dj-porta fade-in fade-in-delay-2" href="/dojos"><span class="dj-kanji" aria-hidden="true">道場</span><b>Dojos</b><span>Covilhã e Tortosendo, com horários.</span></a>
-               <a class="dj-porta fade-in" href="/noticias"><span class="dj-kanji" aria-hidden="true">報</span><b>Notícias</b><span>Resultados, exames e artigos.</span></a>
-               <a class="dj-porta fade-in fade-in-delay-1" href="/contacto"><span class="dj-kanji" aria-hidden="true">連絡</span><b>Contactos</b><span>Fala connosco.</span></a>
-               <a class="dj-porta red fade-in fade-in-delay-2" href="/inscricao"><span class="dj-kanji" aria-hidden="true">入門</span><b>Aula grátis</b><span>A primeira aula é gratuita.</span></a>
+               <a class="dj-porta fade-in" href="/associacao" data-stat="associacao"><span class="dj-kanji" aria-hidden="true">会</span><b>Quem Somos</b><span>História, instrutores e Dojo Kun.</span><em class="dj-porta-stat"></em></a>
+               <a class="dj-porta fade-in fade-in-delay-1" href="/karate" data-stat="karate"><span class="dj-kanji" aria-hidden="true">空手</span><b>Karate</b><span>Kihon, kata e kumite.</span><em class="dj-porta-stat"></em></a>
+               <a class="dj-porta fade-in fade-in-delay-2" href="/dojos" data-stat="dojos"><span class="dj-kanji" aria-hidden="true">道場</span><b>Dojos</b><span>Covilhã e Tortosendo, com horários.</span><em class="dj-porta-stat"></em></a>
+               <a class="dj-porta fade-in" href="/noticias" data-stat="noticias"><span class="dj-kanji" aria-hidden="true">報</span><b>Notícias</b><span>Resultados, exames e artigos.</span><em class="dj-porta-stat"></em></a>
+               <a class="dj-porta fade-in fade-in-delay-1" href="/contacto" data-stat="contacto"><span class="dj-kanji" aria-hidden="true">連絡</span><b>Contactos</b><span>Fala connosco.</span><em class="dj-porta-stat"></em></a>
+               <a class="dj-porta red fade-in fade-in-delay-2" href="/inscricao" data-stat="inscricao"><span class="dj-kanji" aria-hidden="true">入門</span><b>Aula grátis</b><span>A primeira aula é gratuita.</span><em class="dj-porta-stat"></em></a>
             </div>
+            <!-- Corredor móvel: seis portas próprias em 2.5D, com scroll-snap (ver .mdoor em home.css/home.js). -->
+            <div class="mdoor-rail" id="mdoor-rail" role="list" aria-label="As seis portas, uma de cada vez"></div>
+            <p class="mdoor-hint" aria-hidden="true">Desliza para ver as outras portas →</p>
+         </div>
+      </section>
+
+      <!-- ═══ ESTA SEMANA: treinos por dojo + próximo evento ═══════════════ -->
+      <section class="home-section" id="semana" aria-label="Esta semana">
+         <div class="container">
+            <span class="section-label home-reveal">Esta semana</span>
+            <h2 class="section-title home-reveal">Treinos e próxima data</h2>
+            <div class="home-week-grid">
+               <div id="home-sessions"></div>
+               <div class="home-event-wrap">
+                  <div class="home-event-card" id="home-event"></div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <!-- ═══ NOTÍCIAS: últimos dois artigos ════════════════════════════ -->
+      <section class="home-section alt" id="novidades" aria-label="Últimas notícias">
+         <div class="container">
+            <span class="section-label home-reveal">Notícias</span>
+            <h2 class="section-title home-reveal">O que se passa no clube</h2>
+            <div class="card-grid cols-2 home-news-grid" id="home-news-grid"></div>
+         </div>
+      </section>
+
+      <!-- ═══ COMO CHEGAR (só telemóvel/tablet) ═════════════════════════ -->
+      <section class="home-chegar" id="chegar" aria-label="Como chegar">
+         <div class="container">
+            <span class="section-label">Como chegar</span>
+            <div class="home-chegar-actions" id="home-chegar-actions"></div>
+         </div>
+      </section>
+
+      <!-- ═══ CTA FINAL ══════════════════════════════════════════════════ -->
+      <section class="home-final" aria-label="Marcar aula experimental">
+         <div class="container">
+            <h2 id="home-final-title"></h2>
+            <p id="home-final-sub"></p>
+            <a class="btn btn-accent" href="/inscricao" id="home-final-cta-btn">Marcar aula experimental</a>
          </div>
       </section>
 
@@ -124,10 +174,12 @@
 
    <script src="/assets/js/site.js"></script>
    <script src="/assets/js/dojo.js"></script>
+   <script src="/assets/js/home.js"></script>
    <script>
       ASBKI.boot(function (c) {
          ASBKI.setMeta(c.site.name + ' — ' + c.site.tagline);
          if (window.__dojo) { window.__dojo.applyNav(c.nav); window.__dojo.bindNav(); }
+         if (window.ASBKIHome) ASBKIHome.render(c);
       });
    </script>
 </body>
