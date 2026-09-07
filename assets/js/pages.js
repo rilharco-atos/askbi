@@ -529,7 +529,7 @@
     setHTML('#wiz-lbl-email', esc(ins.fields.email).replace('(opcional)', '<span class="optional">(opcional)</span>'));
     setText('#wiz-lbl-age', ins.fields.age || 'Idade');
     setText('#wiz-lbl-guardian', ins.fields.guardian || 'Encarregado de educação');
-    setHTML('#wiz-lbl-consent', `${esc(ins.fields.consent || 'Li e aceito a')} <a href="/associacao#privacidade" target="_blank" rel="noopener">${esc(ins.fields.consentLink || 'política de privacidade')}</a>`);
+    setHTML('#wiz-lbl-consent', `${esc(ins.fields.consent || 'Li e aceito a')} <a href="/privacidade" target="_blank" rel="noopener">${esc(ins.fields.consentLink || 'política de privacidade')}</a>`);
     $('#wiz-name').placeholder     = ins.fields.namePlaceholder || '';
     $('#wiz-phone').placeholder    = ins.fields.phonePlaceholder || '';
     $('#wiz-email').placeholder    = ins.fields.emailPlaceholder || '';
@@ -704,7 +704,7 @@
     setText('#label-phone', ct.fields.phone);
     setText('#label-message', ct.fields.message);
     setText('#label-submit', ct.fields.submit);
-    setHTML('#f-lbl-consent', `${esc(ct.fields.consent || 'Li e aceito a')} <a href="/associacao#privacidade" target="_blank" rel="noopener">${esc(ct.fields.consentLink || 'política de privacidade')}</a>`);
+    setHTML('#f-lbl-consent', `${esc(ct.fields.consent || 'Li e aceito a')} <a href="/privacidade" target="_blank" rel="noopener">${esc(ct.fields.consentLink || 'política de privacidade')}</a>`);
     setHTML('#contact-details', [
       real(site.address) && `<div class="contact-detail"><div class="contact-detail-icon">${svg(ICONS.pin)}</div><div><div class="contact-detail-label">Morada</div><div class="contact-detail-value">${esc(site.address)}</div></div></div>`,
       real(site.phone)   && `<div class="contact-detail"><div class="contact-detail-icon">${svg(ICONS.phone)}</div><div><div class="contact-detail-label">Telefone</div><div class="contact-detail-value"><a href="tel:${esc(site.phone.replace(/\s/g, ''))}">${esc(site.phone)}</a></div></div></div>`,
