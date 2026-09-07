@@ -32,25 +32,39 @@
                <div class="fade-in fade-in-delay-1">
                   <div class="contact-form">
                      <div class="contact-form-title" id="contact-form-title"></div>
-                     <form id="contact-form" onsubmit="handleContactForm(event)">
+                     <form id="contact-form" novalidate>
                         <div class="form-row">
                            <div class="form-group">
                               <label for="f-name" id="label-name">Nome</label>
-                              <input id="f-name" type="text" name="name" required autocomplete="name">
+                              <input id="f-name" type="text" name="name" required autocomplete="name" aria-describedby="f-err-name">
+                              <p class="form-error" id="f-err-name" role="alert" hidden></p>
                            </div>
                            <div class="form-group">
                               <label for="f-email" id="label-email">E-mail</label>
-                              <input id="f-email" type="email" name="email" required autocomplete="email">
+                              <input id="f-email" type="email" name="email" required autocomplete="email" aria-describedby="f-err-email">
+                              <p class="form-error" id="f-err-email" role="alert" hidden></p>
                            </div>
                         </div>
                         <div class="form-group">
                            <label for="f-phone" id="label-phone">Telefone</label>
-                           <input id="f-phone" type="tel" name="phone" autocomplete="tel">
+                           <input id="f-phone" type="tel" name="phone" autocomplete="tel" inputmode="tel" aria-describedby="f-err-phone">
+                           <p class="form-error" id="f-err-phone" role="alert" hidden></p>
                         </div>
                         <div class="form-group">
                            <label for="f-message" id="label-message">Mensagem</label>
-                           <textarea id="f-message" name="message" required></textarea>
+                           <textarea id="f-message" name="message" required aria-describedby="f-err-message"></textarea>
+                           <p class="form-error" id="f-err-message" role="alert" hidden></p>
                         </div>
+                        <p class="form-honeypot" aria-hidden="true">
+                           <label for="f-website">Não preencher</label>
+                           <input type="text" id="f-website" name="website" tabindex="-1" autocomplete="off">
+                        </p>
+                        <div class="form-consent">
+                           <input type="checkbox" id="f-consent" name="consent" required aria-describedby="f-err-consent">
+                           <label for="f-consent" id="f-lbl-consent"></label>
+                           <p class="form-error" id="f-err-consent" role="alert" hidden></p>
+                        </div>
+                        <p class="form-status" id="contact-form-status" role="alert" aria-live="polite" hidden></p>
                         <button type="submit" class="btn btn-accent form-submit" id="label-submit">Enviar</button>
                      </form>
                   </div>
@@ -60,6 +74,7 @@
       </section>
    </main>
    <div id="site-footer"></div>
+   <div class="sticky-cta-bar" id="sticky-cta-bar" hidden></div>
    <script src="/assets/js/site.js"></script>
    <script src="/assets/js/pages.js"></script>
 </body>
