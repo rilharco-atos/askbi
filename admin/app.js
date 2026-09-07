@@ -88,6 +88,8 @@ async function bootApp() {
   await loadContent();
   initSidebar();
   loadImages();
+  loadLeads();
+  loadVersions();
 }
 
 if (token) {
@@ -596,6 +598,111 @@ async function loadImages() {
 
 window.copyUrl = function (url) {
   navigator.clipboard.writeText(url).then(() => showToast('URL copiado!'));
+};
+
+/* ─── Leads ───────────────────────────────────────────────────────────── */
+const LEAD_TYPE_LABEL = { inscricao: 'Aula experimental', contacto: 'Contacto' };
+
+window.loadLeads = async function loadLeads() {
+  try {
+    const res = await fetch('/api/admin/leads', { headers: { 'x-admin-token': token } });
+    if (!res.ok) throw new Error((await res.json()).error || 'Erro ao carregar leads');
+    const leads = await res.json();
+    renderLeads(leads);
+  } catch (err) {
+    showToast('Erro ao carregar leads: ' + err.message, 'error');
+  }
+};
+
+function renderLeads(leads) {
+  const list = document.querySelector('#leads-list');
+  const count = document.querySelector('#leads-count');
+  if (count) count.textContent = leads.length;
+  if (!list) return;
+  if (!leads.length) { list.innerHTML = '<p class="help">Ainda não há pedidos.</p>'; return; }
+  list.innerHTML = leads.map(l => {
+    const when = new Date(l.createdAt).toLocaleString('pt-PT');
+    const typeLabel = LEAD_TYPE_LABEL[l.type] || l.type;
+    const details = l.type === 'inscricao'
+      ? `${esc(l.sessionLabel || '')} · ${esc(l.sessionLocation || '')} · ${esc(l.sessionTime || '')}`
+      : esc(l.message || '');
+    return `
+      <div class="editor-card" style="margin-bottom:10px">
+        <div class="field-row" style="align-items:baseline">
+          <strong>${esc(l.name)}</strong>
+          <span class="stat-badge">${esc(typeLabel)}</span>
+          <span class="help">${when}</span>
+        </div>
+        <div class="help">${esc(l.phone || '')}${l.phone && l.email ? ' · ' : ''}${esc(l.email || '')}</div>
+        <div style="margin-top:6px">${details}</div>
+      </div>`;
+  }).join('');
+}
+
+window.exportLeadsCsv = async function exportLeadsCsv() {
+  try {
+    const res = await fetch('/api/admin/leads?format=csv', { headers: { 'x-admin-token': token } });
+    if (!res.ok) throw new Error('Erro ao exportar');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'leads.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    showToast('Erro ao exportar CSV: ' + err.message, 'error');
+  }
+};
+
+/* ─── Versões ─────────────────────────────────────────────────────────── */
+window.loadVersions = async function loadVersions() {
+  try {
+    const res = await fetch('/api/admin/versions', { headers: { 'x-admin-token': token } });
+    if (!res.ok) throw new Error((await res.json()).error || 'Erro ao carregar versões');
+    const versions = await res.json();
+    renderVersions(versions);
+  } catch (err) {
+    showToast('Erro ao carregar versões: ' + err.message, 'error');
+  }
+};
+
+function renderVersions(versions) {
+  const list = document.querySelector('#versions-list');
+  const count = document.querySelector('#versions-count');
+  if (count) count.textContent = versions.length;
+  if (!list) return;
+  if (!versions.length) { list.innerHTML = '<p class="help">Ainda não há versões guardadas.</p>'; return; }
+  list.innerHTML = versions.map((v, i) => {
+    const when = new Date(v.savedAt).toLocaleString('pt-PT');
+    const size = (v.size / 1024).toFixed(0);
+    return `
+      <div class="field-row" style="align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div>
+          <strong>${when}</strong>${i === 0 ? ' <span class="stat-badge">atual</span>' : ''}
+          <div class="help">${size} KB</div>
+        </div>
+        ${i === 0 ? '' : `<button class="btn btn-secondary" onclick="restoreVersion('${v.id}')">Restaurar</button>`}
+      </div>`;
+  }).join('');
+}
+
+window.restoreVersion = async function restoreVersion(id) {
+  if (!confirm('Restaurar esta versão? Fica gravada como a versão actual (não apaga o histórico).')) return;
+  try {
+    const res = await fetch('/api/admin/restore', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
+      body: JSON.stringify({ id }),
+    });
+    if (!res.ok) throw new Error((await res.json()).error || 'Erro ao restaurar');
+    showToast('✓ Versão restaurada');
+    await loadContent();
+    await loadVersions();
+  } catch (err) {
+    showToast('Erro ao restaurar: ' + err.message, 'error');
+  }
 };
 
 /* ─── Sidebar ─────────────────────────────────────────────────────────── */
