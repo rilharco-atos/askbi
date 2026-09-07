@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "node --test tests/",
+    "test": "node --test \"tests/**/*.test.js\"",
     "leads:prune": "node scripts/leads-prune.mjs",
     "icons:generate": "python scripts/generate_icons.py"
   },
