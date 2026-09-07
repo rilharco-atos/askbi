@@ -7,6 +7,36 @@
    visível mas vazia (ex.: #discipline-image em Kihon/Kata/Kumite sem foto). */
 [hidden] { display: none !important; }
 
+/* ─── CLS: reserva de espaço para conteúdo que só chega depois de /api/content ──
+   As páginas renderizam no cliente: a grelha começa vazia e só ganha altura quando o
+   fetch responde, o que desloca tudo por baixo. min-height (medido com Chrome headless
+   a 1440×900) reserva aproximadamente o espaço final; deixa de se aplicar assim que o
+   contentor ganha filhos (:empty), por isso não força espaço a mais depois de populado. */
+#discipline-grid:empty     { min-height: 260px; }
+#classes-grid:empty        { min-height: 304px; }
+#kids-bullets:empty        { min-height: 180px; }
+#dojos-grid:empty          { min-height: 640px; }
+#agenda-list:empty         { min-height: 784px; }
+#news-featured:empty       { min-height: 322px; }
+#news-grid:empty           { min-height: 1478px; }
+#session-grid:empty        { min-height: 370px; }
+#wizard-session-grid:empty { min-height: 166px; }
+#faq-list:empty            { min-height: 534px; }
+#pricing-block:empty       { min-height: 117px; }
+#board-grid:empty          { min-height: 420px; }
+#instructors-grid:empty    { min-height: 360px; }
+#timeline:empty            { min-height: 480px; }
+/* Em ecrã estreito as grelhas passam a 1 coluna — a mesma quantidade de cartões
+   ocupa mais altura. Os valores desktop ficam curtos; alargam por baixo de 860px. */
+@media (max-width: 860px) {
+  #discipline-grid:empty { min-height: 720px; }
+  #classes-grid:empty    { min-height: 900px; }
+  #dojos-grid:empty      { min-height: 1100px; }
+  #news-grid:empty       { min-height: 2600px; }
+  #board-grid:empty      { min-height: 760px; }
+  #instructors-grid:empty{ min-height: 900px; }
+}
+
 /* ─── Navbar: dropdowns ───────────────────────────────────────────────── */
 .nav-item { position: relative; display: flex; align-items: center; gap: 2px; }
 .nav-caret {
@@ -541,3 +571,74 @@
   .discipline-card { min-height: 0; padding: 26px 22px; }
   .page-cta { padding: 44px 0; }
 }
+
+/* ─── Formulários: honeypot, consentimento, erros e estado de envio ─────── */
+.form-honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.form-error { color: var(--accent-text); font-size: 13.5px; margin-top: 6px; line-height: 1.4; }
+.form-group input[aria-invalid="true"],
+.form-group textarea[aria-invalid="true"] { border-color: var(--accent-text); }
+.form-consent { display: flex; align-items: flex-start; gap: 10px; margin: 4px 0 18px; flex-wrap: wrap; }
+.form-consent input[type="checkbox"] { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; accent-color: var(--accent); }
+.form-consent label { font-size: 14.5px; color: var(--text-2); line-height: 1.5; }
+.form-consent label a { color: var(--accent-text); text-decoration: underline; }
+.form-consent .form-error { width: 100%; margin-top: 4px; }
+.form-status { border-radius: var(--r); padding: 12px 16px; font-size: 14.5px; margin: 4px 0 18px; }
+.form-status.error { color: var(--accent-text); background: var(--accent-bg); border: 1px solid rgba(255,75,62,.25); }
+.form-status.success { color: var(--green); background: rgba(110,203,138,.10); border: 1px solid rgba(110,203,138,.3); }
+.surface-paper .form-status.success { color: #1f7a3d; background: rgba(31,122,61,.08); border-color: rgba(31,122,61,.28); }
+.wizard-summary { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border-subtle); }
+
+/* Cartão de horário como link (fora do wizard): mantém o visual, ganha um indicador de ação */
+a.session-card { text-decoration: none; color: inherit; position: relative; }
+a.session-card:hover { border-color: var(--accent); }
+a.session-card:focus-visible { outline-offset: 3px; }
+
+/* ─── FAQ (accordion) ────────────────────────────────────────────────────── */
+.faq-list { max-width: 760px; margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+.faq-item { border: 1px solid var(--border); border-radius: var(--r); background: var(--bg-card); overflow: hidden; }
+.faq-q {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 16px 20px; min-height: 56px; background: none; border: none; cursor: pointer;
+  font-family: var(--font-h); font-size: 1rem; font-weight: 700; color: var(--text); text-align: left;
+}
+.faq-q svg { flex-shrink: 0; transition: transform var(--tr); stroke: var(--text-2); }
+.faq-q[aria-expanded="true"] svg { transform: rotate(180deg); }
+.faq-a { padding: 0 20px 18px; }
+.faq-a p { color: var(--text-2); font-size: 15px; line-height: 1.6; }
+
+/* ─── Preços ─────────────────────────────────────────────────────────────── */
+.pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; }
+.pricing-card { border: 1px solid var(--border); border-radius: var(--r); background: var(--bg-card); padding: 22px 20px; }
+.pricing-label { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+.pricing-value { font-family: var(--font-h); font-size: 1.6rem; font-weight: 800; color: var(--text); }
+.pricing-note { font-size: 13.5px; color: var(--text-2); margin-top: 6px; }
+.pricing-fallback { margin-top: 24px; padding: 26px 24px; border: 1px dashed var(--border); border-radius: var(--r); display: flex; flex-wrap: wrap; align-items: center; gap: 18px; justify-content: space-between; }
+.pricing-fallback p { color: var(--text-2); font-size: 15px; max-width: 46ch; }
+
+/* ─── Agenda (topo de /noticias) ─────────────────────────────────────────── */
+.agenda-list { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+.agenda-row { display: flex; gap: 18px; align-items: flex-start; border: 1px solid var(--border); border-radius: var(--r); background: var(--bg-card); padding: 16px 20px; }
+.agenda-date { display: flex; flex-direction: column; align-items: center; line-height: 1.1; flex-shrink: 0; width: 52px; }
+.agenda-date .d { font-family: var(--font-h); font-size: 1.4rem; font-weight: 800; color: var(--text); }
+.agenda-date .m { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .1em; color: var(--accent-text); text-transform: uppercase; }
+.agenda-title { font-family: var(--font-h); font-weight: 700; font-size: 1.02rem; color: var(--text); margin: 6px 0 4px; }
+.agenda-loc { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--text-2); }
+.agenda-loc svg { stroke: var(--accent-text); flex-shrink: 0; }
+
+/* ─── Barra fixa inferior (mobile): Ligar / WhatsApp ─────────────────────── */
+.sticky-cta-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 500;
+  display: flex; gap: 1px; background: var(--border);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  box-shadow: 0 -8px 24px rgba(0,0,0,.35);
+}
+.sticky-cta-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 56px; background: var(--bg-2); color: var(--text); font-weight: 700; font-size: 15px;
+}
+.sticky-cta-btn svg { stroke: currentColor; flex-shrink: 0; }
+.sticky-cta-btn.whatsapp { background: #1f7a3d; color: #fff; }
+.sticky-cta-btn.whatsapp svg { fill: currentColor; stroke: none; }
+@media (min-width: 768px) { .sticky-cta-bar { display: none !important; } }
+body.has-sticky-cta { padding-bottom: 56px; }
+@media (min-width: 768px) { body.has-sticky-cta { padding-bottom: 0; } }
